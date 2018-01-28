@@ -16,18 +16,18 @@ class CheckUrl
 {
     const METHOD_GET = "GET";
     const METHOD_POST = "POST";
+    const PROTOCOL_HTTP = "http";
+    const PROTOCOL_HTTPS = "https";
 
     private $method;
+    private $protocol;
 
-    public function __construct(string $method)
+    public function __construct(string $method, string $protocol)
     {
         $this->assertIsValidMethod($method);
+        $this->assertIsValidProtocol($protocol);
         $this->method = $this->formatMethod($method);
-    }
-
-    private function formatMethod($name): string
-    {
-        return strtoupper(trim($name));
+        $this->protocol = $this->formatProtocol($protocol);
     }
 
     /**
@@ -47,9 +47,41 @@ class CheckUrl
         ));
     }
 
+    /**
+     * @param string $protocol
+     * @throws InvalidCheckProtocolException
+     */
+    private function assertIsValidProtocol(string $protocol): void
+    {
+        $formatted = $this->formatProtocol($protocol);
+        if (in_array($formatted, self::protocols())) {
+            return;
+        }
+
+        throw new InvalidCheckProtocolException(sprintf(
+            'Protocol "%s" is not valid',
+            $protocol
+        ));
+    }
+
+    private function formatMethod($name): string
+    {
+        return strtoupper(trim($name));
+    }
+
+    private function formatProtocol($name): string
+    {
+        return strtolower(trim($name));
+    }
+
     public function method(): string
     {
         return $this->method;
+    }
+
+    public function protocol(): string
+    {
+        return $this->protocol;
     }
 
     /**
@@ -60,6 +92,17 @@ class CheckUrl
         return [
             self::METHOD_GET,
             self::METHOD_POST
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function protocols(): array
+    {
+        return [
+            self::PROTOCOL_HTTP,
+            self::PROTOCOL_HTTPS
         ];
     }
 }

@@ -60,4 +60,43 @@ class CheckUrlTest extends TestCase
             [" PoST  ", "POST"],
         ];
     }
+
+    /**
+     * @test
+     * @dataProvider validButNotFormattedProtocolNames
+     */
+    public function isShouldAcceptNonFormattedProtocol($protocol, $expected)
+    {
+        $url = CheckUrlDataBuilder::aCheckUrl()->withProtocol($protocol)->build();
+
+        $this->assertEquals($expected, $url->protocol());
+    }
+
+    public function validButNotFormattedProtocolNames()
+    {
+        return [
+            ["HTTP", "http"],
+            ["HttPS", "https"],
+            [" htTP", "http"],
+            [" hTTpS  ", "https"],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidProtocolDataProvider
+     * @expectedException \ServerStatus\Model\Check\InvalidCheckProtocolException
+     */
+    public function itShouldThrowExceptionWhenUnexpectedProtocolIsGiven($protocol)
+    {
+        CheckUrlDataBuilder::aCheckUrl()->withProtocol($protocol)->build();
+    }
+
+    public function invalidProtocolDataProvider()
+    {
+        return [
+            ['ftp'],
+            ['ssh'],
+        ];
+    }
 }

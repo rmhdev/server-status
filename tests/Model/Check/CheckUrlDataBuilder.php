@@ -17,10 +17,12 @@ use ServerStatus\Model\Check\CheckUrl;
 class CheckUrlDataBuilder
 {
     private $method;
+    private $protocol;
 
     public function __construct()
     {
         $this->method = "get";
+        $this->protocol = "https";
     }
 
     public function withMethod(string $method): CheckUrlDataBuilder
@@ -30,9 +32,16 @@ class CheckUrlDataBuilder
         return $this;
     }
 
+    public function withProtocol(string $protocol): CheckUrlDataBuilder
+    {
+        $this->protocol = $protocol;
+
+        return $this;
+    }
+
     public function build(): CheckUrl
     {
-        return new CheckUrl($this->method);
+        return new CheckUrl($this->method, $this->protocol);
     }
 
     public static function aCheckUrl(): CheckUrlDataBuilder
