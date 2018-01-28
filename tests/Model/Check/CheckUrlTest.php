@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Model\Check;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Model\Check\InvalidCheckDomainException;
 
 class CheckUrlTest extends TestCase
 {
@@ -108,5 +109,23 @@ class CheckUrlTest extends TestCase
         $checkUrl = CheckUrlDataBuilder::aCheckUrl()->withProtocol("https")->withDomain("test.example.com")->build();
 
         $this->assertEquals("https://test.example.com", $checkUrl->url());
+    }
+
+    /**
+     * DISABLED for now...
+     *
+     * @dataProvider invalidDomainDataProvider
+     * @expectedException InvalidCheckDomainException
+     */
+    public function itShouldThrowExceptionWithIncorrectDomains($domain)
+    {
+        CheckUrlDataBuilder::aCheckUrl()->withDomain($domain)->build();
+    }
+
+    public function invalidDomainDataProvider()
+    {
+        return [
+            ["./index.html"]
+        ];
     }
 }

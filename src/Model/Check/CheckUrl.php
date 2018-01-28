@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Model\Check;
 
-use League\Uri\Http;
-use League\Uri\Uri;
-use League\Uri\QueryBuilder;
+use League\Uri;
 use League\Uri\Exception as LeagueUriException;
 
 class CheckUrl
@@ -32,16 +30,8 @@ class CheckUrl
     {
         $this->assertIsValidMethod($method);
         $this->assertIsValidProtocol($protocol);
-        try {
-            $uri = $this->createUri($this->formatProtocol($protocol), $this->formatDomain($domain));
-        } catch (LeagueUriException $e) {
-            throw new InvalidCheckDomainException(sprintf(
-                'Problem generating the uri: %s',
-                $domain,
-                $e->getMessage()
-            ));
-        }
 
+        $uri = $this->createUri($this->formatProtocol($protocol), $this->formatDomain($domain));
         $this->method = $this->formatMethod($method);
         $this->protocol = $uri->getScheme();
         $this->domain = $uri->getPath();
@@ -81,12 +71,27 @@ class CheckUrl
         ));
     }
 
-    private function createUri(string $scheme, string $path): Uri
+    private function createUri(string $scheme, string $path): Uri\Uri
     {
-        return Uri::createFromComponents([
-            "scheme" => $scheme,
-            "path" => $path
-        ]);
+        try {
+            $uri = Uri\Uri::createFromComponents([
+                "scheme" => $scheme,
+                "path" => $path
+            ]);
+        } catch (LeagueUriException $e) {
+            throw new InvalidCheckDomainException(sprintf(
+                'Problem generating the uri: %s',
+                $e->getMessage()
+            ));
+        }
+        if (!Uri\is_absolute($uri)) {
+            throw new InvalidCheckDomainException(sprintf(
+                'Uri is not a network path: %s',
+                $uri
+            ));
+        }
+
+        return $uri;
     }
 
     private function formatMethod($name): string
