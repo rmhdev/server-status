@@ -10,19 +10,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Model\Measurement;
 
 use ServerStatus\Model\Measurement\Measurement;
 use ServerStatus\Model\Measurement\MeasurementId;
-use ServerStatus\Tests\Model\Measurement\MeasurementIdDataBuilder;
 
 class MeasurementDataBuilder
 {
     private $id;
+    private $date;
 
     public function __construct()
     {
         $this->id = MeasurementIdDataBuilder::aMeasurementId()->build();
+        $this->date = new \DateTimeImmutable("2018-01-28 23:00:00", new \DateTimeZone("Europe/Madrid"));
     }
 
     public function withId(MeasurementId $id): MeasurementDataBuilder
@@ -32,9 +33,26 @@ class MeasurementDataBuilder
         return $this;
     }
 
+    public function withDate(\DateTimeInterface $dateTime): MeasurementDataBuilder
+    {
+        $this->date = \DateTimeImmutable::createFromFormat(
+            DATE_ISO8601,
+            $dateTime->format(DATE_ISO8601),
+            $dateTime->getTimezone()
+        );
+
+        return $this;
+    }
+
     public function build(): Measurement
     {
-        return new Measurement($this->id);
+        $date = \DateTime::createFromFormat(
+            DATE_ISO8601,
+            $this->date->format(DATE_ISO8601),
+            $this->date->getTimezone()
+        );
+
+        return new Measurement($this->id, $date);
     }
 
     public static function aMeasurement(): MeasurementDataBuilder

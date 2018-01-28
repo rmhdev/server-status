@@ -15,14 +15,30 @@ namespace ServerStatus\Model\Measurement;
 class Measurement
 {
     private $id;
+    private $dateCreated;
 
-    public function __construct(MeasurementId $id)
+    public function __construct(MeasurementId $id, \DateTimeInterface $dateCreated)
     {
         $this->id = $id;
+        $this->dateCreated = $this->createDateTime($dateCreated);
+    }
+
+    private function createDateTime(\DateTimeInterface $dateTime)
+    {
+        return \DateTime::createFromFormat(
+            DATE_ISO8601,
+            $dateTime->format(DATE_ISO8601),
+            $dateTime->getTimezone()
+        );
     }
 
     public function id(): MeasurementId
     {
         return $this->id;
+    }
+
+    public function dateCreated(): \DateTime
+    {
+        return clone $this->dateCreated;
     }
 }
