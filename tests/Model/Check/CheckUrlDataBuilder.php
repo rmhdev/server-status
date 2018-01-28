@@ -18,11 +18,13 @@ class CheckUrlDataBuilder
 {
     private $method;
     private $protocol;
+    private $domain;
 
     public function __construct()
     {
         $this->method = "get";
         $this->protocol = "https";
+        $this->domain = "www.example.com";
     }
 
     public function withMethod(string $method): CheckUrlDataBuilder
@@ -39,9 +41,16 @@ class CheckUrlDataBuilder
         return $this;
     }
 
+    public function withDomain(string $domain): CheckUrlDataBuilder
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
     public function build(): CheckUrl
     {
-        return new CheckUrl($this->method, $this->protocol);
+        return new CheckUrl($this->method, $this->protocol, $this->domain);
     }
 
     public static function aCheckUrl(): CheckUrlDataBuilder

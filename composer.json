@@ -13,6 +13,7 @@
   ],
   "require": {
     "php": "^7.1.0",
+    "league/uri": "^5.2",
     "ramsey/uuid": "^3.7"
   },
   "require-dev": {

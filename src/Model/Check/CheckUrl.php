@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace ServerStatus\Model\Check;
 
+use League\Uri\Http;
+use League\Uri\Uri;
+use League\Uri\QueryBuilder;
+use League\Uri\Exception as LeagueUriException;
+
 class CheckUrl
 {
     const METHOD_GET = "GET";
@@ -21,13 +26,25 @@ class CheckUrl
 
     private $method;
     private $protocol;
+    private $domain;
 
-    public function __construct(string $method, string $protocol)
+    public function __construct(string $method, string $protocol, string $domain)
     {
         $this->assertIsValidMethod($method);
         $this->assertIsValidProtocol($protocol);
+        try {
+            $uri = $this->createUri($this->formatProtocol($protocol), $this->formatDomain($domain));
+        } catch (LeagueUriException $e) {
+            throw new InvalidCheckDomainException(sprintf(
+                'Problem generating the uri: %s',
+                $domain,
+                $e->getMessage()
+            ));
+        }
+
         $this->method = $this->formatMethod($method);
-        $this->protocol = $this->formatProtocol($protocol);
+        $this->protocol = $uri->getScheme();
+        $this->domain = $uri->getPath();
     }
 
     /**
@@ -64,6 +81,14 @@ class CheckUrl
         ));
     }
 
+    private function createUri(string $scheme, string $path): Uri
+    {
+        return Uri::createFromComponents([
+            "scheme" => $scheme,
+            "path" => $path
+        ]);
+    }
+
     private function formatMethod($name): string
     {
         return strtoupper(trim($name));
@@ -74,6 +99,11 @@ class CheckUrl
         return strtolower(trim($name));
     }
 
+    private function formatDomain($domain): string
+    {
+        return trim($domain);
+    }
+
     public function method(): string
     {
         return $this->method;
@@ -82,6 +112,16 @@ class CheckUrl
     public function protocol(): string
     {
         return $this->protocol;
+    }
+
+    public function domain(): string
+    {
+        return $this->domain;
+    }
+
+    public function url(): string
+    {
+        return sprintf("%s://%s", $this->protocol(), $this->domain());
     }
 
     /**

@@ -99,4 +99,14 @@ class CheckUrlTest extends TestCase
             ['ssh'],
         ];
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAFormattedUri()
+    {
+        $checkUrl = CheckUrlDataBuilder::aCheckUrl()->withProtocol("https")->withDomain("test.example.com")->build();
+
+        $this->assertEquals("https://test.example.com", $checkUrl->url());
+    }
 }
