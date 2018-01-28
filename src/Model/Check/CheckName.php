@@ -40,7 +40,7 @@ class CheckName
         if (self::MAX_LENGTH < mb_strlen($value)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Check %s "%s..." is too long (%d chars), max length is %d.',
+                    'CheckName %s "%s..." is too long (%d chars), max length is %d.',
                     $field,
                     mb_substr($value, 0, 20),
                     mb_strlen($value),
@@ -65,7 +65,7 @@ class CheckName
         if ($processedSlug !== $this->slugify($slug)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Property slug "%s" is not correct, "%s" expected',
+                    'CheckName slug "%s" is not correct, "%s" expected',
                     $slug,
                     $this->slugify($name)
                 )
