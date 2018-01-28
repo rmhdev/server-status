@@ -16,11 +16,13 @@ class Check
 {
     private $id;
     private $name;
+    private $url;
 
-    public function __construct(CheckId $id, CheckName $name)
+    public function __construct(CheckId $id, CheckName $name, CheckUrl $url)
     {
         $this->id = $id;
         $this->name = $name;
+        $this->url = $url;
     }
 
     public function id(): CheckId
@@ -31,5 +33,10 @@ class Check
     public function name(): CheckName
     {
         return $this->name;
+    }
+
+    public function url(): CheckUrl
+    {
+        return $this->url;
     }
 }
