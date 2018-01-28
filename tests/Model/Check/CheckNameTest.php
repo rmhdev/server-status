@@ -50,6 +50,7 @@ class CheckNameTest extends TestCase
     }
 
     /**
+     * @test
      * @dataProvider longNames
      */
     public function itShouldAcceptedNamesWithMaxLength($longName)
@@ -150,11 +151,22 @@ class CheckNameTest extends TestCase
     }
 
     /**
+     * @test
      * @dataProvider longNames
      * @expectedException \InvalidArgumentException
      */
     public function itShouldThrowExceptionWhenSlugIsTooLong($longSlug)
     {
         $this->createCheckNameWithValue("Name", $longSlug . "a");
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnNameWhenConvertedToString()
+    {
+        $name = $this->createCheckNameWithValue("My Custom check", "other-value");
+
+        $this->assertSame("My Custom check", (string) $name);
     }
 }
