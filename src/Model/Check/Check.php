@@ -15,14 +15,21 @@ namespace ServerStatus\Model\Check;
 class Check
 {
     private $id;
+    private $name;
 
-    public function __construct(CheckId $id)
+    public function __construct(CheckId $id, CheckName $name)
     {
         $this->id = $id;
+        $this->name = $name;
     }
 
     public function id(): CheckId
     {
         return $this->id;
+    }
+
+    public function name(): CheckName
+    {
+        return $this->name;
     }
 }

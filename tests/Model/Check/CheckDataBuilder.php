@@ -14,14 +14,17 @@ namespace ServerStatus\Tests\Model\Check;
 
 use ServerStatus\Model\Check\Check;
 use ServerStatus\Model\Check\CheckId;
+use ServerStatus\Model\Check\CheckName;
 
 class CheckDataBuilder
 {
     private $id;
+    private $name;
 
     public function __construct()
     {
         $this->id = CheckIdDataBuilder::aCheckId()->withValue("loremipsum")->build();
+        $this->name = CheckNameDataBuilder::aCheckName()->withName("My custom check")->build();
     }
 
     public function withId(CheckId $id): CheckDataBuilder
@@ -31,9 +34,16 @@ class CheckDataBuilder
         return $this;
     }
 
+    public function withName(CheckName $name): CheckDataBuilder
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function build(): Check
     {
-        return new Check($this->id);
+        return new Check($this->id, $this->name);
     }
 
     public static function aCheck(): CheckDataBuilder
