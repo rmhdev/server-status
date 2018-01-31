@@ -10,9 +10,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Check;
 
-use ServerStatus\Model\Check\CheckUrl;
+use ServerStatus\Domain\Model\Check\CheckUrl;
 
 class CheckUrlDataBuilder
 {

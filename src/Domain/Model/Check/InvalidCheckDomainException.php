@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Model\Check;
+namespace ServerStatus\Domain\Model\Check;
 
-class InvalidCheckMethodException extends \Exception
+class InvalidCheckDomainException extends \Exception
 {
 
 }

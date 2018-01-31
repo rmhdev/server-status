@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Model\Check;
+namespace ServerStatus\Domain\Model\Check;
 
 use League\Uri;
 use League\Uri\Exception as LeagueUriException;

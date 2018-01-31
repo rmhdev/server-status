@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Measurement;
 
-use ServerStatus\Model\Check\CheckId;
+use ServerStatus\Domain\Model\Measurement\MeasurementId;
 
-class CheckIdDataBuilder
+class MeasurementIdDataBuilder
 {
     private $value;
 
@@ -23,20 +23,20 @@ class CheckIdDataBuilder
         $this->value = "loremipsum";
     }
 
-    public function withValue(string $value): CheckIdDataBuilder
+    public function withValue(string $value): MeasurementIdDataBuilder
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function build(): CheckId
+    public function build(): MeasurementId
     {
-        return new CheckId($this->value);
+        return new MeasurementId($this->value);
     }
 
-    public static function aCheckId(): CheckIdDataBuilder
+    public static function aMeasurementId(): MeasurementIdDataBuilder
     {
-        return new self();
+        return new MeasurementIdDataBuilder();
     }
 }

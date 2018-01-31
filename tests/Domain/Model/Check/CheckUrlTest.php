@@ -10,17 +10,17 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Check;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Model\Check\InvalidCheckDomainException;
+use ServerStatus\Domain\Model\Check\InvalidCheckDomainException;
 
 class CheckUrlTest extends TestCase
 {
     /**
      * @test
      * @dataProvider invalidMethodDataProvider
-     * @expectedException \ServerStatus\Model\Check\InvalidCheckMethodException
+     * @expectedException \ServerStatus\Domain\Model\Check\InvalidCheckMethodException
      */
     public function itShouldThrowExceptionWhenUnexpectedMethodNameIsGiven($method)
     {
@@ -86,7 +86,7 @@ class CheckUrlTest extends TestCase
     /**
      * @test
      * @dataProvider invalidProtocolDataProvider
-     * @expectedException \ServerStatus\Model\Check\InvalidCheckProtocolException
+     * @expectedException \ServerStatus\Domain\Model\Check\InvalidCheckProtocolException
      */
     public function itShouldThrowExceptionWhenUnexpectedProtocolIsGiven($protocol)
     {

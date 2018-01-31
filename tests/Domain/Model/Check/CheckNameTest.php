@@ -10,10 +10,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Check;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Model\Check\CheckName;
+use ServerStatus\Domain\Model\Check\CheckName;
 
 class CheckNameTest extends TestCase
 {

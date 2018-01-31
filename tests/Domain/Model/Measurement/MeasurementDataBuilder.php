@@ -10,10 +10,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Measurement;
+namespace ServerStatus\Tests\Domain\Model\Measurement;
 
-use ServerStatus\Model\Measurement\Measurement;
-use ServerStatus\Model\Measurement\MeasurementId;
+use ServerStatus\Domain\Model\Measurement\Measurement;
+use ServerStatus\Domain\Model\Measurement\MeasurementId;
 
 class MeasurementDataBuilder
 {

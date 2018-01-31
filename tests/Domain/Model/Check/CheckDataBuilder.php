@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Check;
 
-use ServerStatus\Model\Check\Check;
-use ServerStatus\Model\Check\CheckId;
-use ServerStatus\Model\Check\CheckName;
+use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Check\CheckId;
+use ServerStatus\Domain\Model\Check\CheckName;
 
 class CheckDataBuilder
 {
