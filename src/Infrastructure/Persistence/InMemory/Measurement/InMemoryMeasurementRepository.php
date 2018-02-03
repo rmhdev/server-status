@@ -85,7 +85,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         Check $check,
         \DateTimeInterface $start,
         \DateTimeInterface $end,
-        $groupByDateFormat
+        $groupByDateFormat = "Y-m-d H:00:00"
     ): array {
         $rawData = [];
         foreach ($this->filterByDateRange($check, $start, $end) as $measurement) {
