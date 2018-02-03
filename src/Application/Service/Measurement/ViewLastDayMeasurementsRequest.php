@@ -11,14 +11,23 @@
 
 namespace ServerStatus\Application\Service\Measurement;
 
-class ViewLastDayMeasurements
+use ServerStatus\Domain\Model\Check\Check;
+
+class ViewLastDayMeasurementsRequest
 {
+    private $check;
     private $date;
 
-    public function __construct(\DateTimeInterface $dateTime = null)
+    public function __construct(Check $check, \DateTimeInterface $dateTime = null)
     {
         $date = $dateTime ? $dateTime : new \DateTime("now");
         $this->date = $date->format(DATE_ISO8601);
+        $this->check = $check;
+    }
+
+    public function check(): Check
+    {
+        return $this->check;
     }
 
     public function date(): \DateTimeImmutable
