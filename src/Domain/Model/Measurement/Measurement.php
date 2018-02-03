@@ -12,15 +12,19 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement;
 
+use ServerStatus\Domain\Model\Check\Check;
+
 class Measurement
 {
     private $id;
     private $dateCreated;
+    private $check;
 
-    public function __construct(MeasurementId $id, \DateTimeInterface $dateCreated)
+    public function __construct(MeasurementId $id, \DateTimeInterface $dateCreated, Check $check)
     {
         $this->id = $id;
         $this->dateCreated = $this->createDateTime($dateCreated);
+        $this->check = $check;
     }
 
     private function createDateTime(\DateTimeInterface $dateTime)
@@ -40,5 +44,10 @@ class Measurement
     public function dateCreated(): \DateTime
     {
         return clone $this->dateCreated;
+    }
+
+    public function check(): Check
+    {
+        return $this->check;
     }
 }
