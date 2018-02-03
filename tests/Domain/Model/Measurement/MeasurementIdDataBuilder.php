@@ -20,7 +20,7 @@ class MeasurementIdDataBuilder
 
     public function __construct()
     {
-        $this->value = "loremipsum";
+        $this->value = "";
     }
 
     public function withValue(string $value): MeasurementIdDataBuilder

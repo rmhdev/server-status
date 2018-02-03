@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement;
 
+use ServerStatus\Domain\Model\Check\Check;
+
 interface MeasurementRepository
 {
     /**
@@ -37,4 +39,12 @@ interface MeasurementRepository
      * @return MeasurementId
      */
     public function nextId(): MeasurementId;
+
+    /**
+     * @param Check $check
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     * @return array
+     */
+    public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
 }
