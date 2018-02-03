@@ -13,7 +13,7 @@ namespace ServerStatus\Application\Service\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
 
-class ViewLastDayMeasurementsRequest
+class ViewLastDayMeasurementSummaryRequest
 {
     private $check;
     private $date;
