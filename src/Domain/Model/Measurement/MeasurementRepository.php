@@ -47,4 +47,12 @@ interface MeasurementRepository
      * @return array
      */
     public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
+
+    /**
+     * @param Check $check
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     * @return array
+     */
+    public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
 }

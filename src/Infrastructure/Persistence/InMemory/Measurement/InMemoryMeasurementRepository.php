@@ -79,10 +79,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
     {
         $start = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $from->format(DATE_ISO8601));
-        $start = $start->modify(sprintf("-%s seconds", $start->format("s")));
-
         $end = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $to->format(DATE_ISO8601));
-        $end = $end->modify(sprintf("-%s seconds +1 minute", $end->format("s")));
         $rawData = [];
         $filtered = $this->filterByDateRange($check, $start, $end);
         foreach ($filtered as $measurement) {
@@ -101,6 +98,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         foreach ($rawData as $raw) {
             $data[] = [
                 "date" => $raw["date"],
+                "count" => $raw["count"],
                 "response_time" => $raw["count"] == 0 ? 0.00 : ($raw["sum"] / $raw["count"]),
             ];
         }
@@ -124,7 +122,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             if ($measurement->dateCreated() < $from) {
                 return false;
             }
-            if ($measurement->dateCreated() >= $to) {
+            if ($measurement->dateCreated() > $to) {
                 return false;
             }
 
@@ -135,5 +133,35 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     private function measurements()
     {
         return $this->measurements;
+    }
+
+    public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    {
+        $start = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $from->format(DATE_ISO8601));
+        $end = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $to->format(DATE_ISO8601));
+        $rawData = [];
+        $filtered = $this->filterByDateRange($check, $start, $end);
+        foreach ($filtered as $measurement) {
+            $groupBy = $measurement->dateCreated()->format("Y-m-d H");
+            if (!array_key_exists($groupBy, $rawData)) {
+                $rawData[$groupBy] = [
+                    "date" => $measurement->dateCreated()->format("Y-m-d H:00:00"),
+                    "count" => 0,
+                    "sum" => 0
+                ];
+            }
+            $rawData[$groupBy]["count"] += 1;
+            $rawData[$groupBy]["sum"] += 0;
+        }
+        $data = [];
+        foreach ($rawData as $raw) {
+            $data[] = [
+                "date" => $raw["date"],
+                "count" => $raw["count"],
+                "response_time" => $raw["count"] == 0 ? 0.00 : ($raw["sum"] / $raw["count"]),
+            ];
+        }
+
+        return $data;
     }
 }

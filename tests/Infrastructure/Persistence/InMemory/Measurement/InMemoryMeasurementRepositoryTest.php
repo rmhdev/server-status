@@ -108,7 +108,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnOneSummaryByMinuteWhenSearchingInSameMinute()
+    public function itShouldReturnSummaryByMinuteUsingStrictlyTheDateRange()
     {
         $repository = $this->createEmptyRepository();
         $check = CheckDataBuilder::aCheck()->build();
@@ -118,17 +118,18 @@ class InMemoryMeasurementRepositoryTest extends TestCase
             $repository->add(
                 MeasurementDataBuilder::aMeasurement()
                     ->withCheck($check)
-                    ->withDate(new \DateTime("2018-02-03T00:{$minute}:00+0200"))
+                    ->withDate(new \DateTime("2018-02-03T00:{$minute}:05+0200"))
                     ->build()
             );
         }
         $sameMinuteSummaries = $repository->summaryByMinute(
             $check,
-            new \DateTimeImmutable("2018-02-03T00:00:00+0200"),
-            new \DateTimeImmutable("2018-02-03T00:00:59+0200")
+            new \DateTimeImmutable("2018-02-03T00:00:10+0200"),
+            new \DateTimeImmutable("2018-02-03T00:02:00+0200")
         );
 
-        $this->assertEquals(1, sizeof($sameMinuteSummaries), "Same minute searches return no result");
+        $this->assertEquals(1, sizeof($sameMinuteSummaries));
+        $this->assertEquals(1, $sameMinuteSummaries[0]["count"]);
     }
 
     /**
@@ -150,11 +151,44 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         }
         $differentMinuteSummaries = $repository->summaryByMinute(
             $check,
-            new \DateTime("2018-02-03T00:00:01+0200"),
+            new \DateTime("2018-02-03T00:00:00+0200"),
             new \DateTime("2018-02-03T00:04:59+0200")
         );
         $this->assertEquals(5, sizeof($differentMinuteSummaries), "Summary for different minutes");
         $this->assertEquals("2018-02-03 00:00:00", $differentMinuteSummaries[0]['date']);
         $this->assertEquals("2018-02-03 00:04:00", $differentMinuteSummaries[4]['date']);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnSummaryByHourUsingStrictlyTheDateRange()
+    {
+        $repository = $this->createEmptyRepository();
+        $check = CheckDataBuilder::aCheck()->build();
+
+        // same hour measurements
+        foreach (range(0, 5, 1) as $minute) {
+            $repository->add(
+                MeasurementDataBuilder::aMeasurement()
+                    ->withCheck($check)
+                    ->withDate(new \DateTime("2018-02-03T00:{$minute}:50+0200"))
+                    ->build()
+            );
+        }
+        $summaries = $repository->summaryByHour(
+            $check,
+            new \DateTimeImmutable("2018-02-03T00:00:51+0200"),
+            new \DateTimeImmutable("2018-02-03T00:01:49+0200")
+        );
+        $this->assertEquals(0, sizeof($summaries));
+
+        $summaries = $repository->summaryByHour(
+            $check,
+            new \DateTimeImmutable("2018-02-03T00:00:50+0200"),
+            new \DateTimeImmutable("2018-02-03T00:01:50+0200")
+        );
+        $this->assertEquals(1, sizeof($summaries));
+        $this->assertEquals(2, $summaries[0]["count"]);
     }
 }
