@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Infrastructure\Persistence\InMemory\Measurement;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Check\Check;
-use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
@@ -128,7 +126,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
             new \DateTimeImmutable("2018-02-03T00:02:00+0200")
         );
 
-        $this->assertEquals(1, sizeof($sameMinuteSummaries));
+        $this->assertEquals(1, sizeof($sameMinuteSummaries), "items outside the date range are ignored");
         $this->assertEquals(1, $sameMinuteSummaries[0]["count"]);
     }
 
@@ -190,5 +188,38 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         );
         $this->assertEquals(1, sizeof($summaries));
         $this->assertEquals(2, $summaries[0]["count"]);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnMeasurementSummaryDataGroupedByHour()
+    {
+        $repository = $this->createEmptyRepository();
+        $check = CheckDataBuilder::aCheck()->build();
+
+        // same hour measurements
+        foreach (range(0, 2, 1) as $hour) {
+            $repository->add(
+                MeasurementDataBuilder::aMeasurement()
+                    ->withCheck($check)
+                    ->withDate(new \DateTime("2018-02-03T{$hour}:00:00+0200"))
+                    ->build()
+            );
+            $repository->add(
+                MeasurementDataBuilder::aMeasurement()
+                    ->withCheck($check)
+                    ->withDate(new \DateTime("2018-02-03T{$hour}:30:00+0200"))
+                    ->build()
+            );
+        }
+        $summaries = $repository->summaryByHour(
+            $check,
+            new \DateTime("2018-02-03T00:00:00+0200"),
+            new \DateTime("2018-02-03T02:30:00+0200")
+        );
+        $this->assertEquals(3, sizeof($summaries), "Summary for different minutes");
+        $this->assertEquals("2018-02-03 00:00:00", $summaries[0]['date']);
+        $this->assertEquals("2018-02-03 02:00:00", $summaries[2]['date']);
     }
 }
