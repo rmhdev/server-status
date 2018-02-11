@@ -12,15 +12,15 @@
 namespace ServerStatus\Tests\Application\Service\Measurement;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Application\Service\Measurement\ViewLastDayMeasurementSummaryRequest;
+use ServerStatus\Application\Service\Measurement\ViewDayMeasurementSummaryRequest;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
-class ViewLastDayMeasurementSummaryRequestTest extends TestCase
+class ViewDayMeasurementSummaryRequestTest extends TestCase
 {
     public function itShouldHaveADefaultDateWhenEmpty()
     {
         $check = CheckDataBuilder::aCheck()->build();
-        $request = new ViewLastDayMeasurementSummaryRequest($check);
+        $request = new ViewDayMeasurementSummaryRequest($check);
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $request->date());
     }
@@ -32,8 +32,9 @@ class ViewLastDayMeasurementSummaryRequestTest extends TestCase
     {
         $check = CheckDataBuilder::aCheck()->build();
         $date = "2018-01-31T12:00:00+0200";
-        $request = new ViewLastDayMeasurementSummaryRequest($check, new \DateTime($date));
+        $request = new ViewDayMeasurementSummaryRequest($check, new \DateTime($date));
 
-        $this->assertSame("2018-01-30T12:00:00+0200", $request->from()->format(DATE_ISO8601));
+        $this->assertSame("2018-01-31T00:00:00+0200", $request->from()->format(DATE_ISO8601));
+        $this->assertSame("2018-01-31T23:59:59+0200", $request->to()->format(DATE_ISO8601));
     }
 }

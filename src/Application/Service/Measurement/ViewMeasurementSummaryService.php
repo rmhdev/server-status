@@ -13,6 +13,7 @@ namespace ServerStatus\Application\Service\Measurement;
 
 use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDataTransformer;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
 
 class ViewMeasurementSummaryService
 {
@@ -27,7 +28,7 @@ class ViewMeasurementSummaryService
     }
 
     /**
-     * @param ViewLastDayMeasurementSummaryRequest $request
+     * @param ViewDayMeasurementSummaryRequest $request
      * @return array
      */
     public function execute($request = null)
@@ -35,9 +36,11 @@ class ViewMeasurementSummaryService
         if (!$request) {
             return [];
         }
-        $this->transformer->write(
-            $this->repository->summaryByMinute($request->check(), $request->from(), $request->to())
+        $measureSummary = new MeasureDaySummary(
+            $this->repository->summaryByMinute($request->check(), $request->from(), $request->to()),
+            $request->from()
         );
+        $this->transformer->write($measureSummary);
 
         return $this->transformer->read();
     }

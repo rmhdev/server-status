@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Measurement;
 
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
+
 interface MeasurementSummaryDataTransformer
 {
-    public function write($measurements = []);
+    public function write(MeasureSummary $measureSummary);
 
     public function read();
 }

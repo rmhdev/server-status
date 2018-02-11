@@ -13,7 +13,7 @@ namespace ServerStatus\Tests\Application\Service\Measurement;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer;
-use ServerStatus\Application\Service\Measurement\ViewLastDayMeasurementSummaryRequest;
+use ServerStatus\Application\Service\Measurement\ViewDayMeasurementSummaryRequest;
 use ServerStatus\Application\Service\Measurement\ViewMeasurementSummaryService;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Measurement;
@@ -72,11 +72,11 @@ class ViewMeasurementSummaryServiceTest extends TestCase
     }
 
     /**
-     * @todo
+     * @test
      */
-    public function isShouldReturnAnExactNumberOfValuesForLastDaySummary()
+    public function isShouldReturnAnExactNumberOfValuesForDaySummary()
     {
-        $request = new ViewLastDayMeasurementSummaryRequest(
+        $request = new ViewDayMeasurementSummaryRequest(
             $this->check,
             new \DateTimeImmutable("2018-02-03T23:59:59+0200")
         );
@@ -84,8 +84,6 @@ class ViewMeasurementSummaryServiceTest extends TestCase
         $service = new ViewMeasurementSummaryService($this->repository, $this->transformer);
         $summary = $service->execute($request);
 
-
-
-        $this->assertEquals(24 * 6, sizeof($summary["values"]));
+        $this->assertEquals(24 * 6, sizeof($summary["averages"]));
     }
 }

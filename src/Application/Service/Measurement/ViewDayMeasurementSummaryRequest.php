@@ -13,7 +13,7 @@ namespace ServerStatus\Application\Service\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
 
-class ViewLastDayMeasurementSummaryRequest
+class ViewDayMeasurementSummaryRequest
 {
     private $check;
     private $date;
@@ -37,11 +37,11 @@ class ViewLastDayMeasurementSummaryRequest
 
     public function from(): \DateTimeImmutable
     {
-        return $this->date()->modify("-24 hours");
+        return $this->date()->setTime(0, 0, 0);
     }
 
     public function to(): \DateTimeImmutable
     {
-        return $this->date();
+        return $this->date()->setTime(23, 59, 59);
     }
 }

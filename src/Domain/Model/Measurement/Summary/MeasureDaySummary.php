@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
-class MeasureDaySummary
+class MeasureDaySummary implements MeasureSummary
 {
     const GROUP_BY_MINUTES = 10;
 
@@ -43,23 +43,32 @@ class MeasureDaySummary
         return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateTime);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function name(): string
     {
         return "day";
     }
 
+    /**
+     * @inheritdoc
+     */
     public function from(): \DateTimeImmutable
     {
         return $this->date()->setTime(0, 0, 0);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function to(): \DateTimeImmutable
     {
         return $this->date()->setTime(23, 59, 59);
     }
 
     /**
-     * @return SummaryAverage[]
+     * @inheritdoc
      */
     public function averages(): array
     {
@@ -71,6 +80,9 @@ class MeasureDaySummary
         return $averages;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function average(\DateTimeInterface $fromDate): SummaryAverage
     {
         list($start, $end) = $this->startEndDates($fromDate);
