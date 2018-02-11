@@ -39,4 +39,9 @@ class ViewLastDayMeasurementSummaryRequest
     {
         return $this->date()->modify("-24 hours");
     }
+
+    public function to(): \DateTimeImmutable
+    {
+        return $this->date();
+    }
 }

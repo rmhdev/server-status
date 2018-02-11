@@ -14,13 +14,18 @@ namespace ServerStatus\Application\DataTransformer\Measurement;
 
 final class MeasurementSummaryDtoDataTransformer implements MeasurementSummaryDataTransformer
 {
+    private $measurements;
+
     public function write($measurements = [])
     {
-        // TODO: Implement write() method.
+        $this->measurements = $measurements;
     }
 
     public function read()
     {
-        // TODO: Implement read() method.
+        $data = [];
+
+
+        return $data;
     }
 }
