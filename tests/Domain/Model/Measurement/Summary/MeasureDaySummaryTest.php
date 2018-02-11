@@ -44,7 +44,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnCorrectFromDateTime()
     {
-        $summary = new MeasureDaySummary(new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T00:00:00+0200"), $summary->from());
     }
@@ -54,7 +54,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnCorrectToDateTime()
     {
-        $summary = new MeasureDaySummary(new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T23:59:59+0200"), $summary->to());
     }
@@ -64,9 +64,57 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnExactNumberOfDates()
     {
-        $summary = new MeasureDaySummary(new \DateTime("2018-02-03T15:24:10+0200"));
-        $dates = $summary->dates();
+        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
+        $averages = $summary->averages();
 
-        $this->assertEquals(24 * (60 / 10), sizeof($dates));
+        $this->assertEquals(24 * (60 / 10), sizeof($averages));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculateCorrectAverages()
+    {
+        $rawValues = [
+            // should ignore previous values: ..19
+            [
+                "date" => "2018-02-03T15:19:00+0200",
+                "response_time" => 1.000400,
+                "count" => 1
+            ],
+            // testing values: minutes 20..29
+            [
+                "date" => "2018-02-03T15:20:00+0200",
+                "response_time" => 1.000100,
+                "count" => 1
+            ],
+            [
+                "date" => "2018-02-03T15:21:00+0200",
+                "response_time" => 1.000200,
+                "count" => 1
+            ],
+            [
+                "date" => "2018-02-03T15:22:00+0200",
+                "response_time" => 1.000300,
+                "count" => 1
+            ],
+            [
+                "date" => "2018-02-03T15:23:00+0200",
+                "response_time" => 1.000400,
+                "count" => 1
+            ],
+            // should ignore next values: 30..
+            [
+                "date" => "2018-02-03T15:30:00+0200",
+                "response_time" => 1.000400,
+                "count" => 1
+            ],
+        ];
+        $summary = new MeasureDaySummary($rawValues, new \DateTime("2018-02-03T15:24:10+0200"));
+        $average = $summary->average(new \DateTime("2018-02-03T15:23:00+0200"));
+
+        $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:20:00+0200"), $average->from());
+        $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:29:59+0200"), $average->to());
+        $this->assertEquals(1.000250, $average->responseTime());
     }
 }

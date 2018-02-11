@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This file is part of the server-status package.
@@ -39,9 +40,9 @@ class SummaryAverage
         $this->values = $this->formatValues($values);
     }
 
-    private function assertDatesAreCorrect(\DateTimeInterface $from, \DateTimeImmutable $to): void
+    private function assertDatesAreCorrect(\DateTimeInterface $from, \DateTimeInterface $to): void
     {
-        if (0 >= $from->diff($to)->s) {
+        if ($from <= $to) {
             return;
         }
         throw new \OutOfBoundsException(sprintf(
