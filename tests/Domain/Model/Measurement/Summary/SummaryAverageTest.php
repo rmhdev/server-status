@@ -18,12 +18,34 @@ class SummaryAverageTest extends TestCase
 {
     /**
      * @test
+     * @expectedException \OutOfBoundsException
+     */
+    public function itShouldThrowExceptionWhenLastDateIsLowerThanFirstDate()
+    {
+        return new SummaryAverage(
+            new \DateTimeImmutable("2018-02-03T15:20:00+0200"),
+            new \DateTimeImmutable("2018-02-03T15:19:59+0200"),
+            []
+        );
+    }
+
+    /**
+     * @test
      */
     public function itShouldReturnZeroResponseTimeWhenNoDataIsDefined()
     {
-        $summaryAverage = new SummaryAverage();
+        $summaryAverage = $this->createSummaryAverageWithValues([]);
 
         $this->assertSame(0.000000, $summaryAverage->responseTime());
+    }
+
+    private function createSummaryAverageWithValues($values = []): SummaryAverage
+    {
+        return new SummaryAverage(
+            new \DateTimeImmutable("2018-02-03T15:20:00+0200"),
+            new \DateTimeImmutable("2018-02-03T15:30:00+0200"),
+            $values
+        );
     }
 
     /**
@@ -37,7 +59,7 @@ class SummaryAverageTest extends TestCase
             ["response_time" => 1.000300],
             ["response_time" => 1.000400],
         ];
-        $summaryAverage = new SummaryAverage($values);
+        $summaryAverage = $this->createSummaryAverageWithValues($values);
 
         $this->assertSame(1.000250, $summaryAverage->responseTime());
     }
@@ -47,7 +69,7 @@ class SummaryAverageTest extends TestCase
      */
     public function itShouldAcceptASingleValueWithData()
     {
-        $summaryAverage = new SummaryAverage(["response_time" => 1.000100]);
+        $summaryAverage = $this->createSummaryAverageWithValues(["response_time" => 1.000100]);
 
         $this->assertSame(1.000100, $summaryAverage->responseTime());
     }

@@ -15,16 +15,61 @@ class SummaryAverage
 {
     const FIELD_RESPONSE_TIME = "response_time";
 
+    /**
+     * @var \DateTimeImmutable
+     */
+    private $from;
+
+    /**
+     * @var \DateTimeImmutable
+     */
+    private $to;
+
+    /**
+     * @var array
+     */
     private $values;
 
-    public function __construct($values = [])
+
+    public function __construct(\DateTimeInterface $from, \DateTimeImmutable $to, $values = [])
+    {
+        $this->assertDatesAreCorrect($from, $to);
+        $this->from = $from->format(DATE_ISO8601);
+        $this->to = $to->format(DATE_ISO8601);
+        $this->values = $this->formatValues($values);
+    }
+
+    private function assertDatesAreCorrect(\DateTimeInterface $from, \DateTimeImmutable $to): void
+    {
+        if (0 >= $from->diff($to)->s) {
+            return;
+        }
+        throw new \OutOfBoundsException(sprintf(
+            'Date "to" (%s) should be greater or equal than date "from" (%s)',
+            $from->format(DATE_ISO8601),
+            $to->format(DATE_ISO8601)
+        ));
+    }
+
+    private function formatValues($values = []): array
     {
         if ($values) {
             if (array_intersect(array_keys($values), self::fields())) {
                 $values = [$values];
             }
         }
-        $this->values = $values;
+
+        return $values;
+    }
+
+    public function from(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->from);
+    }
+
+    public function to(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->to);
     }
 
     private function values(): array
