@@ -14,7 +14,7 @@ namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 class MeasureDaySummary implements MeasureSummary
 {
-    const GROUP_BY_MINUTES = 10;
+    const GROUPED_BY_MINUTES = 10;
 
     /**
      * @var array
@@ -104,9 +104,9 @@ class MeasureDaySummary implements MeasureSummary
     {
         $date = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $fromDate->format(DATE_ISO8601));
         $formattedMinute = (int) $date->format("i");
-        $formattedMinute -= $formattedMinute % self::GROUP_BY_MINUTES;
+        $formattedMinute -= $formattedMinute % self::GROUPED_BY_MINUTES;
         $start = $date->setTime((int) $date->format("H"), $formattedMinute, 0);
-        $end = $start->modify(sprintf("+%d minutes - 1 second", self::GROUP_BY_MINUTES));
+        $end = $start->modify(sprintf("+%d minutes - 1 second", self::GROUPED_BY_MINUTES));
 
         return [$start, $end];
     }
@@ -133,14 +133,17 @@ class MeasureDaySummary implements MeasureSummary
         $date = $this->from();
         while ($date <= $max) {
             $dates[] = $date;
-            $date = $date->modify(sprintf("+%d minutes", $this->groupByMinutes()));
+            $date = $date->modify(sprintf("+%d minutes", $this->groupedByMinutes()));
         }
 
         return $dates;
     }
 
-    protected function groupByMinutes()
+    /**
+     * @inheritdoc
+     */
+    public function groupedByMinutes(): int
     {
-        return self::GROUP_BY_MINUTES;
+        return self::GROUPED_BY_MINUTES;
     }
 }

@@ -33,6 +33,7 @@ final class MeasurementSummaryDtoDataTransformer implements MeasurementSummaryDa
         $data = [
             "from" => $this->measureSummary()->from()->format(DATE_ISO8601),
             "to" => $this->measureSummary()->to()->format(DATE_ISO8601),
+            "minutes_grouped_by" => $this->measureSummary()->groupedByMinutes(),
             "name" => $this->measureSummary()->name(),
             "averages" => []
         ];

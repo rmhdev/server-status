@@ -34,6 +34,13 @@ interface MeasureSummary
     public function to(): \DateTimeImmutable;
 
     /**
+     * Average values are grouped every X minutes
+     *
+     * @return int
+     */
+    public function groupedByMinutes();
+
+    /**
      * All related SummaryAverages
      *
      * @return SummaryAverage[]
