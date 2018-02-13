@@ -32,12 +32,11 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldHaveDefaultDateTime()
     {
-     $summary = new MeasureDaySummary();
+        $summary = new MeasureDaySummary();
 
-     $this->assertEquals("00:00:00", $summary->from()->format("H:i:s"));
-     $this->assertEquals("23:59:59", $summary->to()->format("H:i:s"));
+        $this->assertEquals("00:00:00", $summary->from()->format("H:i:s"));
+        $this->assertEquals("23:59:59", $summary->to()->format("H:i:s"));
     }
-
 
     /**
      * @test
