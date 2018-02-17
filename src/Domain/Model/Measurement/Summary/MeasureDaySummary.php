@@ -126,7 +126,7 @@ class MeasureDaySummary implements MeasureSummary
     /**
      * @return \DateTimeImmutable[]
      */
-    private function dates(): array
+    protected function dates(): array
     {
         $dates = [];
         $max = $this->to();
