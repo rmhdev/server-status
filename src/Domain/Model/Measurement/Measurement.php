@@ -19,12 +19,18 @@ class Measurement
     private $id;
     private $dateCreated;
     private $check;
+    private $result;
 
-    public function __construct(MeasurementId $id, \DateTimeInterface $dateCreated, Check $check)
-    {
+    public function __construct(
+        MeasurementId $id,
+        \DateTimeInterface $dateCreated,
+        Check $check,
+        MeasurementResult $result
+    ) {
         $this->id = $id;
         $this->dateCreated = $this->createDateTime($dateCreated);
         $this->check = $check;
+        $this->result = $result;
     }
 
     private function createDateTime(\DateTimeInterface $dateTime)
@@ -49,5 +55,10 @@ class Measurement
     public function check(): Check
     {
         return $this->check;
+    }
+
+    public function result(): MeasurementResult
+    {
+        return $this->result;
     }
 }

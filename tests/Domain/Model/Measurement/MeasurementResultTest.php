@@ -67,4 +67,42 @@ class MeasurementResultTest extends TestCase
         $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(600)->build();
         $this->assertFalse($result->isSuccessful());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnZeroWhenNotDurationIsDefined()
+    {
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->build();
+
+        $this->assertEquals(0, $result->duration());
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionWhenDurationIsNegative()
+    {
+        MeasurementResultDataBuilder::aMeasurementResult()->withDuration(-0.1)->build();
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnZeroWhenNotMemoryIsDefined()
+    {
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->build();
+
+        $this->assertEquals(0, $result->memory());
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionWhenMemoryIsNegative()
+    {
+        MeasurementResultDataBuilder::aMeasurementResult()->withMemory(-1)->build();
+    }
 }

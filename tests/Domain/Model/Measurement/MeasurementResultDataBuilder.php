@@ -17,10 +17,14 @@ use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 class MeasurementResultDataBuilder
 {
     private $code;
+    private $duration;
+    private $memory;
 
     public function __construct()
     {
         $this->code = 200;
+        $this->duration = 0;
+        $this->memory = 0;
     }
 
     public function withCode(int $code): MeasurementResultDataBuilder
@@ -30,9 +34,23 @@ class MeasurementResultDataBuilder
         return $this;
     }
 
+    public function withDuration(float $duration): MeasurementResultDataBuilder
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function withMemory(int $memory): MeasurementResultDataBuilder
+    {
+        $this->memory = $memory;
+
+        return $this;
+    }
+
     public function build(): MeasurementResult
     {
-        return new MeasurementResult($this->code);
+        return new MeasurementResult($this->code, $this->duration, $this->memory);
     }
 
     public static function aMeasurementResult(): MeasurementResultDataBuilder

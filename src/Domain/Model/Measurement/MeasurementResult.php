@@ -17,10 +17,36 @@ class MeasurementResult
     const STATUS_CODE_CLASS_SUCCESSFUL = 2;
 
     private $code;
+    private $duration;
+    private $memory;
 
-    public function __construct(int $code)
+    public function __construct(int $code, float $duration = 0, int $memory = 0)
     {
+        $this->assertDuration($duration);
+        $this->assertMemory($memory);
         $this->code = $code;
+        $this->duration = $duration;
+        $this->memory = $memory;
+    }
+
+    private function assertDuration(float $duration): void
+    {
+        if (0 > $duration) {
+            throw new \UnexpectedValueException(sprintf(
+                'Duration should not be negative, "%s" seconds received',
+                $duration
+            ));
+        }
+    }
+
+    private function assertMemory(int $memory): void
+    {
+        if (0 > $memory) {
+            throw new \UnexpectedValueException(sprintf(
+                'Memory should not be negative, "%s" bytes received',
+                $memory
+            ));
+        }
     }
 
     public function code(): int
@@ -36,5 +62,15 @@ class MeasurementResult
     private function isStatusCodeClass(int $classNumber): bool
     {
         return $classNumber === (int) substr((string) $this->code(), 0, 1);
+    }
+
+    public function duration(): float
+    {
+        return $this->duration;
+    }
+
+    public function memory(): int
+    {
+        return $this->memory;
     }
 }

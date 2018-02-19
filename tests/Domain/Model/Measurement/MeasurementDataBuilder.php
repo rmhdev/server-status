@@ -15,6 +15,7 @@ namespace ServerStatus\Tests\Domain\Model\Measurement;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
+use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class MeasurementDataBuilder
@@ -22,12 +23,14 @@ class MeasurementDataBuilder
     private $id;
     private $date;
     private $check;
+    private $result;
 
     public function __construct()
     {
         $this->id = MeasurementIdDataBuilder::aMeasurementId()->build();
         $this->date = new \DateTimeImmutable("2018-01-28 23:00:00", new \DateTimeZone("Europe/Madrid"));
         $this->check = CheckDataBuilder::aCheck()->build();
+        $this->result = MeasurementResultDataBuilder::aMeasurementResult()->build();
     }
 
     public function withId(MeasurementId $id): MeasurementDataBuilder
@@ -55,6 +58,13 @@ class MeasurementDataBuilder
         return $this;
     }
 
+    public function withResult(MeasurementResult $result): MeasurementDataBuilder
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
     public function build(): Measurement
     {
         $date = \DateTime::createFromFormat(
@@ -63,7 +73,7 @@ class MeasurementDataBuilder
             $this->date->getTimezone()
         );
 
-        return new Measurement($this->id, $date, $this->check);
+        return new Measurement($this->id, $date, $this->check, $this->result);
     }
 
     public static function aMeasurement(): MeasurementDataBuilder
