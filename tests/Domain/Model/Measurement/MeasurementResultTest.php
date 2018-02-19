@@ -55,4 +55,16 @@ class MeasurementResultTest extends TestCase
 
         $this->assertFalse($result->isSuccessful());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldNotBeSuccessfulWhenResponseCodeIsUnexpected()
+    {
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(0)->build();
+        $this->assertFalse($result->isSuccessful());
+
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(600)->build();
+        $this->assertFalse($result->isSuccessful());
+    }
 }
