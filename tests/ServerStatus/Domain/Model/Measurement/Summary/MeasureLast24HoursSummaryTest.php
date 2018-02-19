@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
 
 class MeasureLast2HoursSummaryTest extends TestCase
