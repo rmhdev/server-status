@@ -16,20 +16,29 @@ use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 
 class MeasurementResultDataBuilder
 {
-    private $code;
+    private $statusCode;
+    private $reasonPhrase;
     private $duration;
     private $memory;
 
     public function __construct()
     {
-        $this->code = 200;
+        $this->statusCode = 200;
+        $this->reasonPhrase = "";
         $this->duration = 0;
         $this->memory = 0;
     }
 
-    public function withCode(int $code): MeasurementResultDataBuilder
+    public function withStatusCode(int $statusCode): MeasurementResultDataBuilder
     {
-        $this->code = $code;
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
+
+    public function withReasonPhrase(string $reasonPhrase): MeasurementResultDataBuilder
+    {
+        $this->reasonPhrase = $reasonPhrase;
 
         return $this;
     }
@@ -50,7 +59,7 @@ class MeasurementResultDataBuilder
 
     public function build(): MeasurementResult
     {
-        return new MeasurementResult($this->code, $this->duration, $this->memory);
+        return new MeasurementResult($this->statusCode, $this->reasonPhrase, $this->duration, $this->memory);
     }
 
     public static function aMeasurementResult(): MeasurementResultDataBuilder

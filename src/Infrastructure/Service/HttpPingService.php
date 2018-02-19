@@ -60,14 +60,17 @@ final class HttpPingService implements PingService
             );
             $response = $this->httpClient->sendRequest($request);
             $code = $response->getStatusCode();
+            $reasonPhrase = (string) $response->getReasonPhrase();
         } catch (HttpClientException $httpException) {
             $code = 0;
+            $reasonPhrase = $httpException->getMessage();
         } catch (\Exception $e) {
             $code = 0;
+            $reasonPhrase = $e->getMessage();
 
         }
         $event = $stopWatch->stop("measurement");
 
-        return new MeasurementResult($code, $event->getDuration(), $event->getMemory());
+        return new MeasurementResult($code, $reasonPhrase, $event->getDuration(), $event->getMemory());
     }
 }

@@ -21,7 +21,7 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldBeSuccessfulWhenResponseCodeIsCorrect()
     {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(200)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(200)->build();
 
         $this->assertTrue($result->isSuccessful());
     }
@@ -31,7 +31,7 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldNotBeSuccessfulWhenResponseCodeIsInformational()
     {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(100)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(100)->build();
 
         $this->assertFalse($result->isSuccessful());
     }
@@ -41,7 +41,7 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldNotBeSuccessfulWhenResponseCodeIsClientError()
     {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(404)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(404)->build();
 
         $this->assertFalse($result->isSuccessful());
     }
@@ -51,7 +51,7 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldNotBeSuccessfulWhenResponseCodeIsServerError()
     {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(500)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(500)->build();
 
         $this->assertFalse($result->isSuccessful());
     }
@@ -61,10 +61,10 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldNotBeSuccessfulWhenResponseCodeIsUnexpected()
     {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(0)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(0)->build();
         $this->assertFalse($result->isSuccessful());
 
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withCode(600)->build();
+        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(600)->build();
         $this->assertFalse($result->isSuccessful());
     }
 

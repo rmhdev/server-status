@@ -33,7 +33,7 @@ class HttpPingServiceTest extends TestCase
         $service = new HttpPingService($client, MessageFactoryDiscovery::find());
         $measurement = $service->measure($check);
 
-        $this->assertEquals(200, $measurement->result()->code());
+        $this->assertEquals(200, $measurement->result()->statusCode());
     }
 
     /**
@@ -44,6 +44,51 @@ class HttpPingServiceTest extends TestCase
         $response = $this->createMock('Psr\Http\Message\ResponseInterface');
         $response
             ->method('getStatusCode')->willReturn($statusCode)
+        ;
+
+        /**
+         * @var $response ResponseInterface
+         */
+        return $response;
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAMeasureWhenTheCheckedSiteResponseIsNotSuccessful()
+    {
+        $client = new MockClient();
+        $client->addResponse($this->createMockResponse(500));
+
+        $check = CheckDataBuilder::aCheck()->build();
+        $service = new HttpPingService($client, MessageFactoryDiscovery::find());
+        $measurement = $service->measure($check);
+
+        $this->assertEquals(500, $measurement->result()->statusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAMeasureWhenThePingThrowsAnException()
+    {
+        $client = new MockClient();
+        $client->addResponse($this->createMockResponseWithException());
+
+        $check = CheckDataBuilder::aCheck()->build();
+        $service = new HttpPingService($client, MessageFactoryDiscovery::find());
+        $measurement = $service->measure($check);
+
+        $this->assertEquals(0, $measurement->result()->statusCode());
+        $this->assertEquals("This is an exception", $measurement->result()->reasonPhrase());
+    }
+
+
+    private function createMockResponseWithException()
+    {
+        $response = $this->createMock('Psr\Http\Message\ResponseInterface');
+        $response
+            ->method('getStatusCode')->willThrowException(new \Exception("This is an exception"));
         ;
 
         /**
