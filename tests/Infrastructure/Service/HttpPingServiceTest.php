@@ -12,12 +12,43 @@ declare(strict_types=1);
 
 namespace Infrastructure\Service;
 
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Mock\Client as MockClient;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use ServerStatus\Infrastructure\Service\HttpPingService;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class HttpPingServiceTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function itShouldReturnACorrectMeasureWhenTheCheckedSiteRespondsOk()
     {
-        // todo
+        $client = new MockClient();
+        $client->addResponse($this->createMockResponse(200));
+
+        $check = CheckDataBuilder::aCheck()->build();
+        $service = new HttpPingService($client, MessageFactoryDiscovery::find());
+        $measurement = $service->measure($check);
+
+        $this->assertEquals(200, $measurement->result()->code());
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    private function createMockResponse(int $statusCode)
+    {
+        $response = $this->createMock('Psr\Http\Message\ResponseInterface');
+        $response
+            ->method('getStatusCode')->willReturn($statusCode)
+        ;
+
+        /**
+         * @var $response ResponseInterface
+         */
+        return $response;
     }
 }

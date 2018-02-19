@@ -84,7 +84,7 @@ class MeasurementResultTest extends TestCase
      */
     public function itShouldThrowExceptionWhenDurationIsNegative()
     {
-        MeasurementResultDataBuilder::aMeasurementResult()->withDuration(-0.1)->build();
+        MeasurementResultDataBuilder::aMeasurementResult()->withDuration(-1)->build();
     }
 
     /**

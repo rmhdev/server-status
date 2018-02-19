@@ -13,12 +13,15 @@ declare(strict_types=1);
 namespace ServerStatus\Infrastructure\Service;
 
 use Http\Client\HttpClient;
+use Http\Client\Exception as HttpClientException;
 use Http\Message\MessageFactory;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
+use ServerStatus\Domain\Model\Measurement\MeasurementResult;
+use Symfony\Component\Stopwatch\Stopwatch;
 
-final class HttpPingService
+final class HttpPingService implements PingService
 {
     private $httpClient;
     private $messageFactory;
@@ -39,9 +42,32 @@ final class HttpPingService
         $measurement = new Measurement(
             new MeasurementId(),
             new \DateTimeImmutable("now"),
-            $check
+            $check,
+            $this->createMeasurementResult($check)
         );
 
         return $measurement;
+    }
+
+    private function createMeasurementResult(Check $check): MeasurementResult
+    {
+        $stopWatch = new Stopwatch(true);
+        $stopWatch->start("measurement");
+        try {
+            $request = $this->messageFactory->createRequest(
+                $check->url()->method(),
+                $check->url()->url()
+            );
+            $response = $this->httpClient->sendRequest($request);
+            $code = $response->getStatusCode();
+        } catch (HttpClientException $httpException) {
+            $code = 0;
+        } catch (\Exception $e) {
+            $code = 0;
+
+        }
+        $event = $stopWatch->stop("measurement");
+
+        return new MeasurementResult($code, $event->getDuration(), $event->getMemory());
     }
 }

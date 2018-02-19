@@ -16,15 +16,20 @@ class MeasurementResult
 {
     const STATUS_CODE_CLASS_SUCCESSFUL = 2;
 
-    private $code;
+    private $statusCode;
     private $duration;
     private $memory;
 
-    public function __construct(int $code, float $duration = 0, int $memory = 0)
+    /**
+     * @param integer $statusCode The response status Code
+     * @param float $duration  The duration (in milliseconds)
+     * @param int $memory The memory usage (in bytes)
+     */
+    public function __construct(int $statusCode, float $duration = 0, int $memory = 0)
     {
         $this->assertDuration($duration);
         $this->assertMemory($memory);
-        $this->code = $code;
+        $this->statusCode = $statusCode;
         $this->duration = $duration;
         $this->memory = $memory;
     }
@@ -33,7 +38,7 @@ class MeasurementResult
     {
         if (0 > $duration) {
             throw new \UnexpectedValueException(sprintf(
-                'Duration should not be negative, "%s" seconds received',
+                'Duration should not be negative, "%s" milliseconds received',
                 $duration
             ));
         }
@@ -49,9 +54,12 @@ class MeasurementResult
         }
     }
 
+    /**
+     * @return int The response status code
+     */
     public function code(): int
     {
-        return $this->code;
+        return $this->statusCode;
     }
 
     public function isSuccessful(): bool
@@ -64,11 +72,17 @@ class MeasurementResult
         return $classNumber === (int) substr((string) $this->code(), 0, 1);
     }
 
+    /**
+     * @return float The duration (in milliseconds)
+     */
     public function duration(): float
     {
         return $this->duration;
     }
 
+    /**
+     * @return int The memory usage (in bytes)
+     */
     public function memory(): int
     {
         return $this->memory;
