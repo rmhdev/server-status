@@ -12,30 +12,30 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\Check;
 
-use ServerStatus\Domain\Model\Check\CheckId;
+use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 
-class CheckIdDataBuilder
+class CheckCollectionDataBuilder
 {
-    private $value;
+    private $checks;
 
     public function __construct()
     {
-        $this->value = "";
+        $this->checks = [];
     }
 
-    public function withValue(string $value): CheckIdDataBuilder
+    public function withChecks($checks = []): CheckCollectionDataBuilder
     {
-        $this->value = $value;
+        $this->checks = $checks;
 
         return $this;
     }
 
-    public function build(): CheckId
+    public function build(): CheckCollection
     {
-        return new CheckId($this->value);
+        return new CheckCollection($this->checks);
     }
 
-    public static function aCheckId(): CheckIdDataBuilder
+    public static function aCheckCollection(): CheckCollectionDataBuilder
     {
         return new self();
     }

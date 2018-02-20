@@ -28,8 +28,8 @@ class CheckDataBuilder
 
     public function __construct()
     {
-        $this->id = CheckIdDataBuilder::aCheckId()->withValue("loremipsum")->build();
-        $this->name = CheckNameDataBuilder::aCheckName()->withName("My custom check")->build();
+        $this->id = CheckIdDataBuilder::aCheckId()->build();
+        $this->name = CheckNameDataBuilder::aCheckName()->build();
         $this->url = CheckUrlDataBuilder::aCheckUrl()->build();
         $this->user = UserDataBuilder::aUser()->build();
     }

@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Check;
 
+use ServerStatus\Domain\Model\User\UserId;
+use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
+
 interface CheckRepository
 {
     /**
@@ -37,4 +40,10 @@ interface CheckRepository
      * @return CheckId
      */
     public function nextId(): CheckId;
+
+    /**
+     * @param UserId $id
+     * @return CheckCollection
+     */
+    public function byUser(UserId $id): CheckCollection;
 }

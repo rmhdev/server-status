@@ -17,6 +17,8 @@ use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
+use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
 class InMemoryCheckRepositoryTest extends TestCase
 {
@@ -101,5 +103,26 @@ class InMemoryCheckRepositoryTest extends TestCase
         $repository = $this->createEmptyRepository();
 
         $this->assertInstanceOf(CheckId::class, $repository->nextId());
+    }
+
+    /**
+     * @test
+     */
+    public function isShouldReturnChecksForAGivenUser()
+    {
+        $userId = UserIdDataBuilder::aUserId()->withValue("one")->build();
+        $user = UserDataBuilder::aUser()->withId($userId)->build();
+        $otherUserId = UserIdDataBuilder::aUserId()->withValue("other")->build();
+        $otherUser = UserDataBuilder::aUser()->withId($otherUserId)->build();
+        $repository = $this->createEmptyRepository();
+        $repository
+            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
+            ->add(CheckDataBuilder::aCheck()->withUser($otherUser)->build())
+            ->add(CheckDataBuilder::aCheck()->withUser($otherUser)->build())
+        ;
+        $userCollection = $repository->byUser($userId);
+        $this->assertEquals(1, $userCollection->count());
+        $this->assertTrue($userCollection->getIterator()->current()->user()->id()->equals($userId));
+        $this->assertEquals(2, $repository->byUser($otherUserId)->count());
     }
 }
