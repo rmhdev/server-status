@@ -67,7 +67,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function itShouldRemoveAnExistingValueById()
+    public function itShouldBeAbleToRemoveAnExistingValueById()
     {
         $id = MeasurementIdDataBuilder::aMeasurementId()->withValue("qwerty")->build();
         $measurement = MeasurementDataBuilder::aMeasurement()->withId($id)->build();
