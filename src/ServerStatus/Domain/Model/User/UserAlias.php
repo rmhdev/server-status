@@ -54,6 +54,11 @@ class UserAlias
         return $this->value;
     }
 
+    public function isEmpty(): bool
+    {
+        return "" == $this->value();
+    }
+
     public function __toString(): string
     {
         return $this->value();

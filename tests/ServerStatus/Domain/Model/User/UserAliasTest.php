@@ -83,4 +83,16 @@ class UserAliasTest extends TestCase
 
         $this->assertEquals($this->longName(), $name->value());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldDetectIfAliasIsEmpty()
+    {
+        $empty = UserAliasDataBuilder::aUserAlias()->withValue("")->build();
+        $this->assertTrue($empty->isEmpty());
+
+        $alias = UserAliasDataBuilder::aUserAlias()->withValue("Lorem Ipsum")->build();
+        $this->assertFalse($alias->isEmpty());
+    }
 }
