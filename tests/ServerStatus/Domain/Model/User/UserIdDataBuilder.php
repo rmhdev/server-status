@@ -20,7 +20,7 @@ class UserIdDataBuilder
 
     public function __construct()
     {
-        $this->value = "loremipsum";
+        $this->value = "";
     }
 
     public function withValue(string $value): UserIdDataBuilder
