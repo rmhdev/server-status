@@ -16,18 +16,22 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckUrl;
+use ServerStatus\ServerStatus\Domain\Model\User\User;
+use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
 
 class CheckDataBuilder
 {
     private $id;
     private $name;
     private $url;
+    private $user;
 
     public function __construct()
     {
         $this->id = CheckIdDataBuilder::aCheckId()->withValue("loremipsum")->build();
         $this->name = CheckNameDataBuilder::aCheckName()->withName("My custom check")->build();
         $this->url = CheckUrlDataBuilder::aCheckUrl()->build();
+        $this->user = UserDataBuilder::aUser()->build();
     }
 
     public function withId(CheckId $id): CheckDataBuilder
@@ -51,9 +55,16 @@ class CheckDataBuilder
         return $this;
     }
 
+    public function withUser(User $user): CheckDataBuilder
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     public function build(): Check
     {
-        return new Check($this->id, $this->name, $this->url);
+        return new Check($this->id, $this->name, $this->url, $this->user);
     }
 
     public static function aCheck(): CheckDataBuilder

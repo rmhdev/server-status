@@ -12,17 +12,21 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Check;
 
+use ServerStatus\ServerStatus\Domain\Model\User\User;
+
 class Check
 {
     private $id;
     private $name;
     private $url;
+    private $user;
 
-    public function __construct(CheckId $id, CheckName $name, CheckUrl $url)
+    public function __construct(CheckId $id, CheckName $name, CheckUrl $url, User $user)
     {
         $this->id = $id;
         $this->name = $name;
         $this->url = $url;
+        $this->user = $user;
     }
 
     public function id(): CheckId
@@ -38,5 +42,10 @@ class Check
     public function url(): CheckUrl
     {
         return $this->url;
+    }
+
+    public function user(): User
+    {
+        return $this->user;
     }
 }
