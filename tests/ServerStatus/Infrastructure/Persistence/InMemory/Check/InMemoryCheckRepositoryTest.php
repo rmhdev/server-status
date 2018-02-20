@@ -110,7 +110,7 @@ class InMemoryCheckRepositoryTest extends TestCase
      */
     public function isShouldReturnChecksForAGivenUser()
     {
-        $userId = UserIdDataBuilder::aUserId()->withValue("one")->build();
+        $userId = UserIdDataBuilder::aUserId()->withValue("first")->build();
         $user = UserDataBuilder::aUser()->withId($userId)->build();
         $otherUserId = UserIdDataBuilder::aUserId()->withValue("other")->build();
         $otherUser = UserDataBuilder::aUser()->withId($otherUserId)->build();
@@ -121,8 +121,12 @@ class InMemoryCheckRepositoryTest extends TestCase
             ->add(CheckDataBuilder::aCheck()->withUser($otherUser)->build())
         ;
         $userCollection = $repository->byUser($userId);
-        $this->assertEquals(1, $userCollection->count());
-        $this->assertTrue($userCollection->getIterator()->current()->user()->id()->equals($userId));
-        $this->assertEquals(2, $repository->byUser($otherUserId)->count());
+
+        $this->assertEquals(1, $userCollection->count(), 'User "first" should have one Check');
+        $this->assertTrue(
+            $userCollection->getIterator()->current()->user()->id()->equals($userId),
+            'Check should be related to User "first"'
+        );
+        $this->assertEquals(2, $repository->byUser($otherUserId)->count(), 'User "other" should have two Checks');
     }
 }
