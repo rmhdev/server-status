@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\User;
 
-use ServerStatus\ServerStatus\Domain\Model\User\InvalidUserAliasException;
+use ServerStatus\ServerStatus\Domain\Model\User\InvalidUserEmailException;
 
-class UserAlias
+class UserEmail
 {
-    const MAX_LENGTH = 20;
-
     private $value;
 
     public function __construct(string $value = "")
@@ -29,22 +27,19 @@ class UserAlias
 
     private function processValue(string $value): string
     {
-        return trim($value);
+        return trim(strtolower($value));
     }
 
     /**
      * @param string $value
-     * @throws InvalidUserAliasException
+     * @throws InvalidUserEmailException
      */
     private function assertValue(string $value)
     {
-        $length = mb_strlen($value);
-        if (self::MAX_LENGTH < $length) {
-            throw new InvalidUserAliasException(sprintf(
-                'Alias "%s" is too long (%d chars), max length is %d chars',
-                $value,
-                $length,
-                self::MAX_LENGTH
+        if (false === filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidUserEmailException(sprintf(
+                'Email "%s" is not valid',
+                $value
             ));
         }
     }

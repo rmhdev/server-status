@@ -11,7 +11,7 @@
 
 namespace ServerStatus\ServerStatus\Domain\Model\User;
 
-class IncorrectUserAliasException extends \Exception
+class InvalidUserEmailException extends \Exception
 {
 
 }

@@ -28,7 +28,7 @@ class UserAliasTest extends TestCase
 
     /**
      * @test
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\User\IncorrectUserAliasException
+     * @expectedException \ServerStatus\ServerStatus\Domain\Model\User\InvalidUserAliasException
      */
     public function itShouldThrowExceptionWithVeryLongValues()
     {
