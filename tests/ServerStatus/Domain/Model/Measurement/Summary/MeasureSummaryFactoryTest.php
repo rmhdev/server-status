@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class MeasureSummaryFactoryTest extends TestCase
 {
@@ -22,7 +24,12 @@ class MeasureSummaryFactoryTest extends TestCase
      */
     public function itShouldGenerateAMeasureSummaryByName($name, $className)
     {
-        $measureSummary = MeasureSummaryFactory::create($name, [], new \DateTimeImmutable("2018-02-02T15:24:10+0200"));
+        $measureSummary = MeasureSummaryFactory::create(
+            $name,
+            CheckDataBuilder::aCheck()->build(),
+            new InMemoryMeasurementRepository(),
+            new \DateTimeImmutable("2018-02-02T15:24:10+0200")
+        );
 
         $this->assertEquals($name, $measureSummary->name());
         $this->assertInstanceOf($className, $measureSummary);
@@ -43,7 +50,12 @@ class MeasureSummaryFactoryTest extends TestCase
      */
     public function itShouldThrowExceptionWithIncorrectNames($incorrectName)
     {
-        MeasureSummaryFactory::create($incorrectName, [], new \DateTimeImmutable("2018-02-02T15:24:10+0200"));
+        MeasureSummaryFactory::create(
+            $incorrectName,
+            CheckDataBuilder::aCheck()->build(),
+            new InMemoryMeasurementRepository(),
+            new \DateTimeImmutable("2018-02-02T15:24:10+0200")
+        );
     }
 
     public function incorrectMeasurementSummaryNames()
