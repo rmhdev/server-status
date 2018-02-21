@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Application\DataTransformer\User;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\ServerStatus\Domain\Model\User\User;
 
@@ -28,17 +29,24 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
      */
     private $checkCollection;
 
-    public function write(User $user, CheckCollection $checkCollection)
+    /**
+     * @var MeasureSummary
+     */
+    private $measureSummary;
+
+    public function write(User $user, CheckCollection $checkCollection, MeasureSummary $measureSummary = null)
     {
         $this->user = $user;
         $this->checkCollection = $checkCollection;
+        $this->measureSummary = $measureSummary;
     }
 
     public function read()
     {
         return [
             "user" => $this->processUser(),
-            "checks" => $this->processChecks()
+            "checks" => $this->processChecks(),
+            "measure_summary" => $this->processMeasureSummary(),
         ];
     }
 
@@ -60,12 +68,22 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
         return $values;
     }
 
-    private function processCheck(Check $check)
+    private function processCheck(Check $check): array
     {
         return [
             "id" => (string) $check->id(),
             "name" => (string) $check->name()->value(),
             "slug" => (string) $check->name()->slug(),
+        ];
+    }
+
+    private function processMeasureSummary(): array
+    {
+        if (!$this->measureSummary) {
+            return [];
+        }
+        return [
+            "name" => $this->measureSummary->name(),
         ];
     }
 }

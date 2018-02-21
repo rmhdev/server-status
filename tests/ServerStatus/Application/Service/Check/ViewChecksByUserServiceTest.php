@@ -17,12 +17,16 @@ use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
 use ServerStatus\Application\DataTransformer\User\UserChecksDtoDataTransformer;
 use ServerStatus\Application\Service\Check\ViewChecksByUserRequest;
 use ServerStatus\Application\Service\Check\ViewChecksByUserService;
+use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\User\UserId;
 use ServerStatus\Domain\Model\User\UserRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Check\InMemoryCheckRepository;
+use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryUserRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
@@ -39,9 +43,14 @@ class ViewChecksByUserServiceTest extends TestCase
     private $checkRepository;
 
     /**
+     * @var MeasurementRepository
+     */
+    private $measurementRepository;
+
+    /**
      * @var UserChecksDataTransformer
      */
-    private $userTransformer;
+    private $userChecksTransformer;
 
     /**
      * @var UserId
@@ -66,15 +75,45 @@ class ViewChecksByUserServiceTest extends TestCase
             ->add(CheckDataBuilder::aCheck()->build())
         ;
 
+        // fake measurements for $userId's checks:
+        $measurementRepo = new InMemoryMeasurementRepository();
+        foreach ($checkRepo->byUser($userId) as $check) {
+            foreach ($this->createMeasurements($check) as $measurement) {
+                $measurementRepo->add($measurement);
+            }
+        }
+
         $this->userId = $userId;
         $this->userRepository = $userRepo;
         $this->checkRepository = $checkRepo;
-        $this->userTransformer = new UserChecksDtoDataTransformer();
+        $this->measurementRepository = $measurementRepo;
+        $this->userChecksTransformer = new UserChecksDtoDataTransformer();
     }
+
+    private function createMeasurements(Check $check)
+    {
+        return [
+            MeasurementDataBuilder::aMeasurement()
+                ->withCheck($check)
+                ->withDate(new \DateTime("2018-02-03T00:00:00+0200"))
+                ->build(),
+            MeasurementDataBuilder::aMeasurement()
+                ->withCheck($check)
+                ->withDate(new \DateTime("2018-02-03T01:00:00+0200"))
+                ->build(),
+            MeasurementDataBuilder::aMeasurement()
+                ->withCheck($check)
+                ->withDate(new \DateTime("2018-02-03T02:00:00+0200"))
+                ->build()
+        ];
+    }
+
+
 
     protected function tearDown()
     {
-        unset($this->userTransformer);
+        unset($this->userChecksTransformer);
+        unset($this->measurementRepository);
         unset($this->checkRepository);
         unset($this->userRepository);
         unset($this->userId);
@@ -94,7 +133,12 @@ class ViewChecksByUserServiceTest extends TestCase
 
     private function createService(): ViewChecksByUserService
     {
-        return new ViewChecksByUserService($this->userRepository, $this->checkRepository, $this->userTransformer);
+        return new ViewChecksByUserService(
+            $this->userRepository,
+            $this->checkRepository,
+            $this->measurementRepository,
+            $this->userChecksTransformer
+        );
     }
 
     /**
@@ -119,5 +163,17 @@ class ViewChecksByUserServiceTest extends TestCase
         );
 
         $this->assertEquals(2, sizeof($data["checks"]));
+    }
+
+    /**
+     * @testNO
+     */
+    public function itShouldReturnMeasurementSummaryDataForEachCheck()
+    {
+        $data = $this->createService()->execute(
+            new ViewChecksByUserRequest($this->userId, new \DateTime("2018-02-03T12:00:00+0200"), "day")
+        );
+
+        //$this->assertEquals("day", $data["checks"][0]["measurement_summary"]["name"]);
     }
 }
