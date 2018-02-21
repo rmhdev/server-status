@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\User;
 
+use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\ServerStatus\Domain\Model\User\User;
 
 interface UserChecksDataTransformer
 {
-    public function write(User $user);
+    public function write(User $user, CheckCollection $checkCollection);
 
     public function read();
 }

@@ -13,16 +13,22 @@ declare(strict_types=1);
 namespace ServerStatus\Application\Service\Check;
 
 use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
+use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\User\UserRepository;
 
 class ViewChecksByUserService
 {
     private $userRepository;
+    private $checkRepository;
     private $transformer;
 
-    public function __construct(UserRepository $userRepository, UserChecksDataTransformer $transformer)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        CheckRepository $checkRepository,
+        UserChecksDataTransformer $transformer
+    ) {
         $this->userRepository = $userRepository;
+        $this->checkRepository = $checkRepository;
         $this->transformer = $transformer;
     }
 
@@ -35,7 +41,10 @@ class ViewChecksByUserService
         if (!$user) {
             return [];
         }
-        $this->transformer->write($user);
+        $this->transformer->write(
+            $user,
+            $this->checkRepository->byUser($request->userId())
+        );
 
         return $this->transformer->read();
     }

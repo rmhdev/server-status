@@ -17,10 +17,12 @@ use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
 use ServerStatus\Application\DataTransformer\User\UserChecksDtoDataTransformer;
 use ServerStatus\Application\Service\Check\ViewChecksByUserRequest;
 use ServerStatus\Application\Service\Check\ViewChecksByUserService;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
+use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\User\UserId;
 use ServerStatus\Domain\Model\User\UserRepository;
+use ServerStatus\Infrastructure\Persistence\InMemory\Check\InMemoryCheckRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryUserRepository;
-use ServerStatus\ServerStatus\Domain\Model\User\User;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
@@ -32,14 +34,19 @@ class ViewChecksByUserServiceTest extends TestCase
     private $userRepository;
 
     /**
+     * @var CheckRepository
+     */
+    private $checkRepository;
+
+    /**
      * @var UserChecksDataTransformer
      */
     private $userTransformer;
 
     /**
-     * @var User
+     * @var UserId
      */
-    private $user;
+    private $userId;
 
 
     protected function setUp()
@@ -52,23 +59,27 @@ class ViewChecksByUserServiceTest extends TestCase
         $userRepo = new InMemoryUserRepository();
         $userRepo->add($user);
 
-        $this->user = $user;
+        $checkRepo = new InMemoryCheckRepository();
+        $checkRepo
+            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
+            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
+            ->add(CheckDataBuilder::aCheck()->build())
+        ;
+
+        $this->userId = $userId;
         $this->userRepository = $userRepo;
+        $this->checkRepository = $checkRepo;
         $this->userTransformer = new UserChecksDtoDataTransformer();
     }
 
     protected function tearDown()
     {
         unset($this->userTransformer);
+        unset($this->checkRepository);
         unset($this->userRepository);
-        unset($this->user);
+        unset($this->userId);
 
         parent::tearDown();
-    }
-
-    private function user(): User
-    {
-        return $this->user;
     }
 
     /**
@@ -76,24 +87,37 @@ class ViewChecksByUserServiceTest extends TestCase
      */
     public function isShouldReturnEmptyListWhenNoRequestIsGiven()
     {
-        $service = new ViewChecksByUserService($this->userRepository, $this->userTransformer);
+        $data = $this->createService()->execute();
 
-        $this->assertEquals([], $service->execute());
+        $this->assertEquals([], $data);
+    }
+
+    private function createService(): ViewChecksByUserService
+    {
+        return new ViewChecksByUserService($this->userRepository, $this->checkRepository, $this->userTransformer);
     }
 
     /**
      * @test
      */
-    public function isShouldReturnUserWhenFound()
+    public function itShouldReturnUserWhenFound()
     {
-        $request = new ViewChecksByUserRequest(
-            $this->user->id(),
-            new \DateTimeImmutable("2018-02-02T15:24:10+0200"),
-            MeasureDaySummary::NAME
+        $data = $this->createService()->execute(
+            new ViewChecksByUserRequest($this->userId)
         );
-        $service = new ViewChecksByUserService($this->userRepository, $this->userTransformer);
-        $data = $service->execute($request);
 
-        $this->assertEquals($this->user()->id()->value(), $data["user"]["id"]);
+        $this->assertEquals($this->userId->value(), $data["user"]["id"]);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnChecksByUser()
+    {
+        $data = $this->createService()->execute(
+            new ViewChecksByUserRequest($this->userId)
+        );
+
+        $this->assertEquals(2, sizeof($data["checks"]));
     }
 }

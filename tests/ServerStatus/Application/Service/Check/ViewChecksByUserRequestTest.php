@@ -15,7 +15,7 @@ namespace ServerStatus\Tests\Application\Service\Check;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Application\Service\Check\ViewChecksByUserRequest;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
+use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
 class ViewChecksByUserRequestTest extends TestCase
 {
@@ -24,8 +24,8 @@ class ViewChecksByUserRequestTest extends TestCase
      */
     public function itShouldHaveADefaultDateWhenEmpty()
     {
-        $user = UserDataBuilder::aUser()->build();
-        $request = new ViewChecksByUserRequest($user);
+        $userId = UserIdDataBuilder::aUserId()->build();
+        $request = new ViewChecksByUserRequest($userId);
 
         $this->assertInstanceOf(\DateTimeImmutable::class, $request->date());
     }
@@ -35,8 +35,8 @@ class ViewChecksByUserRequestTest extends TestCase
      */
     public function itShouldHaveADefaultMeasureSummaryName()
     {
-        $user = UserDataBuilder::aUser()->build();
-        $request = new ViewChecksByUserRequest($user);
+        $userId = UserIdDataBuilder::aUserId()->build();
+        $request = new ViewChecksByUserRequest($userId);
 
         $this->assertEquals(MeasureLast24HoursSummary::NAME, $request->name());
     }
