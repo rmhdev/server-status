@@ -14,6 +14,7 @@ namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 class MeasureDaySummary implements MeasureSummary
 {
+    const NAME = "day";
     const GROUPED_BY_MINUTES = 10;
 
     /**
@@ -48,7 +49,7 @@ class MeasureDaySummary implements MeasureSummary
      */
     public function name(): string
     {
-        return "day";
+        return self::NAME;
     }
 
     /**

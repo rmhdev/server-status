@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
-class MeasureLast24HoursSummary
+class MeasureLast24HoursSummary implements MeasureSummary
 {
+    const NAME = "last_24_hours";
+
     private $values;
     private $date;
 
@@ -34,22 +36,34 @@ class MeasureLast24HoursSummary
         return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->date);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function name(): string
     {
-        return "last_24_hours";
+        return self::NAME;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function from(): \DateTimeImmutable
     {
         return $this->date()->modify("-24 hours");
     }
 
+    /**
+     * @inheritdoc
+     */
     public function to(): \DateTimeImmutable
     {
         return $this->date();
     }
 
-    public function averages()
+    /**
+     * @inheritdoc
+     */
+    public function averages(): array
     {
         $averages = [];
         foreach ($this->dates() as $date) {
