@@ -19,19 +19,14 @@ use ServerStatus\ServerStatus\Domain\Model\User\User;
 
 class InMemoryUserRepository implements UserRepository
 {
+    /**
+     * @var User[]
+     */
     private $users;
 
     public function __construct()
     {
         $this->users = [];
-    }
-
-    /**
-     * @return User[]
-     */
-    private function users(): array
-    {
-        return $this->users;
     }
 
     /**

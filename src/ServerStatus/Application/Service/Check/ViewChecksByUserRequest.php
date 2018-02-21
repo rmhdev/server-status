@@ -13,25 +13,25 @@ declare(strict_types=1);
 namespace ServerStatus\Application\Service\Check;
 
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
-use ServerStatus\ServerStatus\Domain\Model\User\User;
+use ServerStatus\Domain\Model\User\UserId;
 
 class ViewChecksByUserRequest
 {
-    private $user;
+    private $userId;
     private $date;
     private $name;
 
-    public function __construct(User $user, \DateTimeInterface $dateTime = null, string $name = "")
+    public function __construct(UserId $userId, \DateTimeInterface $dateTime = null, string $name = "")
     {
         $date = $dateTime ? $dateTime : new \DateTime("now");
         $this->date = $date->format(DATE_ISO8601);
-        $this->user = $user;
+        $this->userId = $userId;
         $this->name = strlen($name) ? $name : MeasureLast24HoursSummary::NAME;
     }
 
-    public function user(): User
+    public function userId(): UserId
     {
-        return $this->user;
+        return $this->userId;
     }
 
     public function date(): \DateTimeImmutable
