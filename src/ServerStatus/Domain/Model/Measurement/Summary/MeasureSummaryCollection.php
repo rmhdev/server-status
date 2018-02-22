@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
+use ServerStatus\Domain\Model\User\UserId;
+
 final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
 {
     private $measureSummaries;
@@ -23,7 +25,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
 
     private function processValues($measureSummaries = []): \ArrayIterator
     {
-        if (!is_array($measureSummaries)) {
+        if (!\is_iterable($measureSummaries)) {
             $measureSummaries = [$measureSummaries];
         }
         $values = [];
@@ -43,7 +45,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
                 $measureSummary
             ));
         }
-        if (!$measureSummary instanceof MeasureDaySummary) {
+        if (!$measureSummary instanceof MeasureSummary) {
             throw new \UnexpectedValueException(sprintf(
                 'Collection only accepts "MeasureSummary" objects, "%s" received',
                 get_class($measureSummary)
@@ -64,5 +66,18 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
     public function getIterator(): \ArrayIterator
     {
         return $this->measureSummaries();
+    }
+
+    public function byUserId(UserId $userId): MeasureSummaryCollection
+    {
+        return new self(
+            new \CallbackFilterIterator(
+                $this->measureSummaries(),
+                function ($current, $key, $iterator) use ($userId) {
+                    /* @var MeasureSummary $current */
+                    return $current->check()->user()->id()->equals($userId);
+                }
+            )
+        );
     }
 }

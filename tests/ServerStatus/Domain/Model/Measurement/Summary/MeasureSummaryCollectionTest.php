@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
+use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
 class MeasureSummaryCollectionTest extends TestCase
 {
@@ -76,6 +77,19 @@ class MeasureSummaryCollectionTest extends TestCase
         );
     }
 
+    public function itShouldAcceptIterableList()
+    {
+        $collection = $this->createCollection(
+            new \ArrayIterator([
+                $this->createMeasureSummary(),
+                $this->createMeasureSummary(),
+                $this->createMeasureSummary(),
+            ])
+        );
+
+        $this->assertEquals(3, $collection->count());
+    }
+
     /**
      * @test
      */
@@ -112,5 +126,23 @@ class MeasureSummaryCollectionTest extends TestCase
             [UserDataBuilder::aUser()->build()],
             ["hello"],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function isShouldFilterByUserId()
+    {
+        $userId = UserIdDataBuilder::aUserId()->build();
+        $user = UserDataBuilder::aUser()->withId($userId)->build();
+
+        $summary1 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withUser($user)->build());
+        $summary2 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withUser($user)->build());
+        $summary3 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->build());
+
+        $collection = $this->createCollection([$summary1, $summary2, $summary3]);
+        $expectedCollection = $this->createCollection([$summary1, $summary2]);
+
+        $this->assertEquals($expectedCollection, $collection->byUserId($userId));
     }
 }
