@@ -16,7 +16,14 @@ final class Performance
 {
     const UPTIME_PERCENT_PRECISION = 4;
 
+    /**
+     * @var int
+     */
     private $totalMeasurements;
+
+    /**
+     * @var int
+     */
     private $successfulMeasurements;
 
     public function __construct(int $totalMeasurements, int $successfulMeasurements)
