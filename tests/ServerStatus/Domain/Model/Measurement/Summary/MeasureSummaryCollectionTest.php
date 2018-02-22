@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
 
@@ -144,5 +145,22 @@ class MeasureSummaryCollectionTest extends TestCase
         $expectedCollection = $this->createCollection([$summary1, $summary2]);
 
         $this->assertEquals($expectedCollection, $collection->byUserId($userId));
+    }
+
+    /**
+     * @test
+     */
+    public function isShouldFilterByCheckId()
+    {
+        $checkId = CheckIdDataBuilder::aCheckId()->build();
+
+        $summary1 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->build());
+        $summary2 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withId($checkId)->build());
+        $summary3 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withId($checkId)->build());
+
+        $collection = $this->createCollection([$summary1, $summary2, $summary3]);
+        $expectedCollection = $this->createCollection([$summary2, $summary3]);
+
+        $this->assertEquals($expectedCollection, $collection->byCheckId($checkId));
     }
 }

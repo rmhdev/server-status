@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\User;
 
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\ServerStatus\Domain\Model\User\User;
 
 interface UserChecksDataTransformer
 {
-    public function write(User $user, CheckCollection $checkCollection, $measureSummaries = []);
+    public function write(User $user, CheckCollection $checkCollection, MeasureSummaryCollection $measureSummaries);
 
     public function read();
 }

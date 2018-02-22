@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
+use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\User\UserId;
 
 final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
@@ -76,6 +77,19 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
                 function ($current, $key, $iterator) use ($userId) {
                     /* @var MeasureSummary $current */
                     return $current->check()->user()->id()->equals($userId);
+                }
+            )
+        );
+    }
+
+    public function byCheckId(CheckId $checkId): MeasureSummaryCollection
+    {
+        return new self(
+            new \CallbackFilterIterator(
+                $this->measureSummaries(),
+                function ($current, $key, $iterator) use ($checkId) {
+                    /* @var MeasureSummary $current */
+                    return $current->check()->id()->equals($checkId);
                 }
             )
         );

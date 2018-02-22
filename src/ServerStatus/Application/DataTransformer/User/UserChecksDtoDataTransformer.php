@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\User;
 
+use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\ServerStatus\Domain\Model\User\User;
 
@@ -30,15 +32,12 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
     private $checkCollection;
 
     /**
-     * @var MeasureSummary
+     * @var MeasureSummaryCollection
      */
     private $measureSummaries;
 
-    /**
-     * TODO: introducir de alguna manera la lista de measureSummaries en cada "check".
-     * IDEA: un MeasureSummaryCollection? que permita filtrar por check.
-     */
-    public function write(User $user, CheckCollection $checkCollection, $measureSummaries = [])
+
+    public function write(User $user, CheckCollection $checkCollection, MeasureSummaryCollection $measureSummaries)
     {
         $this->user = $user;
         $this->checkCollection = $checkCollection;
@@ -77,16 +76,17 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
             "id" => (string) $check->id(),
             "name" => (string) $check->name()->value(),
             "slug" => (string) $check->name()->slug(),
+            "measure_summary" => $this->processMeasureSummary($check)
         ];
     }
 
-    private function processMeasureSummary(): array
+    private function processMeasureSummary(Check $check): array
     {
-        if (!$this->measureSummary) {
-            return [];
-        }
-        return [
-            "name" => $this->measureSummary->name(),
-        ];
+        /* @var MeasureSummary $measureSummary */
+        $measureSummary = $this->measureSummaries->byCheckId($check->id())->getIterator()->current();
+        $transformer = new MeasurementSummaryDtoDataTransformer();
+        $transformer->write($measureSummary);
+
+        return $transformer->read();
     }
 }

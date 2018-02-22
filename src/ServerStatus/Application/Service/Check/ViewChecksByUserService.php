@@ -15,6 +15,7 @@ namespace ServerStatus\Application\Service\Check;
 use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Domain\Model\User\UserRepository;
 
@@ -76,7 +77,7 @@ class ViewChecksByUserService
         $this->transformer->write(
             $user,
             $checkCollection,
-            $summaries
+            new MeasureSummaryCollection($summaries)
         );
 
         return $this->transformer->read();
