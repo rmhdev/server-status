@@ -10,12 +10,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\Check;
+namespace ServerStatus\Tests\Domain\Model\Check;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\Tests\Domain\Model\Check\CheckCollectionDataBuilder;
-use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
 
 class CheckCollectionTest extends TestCase

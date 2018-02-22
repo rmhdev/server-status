@@ -10,7 +10,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\Measurement\Summary;
+namespace ServerStatus\Tests\Domain\Model\Measurement\Summary;
+
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 
 class MeasureSummaryCollectionDataBuilder
 {

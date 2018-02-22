@@ -10,9 +10,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\Measurement\Summary;
+namespace ServerStatus\Tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 

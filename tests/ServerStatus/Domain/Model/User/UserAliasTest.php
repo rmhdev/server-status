@@ -9,10 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\User;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Tests\Domain\Model\User\UserAliasDataBuilder;
 
 class UserAliasTest extends TestCase
 {
