@@ -32,13 +32,17 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
     /**
      * @var MeasureSummary
      */
-    private $measureSummary;
+    private $measureSummaries;
 
-    public function write(User $user, CheckCollection $checkCollection, MeasureSummary $measureSummary = null)
+    /**
+     * TODO: introducir de alguna manera la lista de measureSummaries en cada "check".
+     * IDEA: un MeasureSummaryCollection? que permita filtrar por check.
+     */
+    public function write(User $user, CheckCollection $checkCollection, $measureSummaries = [])
     {
         $this->user = $user;
         $this->checkCollection = $checkCollection;
-        $this->measureSummary = $measureSummary;
+        $this->measureSummaries = $measureSummaries;
     }
 
     public function read()
@@ -46,7 +50,6 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
         return [
             "user" => $this->processUser(),
             "checks" => $this->processChecks(),
-            "measure_summary" => $this->processMeasureSummary(),
         ];
     }
 

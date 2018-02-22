@@ -15,6 +15,7 @@ namespace ServerStatus\Application\Service\Check;
 use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Domain\Model\User\UserRepository;
 
 class ViewChecksByUserService
@@ -62,7 +63,21 @@ class ViewChecksByUserService
             return [];
         }
         $checkCollection = $this->checkRepository->byUser($request->userId());
-        $this->transformer->write($user, $checkCollection);
+
+        $summaries = [];
+        foreach ($checkCollection as $check) {
+            $summaries[] = MeasureSummaryFactory::create(
+                $request->name(),
+                $check,
+                $this->measurementRepository,
+                $request->date()
+            );
+        }
+        $this->transformer->write(
+            $user,
+            $checkCollection,
+            $summaries
+        );
 
         return $this->transformer->read();
     }

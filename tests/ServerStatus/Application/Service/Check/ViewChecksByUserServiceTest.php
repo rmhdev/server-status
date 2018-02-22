@@ -174,6 +174,6 @@ class ViewChecksByUserServiceTest extends TestCase
             new ViewChecksByUserRequest($this->userId, new \DateTime("2018-02-03T12:00:00+0200"), "day")
         );
 
-        //$this->assertEquals("day", $data["checks"][0]["measurement_summary"]["name"]);
+        $this->assertEquals("day", $data["checks"][0]["measurement_summary"]["name"]);
     }
 }
