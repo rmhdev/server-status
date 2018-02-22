@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
+namespace ServerStatus\Tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
