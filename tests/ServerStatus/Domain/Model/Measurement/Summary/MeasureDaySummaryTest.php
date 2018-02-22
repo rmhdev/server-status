@@ -14,6 +14,7 @@ namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class MeasureDaySummaryTest extends TestCase
 {
@@ -22,9 +23,14 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnTheSummaryName()
     {
-        $summary = new MeasureDaySummary();
+        $summary = $this->createSummary();
 
         $this->assertEquals("day", $summary->name());
+    }
+
+    private function createSummary($values = [], \DateTimeInterface $dateTime = null): MeasureDaySummary
+    {
+        return new MeasureDaySummary(CheckDataBuilder::aCheck()->build(), $values, $dateTime);
     }
 
     /**
@@ -32,7 +38,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldHaveDefaultDateTime()
     {
-        $summary = new MeasureDaySummary();
+        $summary = $this->createSummary();
 
         $this->assertEquals("00:00:00", $summary->from()->format("H:i:s"));
         $this->assertEquals("23:59:59", $summary->to()->format("H:i:s"));
@@ -43,7 +49,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnCorrectFromDateTime()
     {
-        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = $this->createSummary([], new \DateTime("2018-02-03T15:24:10+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T00:00:00+0200"), $summary->from());
     }
@@ -53,7 +59,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnCorrectToDateTime()
     {
-        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = $this->createSummary([], new \DateTime("2018-02-03T15:24:10+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T23:59:59+0200"), $summary->to());
     }
@@ -63,7 +69,7 @@ class MeasureDaySummaryTest extends TestCase
      */
     public function itShouldReturnExactNumberOfDates()
     {
-        $summary = new MeasureDaySummary([], new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = $this->createSummary([], new \DateTime("2018-02-03T15:24:10+0200"));
         $averages = $summary->averages();
 
         $this->assertEquals(24 * (60 / 10), sizeof($averages));
@@ -109,7 +115,7 @@ class MeasureDaySummaryTest extends TestCase
                 "count" => 1
             ],
         ];
-        $summary = new MeasureDaySummary($rawValues, new \DateTime("2018-02-03T15:24:10+0200"));
+        $summary = $this->createSummary($rawValues, new \DateTime("2018-02-03T15:24:10+0200"));
         $average = $summary->average(new \DateTime("2018-02-03T15:23:00+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:20:00+0200"), $average->from());

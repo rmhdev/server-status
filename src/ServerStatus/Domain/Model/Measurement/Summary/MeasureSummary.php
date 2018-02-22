@@ -12,12 +12,19 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
+use ServerStatus\Domain\Model\Check\Check;
+
 interface MeasureSummary
 {
     /**
      * @return string
      */
     public function name(): string;
+
+    /**
+     * @return Check
+     */
+    public function check(): Check;
 
     /**
      * minimum datetime

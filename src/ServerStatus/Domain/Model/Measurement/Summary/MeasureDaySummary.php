@@ -12,10 +12,17 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
+use ServerStatus\Domain\Model\Check\Check;
+
 class MeasureDaySummary implements MeasureSummary
 {
     const NAME = "day";
     const GROUPED_BY_MINUTES = 10;
+
+    /**
+     * @var Check
+     */
+    private $check;
 
     /**
      * @var array
@@ -27,8 +34,9 @@ class MeasureDaySummary implements MeasureSummary
      */
     private $dateTime;
 
-    public function __construct($values = [], \DateTimeInterface $dateTime = null)
+    public function __construct(Check $check, $values = [], \DateTimeInterface $dateTime = null)
     {
+        $this->check = $check;
         $this->values = $values;
         $date = $dateTime ? $dateTime : new \DateTimeImmutable("now");
         $this->dateTime = $date->format(DATE_ISO8601);
@@ -42,6 +50,11 @@ class MeasureDaySummary implements MeasureSummary
     protected function date(): \DateTimeImmutable
     {
         return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateTime);
+    }
+
+    public function check(): Check
+    {
+        return $this->check;
     }
 
     /**

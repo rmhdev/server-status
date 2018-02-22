@@ -25,9 +25,10 @@ final class MeasureSummaryFactory
     ): MeasureSummary {
         switch ($name) {
             case MeasureLast24HoursSummary::NAME:
-                $base = new MeasureLast24HoursSummary([], $date);
+                $base = new MeasureLast24HoursSummary($check, [], $date);
 
                 return new MeasureLast24HoursSummary(
+                    $check,
                     $repository->summaryByMinute(
                         $check,
                         $base->from(),
@@ -36,9 +37,10 @@ final class MeasureSummaryFactory
                     $date
                 );
             case MeasureDaySummary::NAME:
-                $base = new MeasureDaySummary([], $date);
+                $base = new MeasureDaySummary($check, [], $date);
 
                 return new MeasureDaySummary(
+                    $check,
                     $repository->summaryByMinute(
                         $check,
                         $base->from(),

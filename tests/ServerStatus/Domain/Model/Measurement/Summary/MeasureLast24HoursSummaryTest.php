@@ -14,6 +14,7 @@ namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class MeasureLast2HoursSummaryTest extends TestCase
 {
@@ -29,7 +30,7 @@ class MeasureLast2HoursSummaryTest extends TestCase
 
     private function createSummary($values = [], \DateTimeInterface $dateTime = null): MeasureLast24HoursSummary
     {
-        return new MeasureLast24HoursSummary($values, $dateTime);
+        return new MeasureLast24HoursSummary(CheckDataBuilder::aCheck()->build(), $values, $dateTime);
     }
 
     /**
@@ -122,7 +123,8 @@ class MeasureLast2HoursSummaryTest extends TestCase
                 "count" => 1
             ],
         ];
-        $summary = new MeasureLast24HoursSummary($rawValues, new \DateTime("2018-02-03T15:24:10+0200"));
+
+        $summary = $this->createSummary($rawValues, new \DateTime("2018-02-03T15:24:10+0200"));
         $average = $summary->average(new \DateTime("2018-02-03T15:23:00+0200"));
 
         $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:20:00+0200"), $average->from());
