@@ -15,6 +15,8 @@ namespace ServerStatus\Domain\Model\Measurement\Performance;
 final class Performance
 {
     const UPTIME_PERCENT_PRECISION = 4;
+    const FIELD_MEAN = "mean";
+    const FIELD_MEAN_95TH_PERCENTILE = "mean_95th";
 
     /**
      * @var int
@@ -26,10 +28,28 @@ final class Performance
      */
     private $successfulMeasurements;
 
-    public function __construct(int $totalMeasurements, int $successfulMeasurements)
+    private $responseMeanTimes;
+
+    public function __construct(int $totalMeasurements, int $successfulMeasurements, $responseMeanTimes = [])
     {
         $this->totalMeasurements = $totalMeasurements;
         $this->successfulMeasurements = $successfulMeasurements;
+        $this->responseMeanTimes = $this->processResponseMeanTimes($responseMeanTimes);
+    }
+
+    private function processResponseMeanTimes($responseMeanTimes = [])
+    {
+        $processed = [
+            self::FIELD_MEAN => 0,
+            self::FIELD_MEAN_95TH_PERCENTILE => 0
+        ];
+        foreach ($processed as $field => $value) {
+            if (array_key_exists($field, $responseMeanTimes)) {
+                $processed[$field] = $responseMeanTimes[$field];
+            }
+        }
+
+        return $processed;
     }
 
     public function totalMeasurements(): int
@@ -52,5 +72,30 @@ final class Performance
             $this->successfulMeasurements() / $this->totalMeasurements(),
             self::UPTIME_PERCENT_PRECISION
         );
+    }
+
+    /**
+     * @return float Value in milliseconds
+     */
+    public function responseTimeMean(): float
+    {
+        return $this->getResponseMeanTime(self::FIELD_MEAN, 0);
+    }
+
+    /**
+     * @return float Value in milliseconds
+     */
+    public function responseTime95th(): float
+    {
+        return $this->getResponseMeanTime(self::FIELD_MEAN_95TH_PERCENTILE, 0);
+    }
+
+    private function getResponseMeanTime($name, $default = 0): float
+    {
+        if (!array_key_exists($name, $this->responseMeanTimes)) {
+            return $default;
+        }
+
+        return $this->responseMeanTimes[$name];
     }
 }

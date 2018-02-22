@@ -26,10 +26,16 @@ class PerformanceDataBuilder
      */
     private $successfulMeasurements;
 
+    /**
+     * @var array
+     */
+    private $means;
+
     public function __construct()
     {
         $this->totalMeasurements = 0;
         $this->successfulMeasurements = 0;
+        $this->means = [];
     }
 
     public function withTotalMeasurements($totalMeasurements): PerformanceDataBuilder
@@ -46,10 +52,16 @@ class PerformanceDataBuilder
         return $this;
     }
 
+    public function withMeans($means): PerformanceDataBuilder
+    {
+        $this->means = $means;
+
+        return $this;
+    }
 
     public function build(): Performance
     {
-        return new Performance($this->totalMeasurements, $this->successfulMeasurements);
+        return new Performance($this->totalMeasurements, $this->successfulMeasurements, $this->means);
     }
 
     public static function aPerformance(): PerformanceDataBuilder

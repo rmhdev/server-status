@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Measurement\Performance\Performance;
 
 class PerformanceTest extends TestCase
 {
@@ -27,5 +28,30 @@ class PerformanceTest extends TestCase
             ->build();
 
         $this->assertEquals(0.99, $performance->uptimePercent());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnZeroWhenNoDataIsDefined()
+    {
+        $performance = PerformanceDataBuilder::aPerformance()->build();
+
+        $this->assertSame(0.00, $performance->responseTimeMean());
+        $this->assertSame(0.00, $performance->responseTime95th());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnDefinedMeanValues()
+    {
+        $performance = PerformanceDataBuilder::aPerformance()->withMeans([
+            Performance::FIELD_MEAN => 123.1234,
+            Performance::FIELD_MEAN_95TH_PERCENTILE => 567.5678,
+        ])->build();
+
+        $this->assertSame(123.1234, $performance->responseTimeMean());
+        $this->assertSame(567.5678, $performance->responseTime95th());
     }
 }
