@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Infrastructure\Domain\Model\Traveler;
+namespace ServerStatus\Infrastructure\Domain\Model\Customer;
 
 use ServerStatus\Domain\Model\Customer\CustomerAlias;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
