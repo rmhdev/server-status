@@ -12,17 +12,38 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Customer;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use ServerStatus\Domain\Model\Check\Check;
+
 final class Customer
 {
+    /**
+     * @var CustomerId
+     */
     private $id;
+
+    /**
+     * @var CustomerEmail
+     */
     private $email;
+
+    /**
+     * @var CustomerAlias
+     */
     private $alias;
+
+    /**
+     * @var Check[]|ArrayCollection
+     */
+    private $checks;
+
 
     public function __construct(CustomerId $id, CustomerEmail $email, CustomerAlias $alias)
     {
         $this->id = $id;
         $this->email = $email;
         $this->alias = $alias;
+        $this->checks = new ArrayCollection();
     }
 
     public function id(): CustomerId

@@ -1,0 +1,5 @@
+ServerStatus\Domain\Model\Check\CheckName:
+  type: embeddable
+  fields:
+    value: { type: string, length: 100, nullable: false }
+    slug: { type: string, length: 100, nullable: false }

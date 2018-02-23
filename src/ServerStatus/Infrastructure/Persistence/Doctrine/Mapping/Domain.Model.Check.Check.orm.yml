@@ -1,0 +1,28 @@
+ServerStatus\Domain\Model\Check\Check:
+    type: entity
+    id:
+        id:
+          column: id
+          type:   CheckId
+    table: check
+    repositoryClass: ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckRepository
+    embedded:
+        name:
+            class: ServerStatus\Domain\Model\Check\CheckName
+            columnPrefix: "name_"
+        url:
+            class: ServerStatus\Domain\Model\Check\CheckUrl
+            columnPrefix: "url_"
+
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [id]
+    manyToOne:
+        customer: # many checks have one customer
+            targetEntity: ServerStatus\Domain\Model\Customer\Customer
+            inversedBy: checks
+            joinColumn:
+                name: customer_id
+                referencedColumnName: id
+                nullable: false
+                type: CustomerId

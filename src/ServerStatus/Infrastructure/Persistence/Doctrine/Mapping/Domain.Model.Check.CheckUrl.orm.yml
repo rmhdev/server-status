@@ -1,0 +1,6 @@
+ServerStatus\Domain\Model\Check\CheckUrl:
+  type: embeddable
+  fields:
+    method: { type: string, length: 4, nullable: false }
+    protocol: { type: string, length: 5, nullable: false }
+    domain: { type: string, length: 255, nullable: false }
