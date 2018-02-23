@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\Customer;
 
-use ServerStatus\Domain\Model\User\UserEmail;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
 
-class UserEmailDataBuilder
+class CustomerEmailDataBuilder
 {
     private $value;
 
@@ -23,19 +23,19 @@ class UserEmailDataBuilder
         $this->value = "username@example.com";
     }
 
-    public function withValue(string $value): UserEmailDataBuilder
+    public function withValue(string $value): CustomerEmailDataBuilder
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function build(): UserEmail
+    public function build(): CustomerEmail
     {
-        return new UserEmail($this->value);
+        return new CustomerEmail($this->value);
     }
 
-    public static function aUserEmail(): UserEmailDataBuilder
+    public static function aCustomerEmail(): CustomerEmailDataBuilder
     {
         return new self();
     }

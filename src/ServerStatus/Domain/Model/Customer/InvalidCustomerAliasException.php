@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\ServerStatus\Domain\Model\User;
+namespace ServerStatus\ServerStatus\Domain\Model\Customer;
 
-class InvalidUserEmailException extends \Exception
+class InvalidCustomerAliasException extends \Exception
 {
 
 }

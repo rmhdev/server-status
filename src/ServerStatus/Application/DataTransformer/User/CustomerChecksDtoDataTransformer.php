@@ -10,21 +10,21 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Application\DataTransformer\User;
+namespace ServerStatus\Application\DataTransformer\Customer;
 
 use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\ServerStatus\Domain\Model\User\User;
+use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
 
-final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
+final class CustomerChecksDtoDataTransformer implements CustomerChecksDataTransformer
 {
     /**
-     * @var User
+     * @var Customer
      */
-    private $user;
+    private $customer;
 
     /**
      * @var CheckCollection
@@ -37,9 +37,12 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
     private $measureSummaries;
 
 
-    public function write(User $user, CheckCollection $checkCollection, MeasureSummaryCollection $measureSummaries)
-    {
-        $this->user = $user;
+    public function write(
+        Customer $customer,
+        CheckCollection $checkCollection,
+        MeasureSummaryCollection $measureSummaries
+    ) {
+        $this->customer = $customer;
         $this->checkCollection = $checkCollection;
         $this->measureSummaries = $measureSummaries;
     }
@@ -47,16 +50,16 @@ final class UserChecksDtoDataTransformer implements UserChecksDataTransformer
     public function read()
     {
         return [
-            "user" => $this->processUser(),
+            "customer" => $this->processCustomer(),
             "checks" => $this->processChecks(),
         ];
     }
 
-    private function processUser(): array
+    private function processCustomer(): array
     {
         return [
-            "id" => (string) $this->user->id(),
-            "alias" => (string) $this->user->alias(),
+            "id" => (string) $this->customer->id(),
+            "alias" => (string) $this->customer->alias(),
         ];
     }
 

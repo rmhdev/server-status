@@ -13,29 +13,29 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Application\Service\Check;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
-use ServerStatus\Application\DataTransformer\User\UserChecksDtoDataTransformer;
-use ServerStatus\Application\Service\Check\ViewChecksByUserRequest;
-use ServerStatus\Application\Service\Check\ViewChecksByUserService;
+use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer;
+use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDtoDataTransformer;
+use ServerStatus\Application\Service\Check\ViewChecksByCustomerRequest;
+use ServerStatus\Application\Service\Check\ViewChecksByCustomerService;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
-use ServerStatus\Domain\Model\User\UserId;
-use ServerStatus\Domain\Model\User\UserRepository;
+use ServerStatus\Domain\Model\Customer\CustomerId;
+use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Check\InMemoryCheckRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
-use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryUserRepository;
+use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryCustomerRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
-class ViewChecksByUserServiceTest extends TestCase
+class ViewChecksByCustomerServiceTest extends TestCase
 {
     /**
-     * @var UserRepository
+     * @var CustomerRepository
      */
-    private $userRepository;
+    private $customerRepository;
 
     /**
      * @var CheckRepository
@@ -48,46 +48,46 @@ class ViewChecksByUserServiceTest extends TestCase
     private $measurementRepository;
 
     /**
-     * @var UserChecksDataTransformer
+     * @var CustomerChecksDataTransformer
      */
-    private $userChecksTransformer;
+    private $customerChecksTransformer;
 
     /**
-     * @var UserId
+     * @var CustomerId
      */
-    private $userId;
+    private $customerId;
 
 
     protected function setUp()
     {
         parent::setUp();
 
-        $userId = UserIdDataBuilder::aUserId()->withValue("qwerty")->build();
-        $user = UserDataBuilder::aUser()->withId($userId)->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->withValue("qwerty")->build();
+        $customer = CustomerDataBuilder::aCustomer()->withId($id)->build();
 
-        $userRepo = new InMemoryUserRepository();
-        $userRepo->add($user);
+        $customerRepository = new InMemoryCustomerRepository();
+        $customerRepository->add($customer);
 
         $checkRepo = new InMemoryCheckRepository();
         $checkRepo
-            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
-            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
             ->add(CheckDataBuilder::aCheck()->build())
         ;
 
-        // fake measurements for $userId's checks:
+        // fake measurements for $customerId's checks:
         $measurementRepo = new InMemoryMeasurementRepository();
-        foreach ($checkRepo->byUser($userId) as $check) {
+        foreach ($checkRepo->byCustomer($id) as $check) {
             foreach ($this->createMeasurements($check) as $measurement) {
                 $measurementRepo->add($measurement);
             }
         }
 
-        $this->userId = $userId;
-        $this->userRepository = $userRepo;
+        $this->customerId = $id;
+        $this->customerRepository = $customerRepository;
         $this->checkRepository = $checkRepo;
         $this->measurementRepository = $measurementRepo;
-        $this->userChecksTransformer = new UserChecksDtoDataTransformer();
+        $this->customerChecksTransformer = new CustomerChecksDtoDataTransformer();
     }
 
     private function createMeasurements(Check $check)
@@ -112,11 +112,11 @@ class ViewChecksByUserServiceTest extends TestCase
 
     protected function tearDown()
     {
-        unset($this->userChecksTransformer);
+        unset($this->customerChecksTransformer);
         unset($this->measurementRepository);
         unset($this->checkRepository);
-        unset($this->userRepository);
-        unset($this->userId);
+        unset($this->customerRepository);
+        unset($this->customerId);
 
         parent::tearDown();
     }
@@ -131,35 +131,35 @@ class ViewChecksByUserServiceTest extends TestCase
         $this->assertEquals([], $data);
     }
 
-    private function createService(): ViewChecksByUserService
+    private function createService(): ViewChecksByCustomerService
     {
-        return new ViewChecksByUserService(
-            $this->userRepository,
+        return new ViewChecksByCustomerService(
+            $this->customerRepository,
             $this->checkRepository,
             $this->measurementRepository,
-            $this->userChecksTransformer
+            $this->customerChecksTransformer
         );
     }
 
     /**
      * @test
      */
-    public function itShouldReturnUserWhenFound()
+    public function itShouldReturnCustomerWhenFound()
     {
         $data = $this->createService()->execute(
-            new ViewChecksByUserRequest($this->userId)
+            new ViewChecksByCustomerRequest($this->customerId)
         );
 
-        $this->assertEquals($this->userId->value(), $data["user"]["id"]);
+        $this->assertEquals($this->customerId->value(), $data["customer"]["id"]);
     }
 
     /**
      * @test
      */
-    public function itShouldReturnChecksByUser()
+    public function itShouldReturnChecksByCustomer()
     {
         $data = $this->createService()->execute(
-            new ViewChecksByUserRequest($this->userId)
+            new ViewChecksByCustomerRequest($this->customerId)
         );
 
         $this->assertEquals(2, sizeof($data["checks"]));
@@ -171,7 +171,7 @@ class ViewChecksByUserServiceTest extends TestCase
     public function itShouldReturnMeasurementSummaryDataForEachCheck()
     {
         $data = $this->createService()->execute(
-            new ViewChecksByUserRequest($this->userId, new \DateTime("2018-02-03T12:00:00+0200"), "day")
+            new ViewChecksByCustomerRequest($this->customerId, new \DateTime("2018-02-03T12:00:00+0200"), "day")
         );
 
         $this->assertEquals("day", $data["checks"][0]["measure_summary"]["name"]);

@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\User;
+namespace ServerStatus\Domain\Model\Customer;
 
-use ServerStatus\ServerStatus\Domain\Model\User\InvalidUserEmailException;
+use ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException;
 
-class UserEmail
+class CustomerEmail
 {
     private $value;
 
@@ -32,12 +32,12 @@ class UserEmail
 
     /**
      * @param string $value
-     * @throws InvalidUserEmailException
+     * @throws InvalidCustomerEmailException
      */
     private function assertValue(string $value)
     {
         if (false === filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidUserEmailException(sprintf(
+            throw new InvalidCustomerEmailException(sprintf(
                 'Email "%s" is not valid',
                 $value
             ));

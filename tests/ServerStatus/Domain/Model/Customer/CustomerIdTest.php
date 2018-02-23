@@ -10,19 +10,19 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\Customer;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\User\UserId;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 
-class UserIdTest extends TestCase
+class CustomerIdTest extends TestCase
 {
     /**
      * @test
      */
     public function itShouldHaveAUniqueIdWhenCreatedEmpty()
     {
-        $id = UserIdDataBuilder::aUserId()->withValue("")->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->withValue("")->build();
 
         $this->assertInternalType("string", $id->value());
         $this->assertGreaterThan(0, strlen($id->value()));
@@ -33,7 +33,7 @@ class UserIdTest extends TestCase
      */
     public function itShouldHaveValueWhenExplicitlyGiven()
     {
-        $id = UserIdDataBuilder::aUserId()->withValue("loremipsum")->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->withValue("loremipsum")->build();
 
         $this->assertSame("loremipsum", $id->value());
     }
@@ -43,7 +43,7 @@ class UserIdTest extends TestCase
      */
     public function itShouldReturnValueWhenCastingToString()
     {
-        $id = UserIdDataBuilder::aUserId()->withValue("loremipsum")->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->withValue("loremipsum")->build();
 
         $this->assertSame("loremipsum", (string) $id);
     }
@@ -53,9 +53,9 @@ class UserIdTest extends TestCase
      */
     public function itShouldBeAbleToBeComparedWithOtherUserIds()
     {
-        $id = UserIdDataBuilder::aUserId()->withValue("loremipsum")->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->withValue("loremipsum")->build();
 
-        $this->assertFalse($id->equals(new UserId("123456")));
+        $this->assertFalse($id->equals(new CustomerId("123456")));
         $this->assertTrue($id->equals($id));
     }
 }

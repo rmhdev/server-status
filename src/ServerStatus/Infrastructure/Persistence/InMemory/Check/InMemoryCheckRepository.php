@@ -16,7 +16,7 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
-use ServerStatus\Domain\Model\User\UserId;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 
 class InMemoryCheckRepository implements CheckRepository
@@ -86,13 +86,13 @@ class InMemoryCheckRepository implements CheckRepository
     /**
      * @inheritdoc
      */
-    public function byUser(UserId $id): CheckCollection
+    public function byCustomer(CustomerId $id): CheckCollection
     {
         $checks = $this->checks();
 
         return new CheckCollection(
             array_filter($checks, function (Check $check) use ($id) {
-                return $check->user()->id()->equals($id);
+                return $check->customer()->id()->equals($id);
             })
         );
     }

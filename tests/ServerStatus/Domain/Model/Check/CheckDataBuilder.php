@@ -16,22 +16,22 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckUrl;
-use ServerStatus\ServerStatus\Domain\Model\User\User;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
+use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class CheckDataBuilder
 {
     private $id;
     private $name;
     private $url;
-    private $user;
+    private $customer;
 
     public function __construct()
     {
         $this->id = CheckIdDataBuilder::aCheckId()->build();
         $this->name = CheckNameDataBuilder::aCheckName()->build();
         $this->url = CheckUrlDataBuilder::aCheckUrl()->build();
-        $this->user = UserDataBuilder::aUser()->build();
+        $this->customer = CustomerDataBuilder::aCustomer()->build();
     }
 
     public function withId(CheckId $id): CheckDataBuilder
@@ -55,16 +55,16 @@ class CheckDataBuilder
         return $this;
     }
 
-    public function withUser(User $user): CheckDataBuilder
+    public function withCustomer(Customer $customer): CheckDataBuilder
     {
-        $this->user = $user;
+        $this->customer = $customer;
 
         return $this;
     }
 
     public function build(): Check
     {
-        return new Check($this->id, $this->name, $this->url, $this->user);
+        return new Check($this->id, $this->name, $this->url, $this->customer);
     }
 
     public static function aCheck(): CheckDataBuilder

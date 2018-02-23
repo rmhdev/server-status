@@ -17,8 +17,8 @@ use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
 class InMemoryCheckRepositoryTest extends TestCase
 {
@@ -108,25 +108,29 @@ class InMemoryCheckRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function isShouldReturnChecksForAGivenUser()
+    public function isShouldReturnChecksForAGivenCustomer()
     {
-        $userId = UserIdDataBuilder::aUserId()->withValue("first")->build();
-        $user = UserDataBuilder::aUser()->withId($userId)->build();
-        $otherUserId = UserIdDataBuilder::aUserId()->withValue("other")->build();
-        $otherUser = UserDataBuilder::aUser()->withId($otherUserId)->build();
+        $customerId = CustomerIdDataBuilder::aCustomerId()->withValue("first")->build();
+        $customer = CustomerDataBuilder::aCustomer()->withId($customerId)->build();
+        $otherCustomerId = CustomerIdDataBuilder::aCustomerId()->withValue("other")->build();
+        $otherCustomer = CustomerDataBuilder::aCustomer()->withId($otherCustomerId)->build();
         $repository = $this->createEmptyRepository();
         $repository
-            ->add(CheckDataBuilder::aCheck()->withUser($user)->build())
-            ->add(CheckDataBuilder::aCheck()->withUser($otherUser)->build())
-            ->add(CheckDataBuilder::aCheck()->withUser($otherUser)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->build())
         ;
-        $userCollection = $repository->byUser($userId);
+        $customerCollection = $repository->byCustomer($customerId);
 
-        $this->assertEquals(1, $userCollection->count(), 'User "first" should have one Check');
+        $this->assertEquals(1, $customerCollection->count(), 'Customer "first" should have one Check');
         $this->assertTrue(
-            $userCollection->getIterator()->current()->user()->id()->equals($userId),
-            'Check should be related to User "first"'
+            $customerCollection->getIterator()->current()->customer()->id()->equals($customerId),
+            'Check should be related to Customer "first"'
         );
-        $this->assertEquals(2, $repository->byUser($otherUserId)->count(), 'User "other" should have two Checks');
+        $this->assertEquals(
+            2,
+            $repository->byCustomer($otherCustomerId)->count(),
+            'Customer "other" should have two Checks'
+        );
     }
 }

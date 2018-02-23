@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\User;
+namespace ServerStatus\Domain\Model\Customer;
 
 use Ramsey\Uuid\Uuid;
 
-class UserId
+class CustomerId
 {
     private $value;
 
@@ -33,7 +33,7 @@ class UserId
         return $this->value();
     }
 
-    public function equals(UserId $id): bool
+    public function equals(CustomerId $id): bool
     {
         return $this->value() === $id->value();
     }

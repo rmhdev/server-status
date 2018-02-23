@@ -9,27 +9,27 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\Customer;
 
 use PHPUnit\Framework\TestCase;
 
-class UserEmailTest extends TestCase
+class CustomerEmailTest extends TestCase
 {
     /**
      * @test
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\User\InvalidUserEmailException
+     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
      */
     public function itShouldThrowExceptionWithEmptyEmail()
     {
-        UserEmailDataBuilder::aUserEmail()->withValue("")->build();
+        CustomerEmailDataBuilder::aCustomerEmail()->withValue("")->build();
     }
 
     /**
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\User\InvalidUserEmailException
+     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
      */
     public function itShouldThrowExceptionForIncorrectEmail($incorrectEmail)
     {
-        UserEmailDataBuilder::aUserEmail()->withValue($incorrectEmail)->build();
+        CustomerEmailDataBuilder::aCustomerEmail()->withValue($incorrectEmail)->build();
     }
 
     /**
@@ -37,7 +37,7 @@ class UserEmailTest extends TestCase
      */
     public function itShouldSanitizeEmail(string $raw, string $expected)
     {
-        $email = UserEmailDataBuilder::aUserEmail()->withValue($raw)->build();
+        $email = CustomerEmailDataBuilder::aCustomerEmail()->withValue($raw)->build();
 
         $this->assertSame($expected, $email->value());
     }
@@ -54,7 +54,7 @@ class UserEmailTest extends TestCase
      */
     public function itShouldBeCastedToString()
     {
-        $email = UserEmailDataBuilder::aUserEmail()->withValue("hello@example.com")->build();
+        $email = CustomerEmailDataBuilder::aCustomerEmail()->withValue("hello@example.com")->build();
 
         $this->assertEquals("hello@example.com", (string) $email);
     }

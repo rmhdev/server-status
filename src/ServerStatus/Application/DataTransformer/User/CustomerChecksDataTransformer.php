@@ -10,15 +10,19 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Application\DataTransformer\User;
+namespace ServerStatus\Application\DataTransformer\Customer;
 
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\ServerStatus\Domain\Model\User\User;
+use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
 
-interface UserChecksDataTransformer
+interface CustomerChecksDataTransformer
 {
-    public function write(User $user, CheckCollection $checkCollection, MeasureSummaryCollection $measureSummaries);
+    public function write(
+        Customer $customer,
+        CheckCollection $checkCollection,
+        MeasureSummaryCollection $measureSummaries
+    );
 
     public function read();
 }

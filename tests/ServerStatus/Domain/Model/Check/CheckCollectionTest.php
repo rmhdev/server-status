@@ -14,7 +14,7 @@ namespace ServerStatus\Tests\Domain\Model\Check;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class CheckCollectionTest extends TestCase
 {
@@ -67,7 +67,7 @@ class CheckCollectionTest extends TestCase
     public function incorrectItemDataProvider()
     {
         return [
-            [UserDataBuilder::aUser()->build()],
+            [CustomerDataBuilder::aCustomer()->build()],
             ["hello"],
         ];
     }

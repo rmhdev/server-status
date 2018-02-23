@@ -20,8 +20,8 @@ use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserDataBuilder;
-use ServerStatus\Tests\Domain\Model\User\UserIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
 class MeasureSummaryCollectionTest extends TestCase
 {
@@ -127,7 +127,7 @@ class MeasureSummaryCollectionTest extends TestCase
     public function incorrectItemDataProvider()
     {
         return [
-            [UserDataBuilder::aUser()->build()],
+            [CustomerDataBuilder::aCustomer()->build()],
             ["hello"],
         ];
     }
@@ -135,19 +135,19 @@ class MeasureSummaryCollectionTest extends TestCase
     /**
      * @test
      */
-    public function isShouldFilterByUserId()
+    public function isShouldFilterByCustomerId()
     {
-        $userId = UserIdDataBuilder::aUserId()->build();
-        $user = UserDataBuilder::aUser()->withId($userId)->build();
+        $id = CustomerIdDataBuilder::aCustomerId()->build();
+        $customer = CustomerDataBuilder::aCustomer()->withId($id)->build();
 
-        $summary1 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withUser($user)->build());
-        $summary2 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withUser($user)->build());
+        $summary1 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withCustomer($customer)->build());
+        $summary2 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->withCustomer($customer)->build());
         $summary3 = $this->createMeasureSummary(CheckDataBuilder::aCheck()->build());
 
         $collection = $this->createCollection([$summary1, $summary2, $summary3]);
         $expectedCollection = $this->createCollection([$summary1, $summary2]);
 
-        $this->assertEquals($expectedCollection, $collection->byUserId($userId));
+        $this->assertEquals($expectedCollection, $collection->byCustomerId($id));
     }
 
     /**

@@ -10,36 +10,36 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\ServerStatus\Domain\Model\User;
+namespace ServerStatus\ServerStatus\Domain\Model\Customer;
 
-use ServerStatus\Domain\Model\User\UserAlias;
-use ServerStatus\Domain\Model\User\UserEmail;
-use ServerStatus\Domain\Model\User\UserId;
+use ServerStatus\Domain\Model\Customer\CustomerAlias;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 
-final class User
+final class Customer
 {
     private $id;
     private $email;
     private $alias;
 
-    public function __construct(UserId $id, UserEmail $email, UserAlias $alias)
+    public function __construct(CustomerId $id, CustomerEmail $email, CustomerAlias $alias)
     {
         $this->id = $id;
         $this->email = $email;
         $this->alias = $alias;
     }
 
-    public function id(): UserId
+    public function id(): CustomerId
     {
         return $this->id;
     }
 
-    public function email(): UserEmail
+    public function email(): CustomerEmail
     {
         return $this->email;
     }
 
-    public function alias(): UserAlias
+    public function alias(): CustomerAlias
     {
         return $this->alias;
     }

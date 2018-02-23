@@ -12,19 +12,19 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\Service\Check;
 
-use ServerStatus\Application\DataTransformer\User\UserChecksDataTransformer;
+use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
-use ServerStatus\Domain\Model\User\UserRepository;
+use ServerStatus\Domain\Model\Customer\CustomerRepository;
 
-class ViewChecksByUserService
+class ViewChecksByCustomerService
 {
     /**
-     * @var UserRepository
+     * @var CustomerRepository
      */
-    private $userRepository;
+    private $customerRepository;
 
     /**
      * @var CheckRepository
@@ -37,33 +37,33 @@ class ViewChecksByUserService
     private $measurementRepository;
 
     /**
-     * @var UserChecksDataTransformer
+     * @var CustomerChecksDataTransformer
      */
     private $transformer;
 
 
     public function __construct(
-        UserRepository $userRepository,
+        CustomerRepository $customerRepository,
         CheckRepository $checkRepository,
         MeasurementRepository $measurementRepository,
-        UserChecksDataTransformer $transformer
+        CustomerChecksDataTransformer $transformer
     ) {
-        $this->userRepository = $userRepository;
+        $this->customerRepository = $customerRepository;
         $this->checkRepository = $checkRepository;
         $this->measurementRepository = $measurementRepository;
         $this->transformer = $transformer;
     }
 
-    public function execute(ViewChecksByUserRequest $request = null)
+    public function execute(ViewChecksByCustomerRequest $request = null)
     {
         if (is_null($request)) {
             return [];
         }
-        $user = $this->userRepository->ofId($request->userId());
-        if (!$user) {
+        $customer = $this->customerRepository->ofId($request->customerId());
+        if (!$customer) {
             return [];
         }
-        $checkCollection = $this->checkRepository->byUser($request->userId());
+        $checkCollection = $this->checkRepository->byCustomer($request->customerId());
 
         $summaries = [];
         foreach ($checkCollection as $check) {
@@ -75,7 +75,7 @@ class ViewChecksByUserService
             );
         }
         $this->transformer->write(
-            $user,
+            $customer,
             $checkCollection,
             new MeasureSummaryCollection($summaries)
         );

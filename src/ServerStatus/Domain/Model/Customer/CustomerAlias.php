@@ -10,11 +10,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\User;
+namespace ServerStatus\Domain\Model\Customer;
 
-use ServerStatus\ServerStatus\Domain\Model\User\InvalidUserAliasException;
+use ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerAliasException;
 
-class UserAlias
+class CustomerAlias
 {
     const MAX_LENGTH = 20;
 
@@ -34,13 +34,13 @@ class UserAlias
 
     /**
      * @param string $value
-     * @throws InvalidUserAliasException
+     * @throws InvalidCustomerAliasException
      */
     private function assertValue(string $value)
     {
         $length = mb_strlen($value);
         if (self::MAX_LENGTH < $length) {
-            throw new InvalidUserAliasException(sprintf(
+            throw new InvalidCustomerAliasException(sprintf(
                 'Alias "%s" is too long (%d chars), max length is %d chars',
                 $value,
                 $length,

@@ -10,32 +10,32 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\Customer;
 
-use ServerStatus\Domain\Model\User\UserAlias;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 
-class UserAliasDataBuilder
+class CustomerIdDataBuilder
 {
     private $value;
 
     public function __construct()
     {
-        $this->value = "loremipsum";
+        $this->value = "";
     }
 
-    public function withValue(string $value): UserAliasDataBuilder
+    public function withValue(string $value): CustomerIdDataBuilder
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function build(): UserAlias
+    public function build(): CustomerId
     {
-        return new UserAlias($this->value);
+        return new CustomerId($this->value);
     }
 
-    public static function aUserAlias(): UserAliasDataBuilder
+    public static function aCustomerId(): CustomerIdDataBuilder
     {
         return new self();
     }

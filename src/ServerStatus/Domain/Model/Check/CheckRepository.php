@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Check;
 
-use ServerStatus\Domain\Model\User\UserId;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 
 interface CheckRepository
@@ -42,8 +42,8 @@ interface CheckRepository
     public function nextId(): CheckId;
 
     /**
-     * @param UserId $id
+     * @param CustomerId $id
      * @return CheckCollection
      */
-    public function byUser(UserId $id): CheckCollection;
+    public function byCustomer(CustomerId $id): CheckCollection;
 }

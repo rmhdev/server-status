@@ -9,30 +9,30 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\User;
+namespace ServerStatus\Tests\Domain\Model\Customer;
 
 use PHPUnit\Framework\TestCase;
 
-class UserAliasTest extends TestCase
+class CustomerAliasTest extends TestCase
 {
     /**
      * @test
      */
     public function itShouldAcceptEmptyAlias()
     {
-        $alias = UserAliasDataBuilder::aUserAlias()->withValue("")->build();
+        $alias = CustomerAliasDataBuilder::aCustomerAlias()->withValue("")->build();
 
         $this->assertEquals("", $alias->value());
     }
 
     /**
      * @test
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\User\InvalidUserAliasException
+     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerAliasException
      */
     public function itShouldThrowExceptionWithVeryLongValues()
     {
         $maxLengthAlias = str_repeat("a", 50);
-        UserAliasDataBuilder::aUserAlias()->withValue($maxLengthAlias . "1")->build();
+        CustomerAliasDataBuilder::aCustomerAlias()->withValue($maxLengthAlias . "1")->build();
     }
 
     /**
@@ -41,7 +41,7 @@ class UserAliasTest extends TestCase
      */
     public function itShouldAcceptedNamesWithMaxLength($longName)
     {
-        $name = UserAliasDataBuilder::aUserAlias()->withValue($longName)->build();
+        $name = CustomerAliasDataBuilder::aCustomerAlias()->withValue($longName)->build();
 
         $this->assertEquals($longName, $name->value());
     }
@@ -68,7 +68,7 @@ class UserAliasTest extends TestCase
      */
     public function itShouldTrimNamesWithLeftOrRightSpaces()
     {
-        $name = UserAliasDataBuilder::aUserAlias()->withValue("   Lorem Ipsum ")->build();
+        $name = CustomerAliasDataBuilder::aCustomerAlias()->withValue("   Lorem Ipsum ")->build();
 
         $this->assertSame("Lorem Ipsum", $name->value());
     }
@@ -78,7 +78,7 @@ class UserAliasTest extends TestCase
      */
     public function itShouldIgnoreLeftAndRightSpacesFromNameLengthCalculation()
     {
-        $name = UserAliasDataBuilder::aUserAlias()->withValue("   " . $this->longName() . " ")->build();
+        $name = CustomerAliasDataBuilder::aCustomerAlias()->withValue("   " . $this->longName() . " ")->build();
 
         $this->assertEquals($this->longName(), $name->value());
     }
@@ -88,10 +88,10 @@ class UserAliasTest extends TestCase
      */
     public function itShouldDetectIfAliasIsEmpty()
     {
-        $empty = UserAliasDataBuilder::aUserAlias()->withValue("")->build();
+        $empty = CustomerAliasDataBuilder::aCustomerAlias()->withValue("")->build();
         $this->assertTrue($empty->isEmpty());
 
-        $alias = UserAliasDataBuilder::aUserAlias()->withValue("Lorem Ipsum")->build();
+        $alias = CustomerAliasDataBuilder::aCustomerAlias()->withValue("Lorem Ipsum")->build();
         $this->assertFalse($alias->isEmpty());
     }
 }
