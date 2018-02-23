@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Check;
 
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 class Check
 {

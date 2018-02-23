@@ -27,7 +27,7 @@ class CustomerAliasTest extends TestCase
 
     /**
      * @test
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerAliasException
+     * @expectedException \ServerStatus\Domain\Model\Customer\InvalidCustomerAliasException
      */
     public function itShouldThrowExceptionWithVeryLongValues()
     {

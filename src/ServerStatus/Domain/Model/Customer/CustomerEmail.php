@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Customer;
 
-use ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException;
-
 class CustomerEmail
 {
     private $value;

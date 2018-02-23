@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This file is part of the server-status package.
@@ -9,9 +10,9 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\Customer;
+namespace App\Entity;
 
-class InvalidCustomerAliasException extends \Exception
+class UserCustomer
 {
 
 }

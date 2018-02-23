@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This file is part of the server-status package.
@@ -11,7 +12,7 @@
 
 namespace ServerStatus\Domain\Model\Customer;
 
-class InvalidCustomerAliasException extends \Exception
+interface CustomerFactory
 {
-
+    public function build(CustomerId $id, CustomerEmail $email, CustomerAlias $alias): Customer;
 }

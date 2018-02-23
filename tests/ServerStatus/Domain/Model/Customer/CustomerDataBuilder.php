@@ -15,7 +15,7 @@ namespace ServerStatus\Tests\Domain\Model\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerAlias;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerId;
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 class CustomerDataBuilder
 {

@@ -1,0 +1,4 @@
+ServerStatus\Domain\Model\Customer\CustomerEmail:
+  type: embeddable
+  fields:
+    value: { type: string, length: 255, nullable: false }

@@ -16,8 +16,8 @@ use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDa
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Check\CheckCollection;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 final class CustomerChecksDtoDataTransformer implements CustomerChecksDataTransformer
 {

@@ -1,0 +1,4 @@
+ServerStatus\Domain\Model\Customer\CustomerAlias:
+  type: embeddable
+  fields:
+    value: { type: string, length: 20, nullable: false }

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Check;
 
 use ServerStatus\Domain\Model\Customer\CustomerId;
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
 
 interface CheckRepository
 {

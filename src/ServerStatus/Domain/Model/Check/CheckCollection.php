@@ -10,9 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\ServerStatus\Domain\Model\Check;
-
-use ServerStatus\Domain\Model\Check\Check;
+namespace ServerStatus\Domain\Model\Check;
 
 final class CheckCollection implements \Countable, \IteratorAggregate
 {

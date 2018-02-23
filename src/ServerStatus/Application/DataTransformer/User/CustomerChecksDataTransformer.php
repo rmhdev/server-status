@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace ServerStatus\Application\DataTransformer\Customer;
 
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Check\CheckCollection;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 interface CustomerChecksDataTransformer
 {

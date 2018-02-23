@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\ServerStatus\Domain\Model\Measurement\Performance\PerformanceReportWeek;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReportWeek;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
 class PerformanceReportWeekTest extends TestCase

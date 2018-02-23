@@ -1,0 +1,18 @@
+ServerStatus\Domain\Model\Customer\Customer:
+  type: entity
+  id:
+    id:
+      column: id
+      type:   CustomerId
+  table: customer
+  repositoryClass: ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerRepository
+  embedded:
+    email:
+      class: ServerStatus\Domain\Model\Customer\CustomerEmail
+      columnPrefix: "email_"
+    alias:
+      class: ServerStatus\Domain\Model\Customer\CustomerAlias
+      columnPrefix: "alias_"
+  constraints:
+    - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+        fields: [id]

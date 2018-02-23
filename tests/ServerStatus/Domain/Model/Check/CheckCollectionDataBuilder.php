@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\Check;
 
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
+use ServerStatus\Domain\Model\Check\CheckCollection;
 
 class CheckCollectionDataBuilder
 {

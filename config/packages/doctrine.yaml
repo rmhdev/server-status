@@ -14,11 +14,19 @@ doctrine:
 
         # With Symfony 3.3, remove the `resolve:` prefix
         url: '%env(resolve:DATABASE_URL)%'
+
+        types:
+            CustomerId:   ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerId
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
         mappings:
+            default:
+                type: "yml"
+                dir: "%kernel.project_dir%/src/ServerStatus/Infrastructure/Persistence/Doctrine/Mapping"
+                is_bundle: false
+                prefix: 'ServerStatus'
             App:
                 is_bundle: false
                 type: annotation

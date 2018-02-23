@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\ServerStatus\Domain\Model\Customer;
+namespace ServerStatus\Domain\Model\Customer;
 
 class InvalidCustomerEmailException extends \Exception
 {

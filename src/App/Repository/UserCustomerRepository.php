@@ -9,9 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Domain\Model\Customer;
+namespace App\Repository;
 
-class InvalidCustomerAliasException extends \Exception
+use Doctrine\ORM\EntityRepository;
+
+class UserCustomerRepository extends EntityRepository
 {
 
 }

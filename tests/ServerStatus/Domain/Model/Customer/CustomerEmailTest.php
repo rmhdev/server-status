@@ -17,7 +17,7 @@ class CustomerEmailTest extends TestCase
 {
     /**
      * @test
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
+     * @expectedException \ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
      */
     public function itShouldThrowExceptionWithEmptyEmail()
     {
@@ -25,7 +25,7 @@ class CustomerEmailTest extends TestCase
     }
 
     /**
-     * @expectedException \ServerStatus\ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
+     * @expectedException \ServerStatus\Domain\Model\Customer\InvalidCustomerEmailException
      */
     public function itShouldThrowExceptionForIncorrectEmail($incorrectEmail)
     {

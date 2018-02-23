@@ -10,10 +10,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\ServerStatus\Domain\Model\Measurement\Performance;
+namespace ServerStatus\Domain\Model\Measurement\Performance;
 
 use ServerStatus\Domain\Model\Check\Check;
-use ServerStatus\Domain\Model\Measurement\Performance\Performance;
 
 class PerformanceReportWeek implements PerformanceReport
 {

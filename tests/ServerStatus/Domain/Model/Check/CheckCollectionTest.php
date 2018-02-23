@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Check;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
+use ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class CheckCollectionTest extends TestCase

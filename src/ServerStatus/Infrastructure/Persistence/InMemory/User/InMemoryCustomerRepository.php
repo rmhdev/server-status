@@ -15,7 +15,7 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\User;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 class InMemoryCustomerRepository implements CustomerRepository
 {

@@ -17,7 +17,7 @@ use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerId;
-use ServerStatus\ServerStatus\Domain\Model\Check\CheckCollection;
+use ServerStatus\Domain\Model\Check\CheckCollection;
 
 class InMemoryCheckRepository implements CheckRepository
 {

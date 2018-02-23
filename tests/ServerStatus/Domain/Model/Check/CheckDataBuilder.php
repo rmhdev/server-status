@@ -16,7 +16,7 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckUrl;
-use ServerStatus\ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class CheckDataBuilder
