@@ -1,5 +1,5 @@
 PHP=php
-PHPUNIT=vendor/bin/phpunit
+PHPUNIT=bin/phpunit
 PHPCS=vendor/bin/phpcs
 PHPMD=vendor/bin/phpmd
 PDEPEND=vendor/bin/pdepend
