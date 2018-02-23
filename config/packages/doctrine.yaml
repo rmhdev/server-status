@@ -16,6 +16,8 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
 
         types:
+            datetime:     ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
+            datetimetz:   ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
             CustomerId:   ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerId
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
