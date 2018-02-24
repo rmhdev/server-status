@@ -24,8 +24,8 @@ class CheckIdTest extends TestCase
     {
         $id = new CheckId();
 
-        $this->assertInternalType("string", $id->value());
-        $this->assertGreaterThan(0, strlen($id->value()));
+        $this->assertInternalType("string", $id->id());
+        $this->assertGreaterThan(0, strlen($id->id()));
     }
 
     /**
@@ -35,7 +35,7 @@ class CheckIdTest extends TestCase
     {
         $id = new CheckId("loremipsum");
 
-        $this->assertSame("loremipsum", $id->value());
+        $this->assertSame("loremipsum", $id->id());
     }
 
     /**

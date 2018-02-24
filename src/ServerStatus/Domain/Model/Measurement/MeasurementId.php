@@ -16,25 +16,25 @@ use Ramsey\Uuid\Uuid;
 
 class MeasurementId
 {
-    private $value;
+    private $id;
 
-    public function __construct(string $value = "")
+    public function __construct(string $id = "")
     {
-        $this->value = $value ? $value : Uuid::uuid4()->toString();
+        $this->id = $id ? $id : Uuid::uuid4()->toString();
     }
 
-    public function value(): string
+    public function id(): string
     {
-        return $this->value;
+        return $this->id;
     }
 
     public function __toString(): string
     {
-        return $this->value();
+        return $this->id();
     }
 
     public function equals(MeasurementId $id): bool
     {
-        return $this->value() === $id->value();
+        return $this->id() === $id->id();
     }
 }

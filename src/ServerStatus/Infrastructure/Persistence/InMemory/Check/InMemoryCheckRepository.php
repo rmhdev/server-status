@@ -41,8 +41,8 @@ class InMemoryCheckRepository implements CheckRepository
      */
     public function ofId(CheckId $id): ?Check
     {
-        if (array_key_exists($id->value(), $this->checks)) {
-            return $this->checks[$id->value()];
+        if (array_key_exists($id->id(), $this->checks)) {
+            return $this->checks[$id->id()];
         }
 
         return null;
@@ -53,7 +53,7 @@ class InMemoryCheckRepository implements CheckRepository
      */
     public function add(Check $check): CheckRepository
     {
-        $this->checks[$check->id()->value()] = $check;
+        $this->checks[$check->id()->id()] = $check;
 
         return $this;
     }
@@ -63,7 +63,7 @@ class InMemoryCheckRepository implements CheckRepository
      */
     public function remove(Check $check): CheckRepository
     {
-        $id = $check->id()->value();
+        $id = $check->id()->id();
         if (!array_key_exists($id, $this->checks)) {
             throw new CheckDoesNotExistException(sprintf(
                 'Check with id "%s" does not exist',

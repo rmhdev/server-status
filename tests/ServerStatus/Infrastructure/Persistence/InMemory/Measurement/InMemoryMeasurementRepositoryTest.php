@@ -47,7 +47,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         $repository = $this->createEmptyRepository();
         $repository->add($measurement);
 
-        $this->assertSame("qwerty", $repository->ofId($id)->id()->value());
+        $this->assertSame("qwerty", $repository->ofId($id)->id()->id());
     }
 
     /**

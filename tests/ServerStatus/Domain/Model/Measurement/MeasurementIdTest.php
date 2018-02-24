@@ -23,8 +23,8 @@ class MeasurementIdTest extends TestCase
     {
         $id = MeasurementIdDataBuilder::aMeasurementId()->withValue("")->build();
 
-        $this->assertInternalType("string", $id->value());
-        $this->assertGreaterThan(0, strlen($id->value()));
+        $this->assertInternalType("string", $id->id());
+        $this->assertGreaterThan(0, strlen($id->id()));
     }
 
     /**
@@ -34,7 +34,7 @@ class MeasurementIdTest extends TestCase
     {
         $id = MeasurementIdDataBuilder::aMeasurementId()->withValue("loremipsum")->build();
 
-        $this->assertSame("loremipsum", $id->value());
+        $this->assertSame("loremipsum", $id->id());
     }
 
     /**

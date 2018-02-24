@@ -32,11 +32,11 @@ class InMemoryMeasurementRepository implements MeasurementRepository
      */
     public function ofId(MeasurementId $id): ?Measurement
     {
-        if (!array_key_exists($id->value(), $this->measurements)) {
+        if (!array_key_exists($id->id(), $this->measurements)) {
             return null;
         }
 
-        return $this->measurements[$id->value()];
+        return $this->measurements[$id->id()];
     }
 
     /**
@@ -44,7 +44,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
      */
     public function add(Measurement $measurement): MeasurementRepository
     {
-        $this->measurements[$measurement->id()->value()] = $measurement;
+        $this->measurements[$measurement->id()->id()] = $measurement;
 
         return $this;
     }
@@ -54,7 +54,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
      */
     public function remove(Measurement $measurement): MeasurementRepository
     {
-        $id = $measurement->id()->value();
+        $id = $measurement->id()->id();
         if (!array_key_exists($id, $this->measurements)) {
             throw new MeasurementDoesNotExistException(
                 sprintf('Measurement "%s" is not in the repository', $id)
