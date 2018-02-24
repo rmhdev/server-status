@@ -72,4 +72,13 @@ class Check
     {
         return $this->customer;
     }
+
+    public function __toString()
+    {
+        return sprintf(
+            '%s (%s)',
+            $this->id(),
+            $this->name()->slug()
+        );
+    }
 }
