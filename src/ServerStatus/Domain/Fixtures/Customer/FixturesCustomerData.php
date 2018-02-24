@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Fixtures\Customer;
+namespace ServerStatus\Domain\Fixtures\Customer;
 
 use ServerStatus\Domain\Model\Customer\CustomerFactory;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;

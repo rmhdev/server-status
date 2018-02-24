@@ -17,7 +17,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerFactory;
-use ServerStatus\Tests\Domain\Fixtures\Customer\FixturesCustomerData;
+use ServerStatus\Domain\Fixtures\Customer\FixturesCustomerData;
 
 class CustomerFixtures extends Fixture
 {
