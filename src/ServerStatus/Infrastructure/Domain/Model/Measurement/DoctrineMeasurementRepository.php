@@ -12,40 +12,72 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Domain\Model\Measurement;
 
+use Doctrine\ORM\EntityRepository;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 
-class DoctrineMeasurementRepository implements MeasurementRepository
+/**
+ * @method Measurement|null findOneBy(array $criteria, array $orderBy = null)
+ */
+class DoctrineMeasurementRepository extends EntityRepository implements MeasurementRepository
 {
     public function ofId(MeasurementId $id): ?Measurement
     {
-        // TODO: Implement ofId() method.
+        return $this->findOneBy(["id" => $id]);
     }
 
-    public function add(Measurement $measurement): MeasurementRepository
+    public function add($measurement): MeasurementRepository
     {
-        // TODO: Implement add() method.
+        if (!is_iterable($measurement)) {
+            $measurement = [$measurement];
+        }
+        foreach ($measurement as $item) {
+            $this->assertAddMeasurement($item);
+            $this->getEntityManager()->persist($item);
+        }
+        $this->getEntityManager()->flush();
+
+        return $this;
+    }
+
+    private function assertAddMeasurement($measurement)
+    {
+        if (!is_object($measurement)) {
+            throw new \UnexpectedValueException(sprintf(
+                'Only Measurement objects can be added to repository, "%s" received',
+                gettype($measurement)
+            ));
+        }
+        if (!$measurement instanceof Measurement) {
+            throw new \UnexpectedValueException(sprintf(
+                'Only Measurement objects can be added to repository, "%s" received',
+                get_class($measurement)
+            ));
+        }
     }
 
     public function remove(Measurement $measurement): MeasurementRepository
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($measurement);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function nextId(): MeasurementId
     {
-        // TODO: Implement nextId() method.
+        return new MeasurementId();
     }
 
     public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
     {
-        // TODO: Implement summaryByMinute() method.
+        return [];
     }
 
     public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
     {
-        // TODO: Implement summaryByHour() method.
+        return [];
     }
 }

@@ -23,10 +23,10 @@ interface MeasurementRepository
     public function ofId(MeasurementId $id): ?Measurement;
 
     /**
-     * @param Measurement $measurement
+     * @param Measurement|Measurement[] $measurement
      * @return MeasurementRepository
      */
-    public function add(Measurement $measurement): MeasurementRepository;
+    public function add($measurement): MeasurementRepository;
 
     /**
      * @param Measurement $measurement

@@ -78,9 +78,7 @@ class ViewChecksByCustomerServiceTest extends TestCase
         // fake measurements for $customerId's checks:
         $measurementRepo = new InMemoryMeasurementRepository();
         foreach ($checkRepo->byCustomer($id) as $check) {
-            foreach ($this->createMeasurements($check) as $measurement) {
-                $measurementRepo->add($measurement);
-            }
+            $measurementRepo->add($this->createMeasurements($check));
         }
 
         $this->customerId = $id;

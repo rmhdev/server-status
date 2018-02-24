@@ -42,11 +42,33 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     /**
      * @inheritdoc
      */
-    public function add(Measurement $measurement): MeasurementRepository
+    public function add($measurement): MeasurementRepository
     {
-        $this->measurements[$measurement->id()->id()] = $measurement;
+        if (!is_iterable($measurement)) {
+            $measurement = [$measurement];
+        }
+        foreach ($measurement as $item) {
+            $this->assertAddMeasurement($item);
+            $this->measurements[$item->id()->id()] = $item;
+        }
 
         return $this;
+    }
+
+    private function assertAddMeasurement($measurement)
+    {
+        if (!is_object($measurement)) {
+            throw new \UnexpectedValueException(sprintf(
+                'Only Measurement objects can be added to repository, "%s" received',
+                gettype($measurement)
+            ));
+        }
+        if (!$measurement instanceof Measurement) {
+            throw new \UnexpectedValueException(sprintf(
+                'Only Measurement objects can be added to repository, "%s" received',
+                get_class($measurement)
+            ));
+        }
     }
 
     /**

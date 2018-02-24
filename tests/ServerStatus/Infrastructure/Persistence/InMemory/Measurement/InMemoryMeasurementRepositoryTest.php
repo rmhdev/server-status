@@ -40,6 +40,41 @@ class InMemoryMeasurementRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function itShouldAllowAddingMultipleMeasurements()
+    {
+        $id = MeasurementIdDataBuilder::aMeasurementId()->build();
+        $measurement = MeasurementDataBuilder::aMeasurement()->withId($id)->build();
+        $repository = $this->createEmptyRepository();
+        $repository->add([
+            MeasurementDataBuilder::aMeasurement()->build(),
+            $measurement,
+            MeasurementDataBuilder::aMeasurement()->build(),
+        ]);
+
+        $this->assertEquals($measurement, $repository->ofId($id));
+    }
+
+    /**
+     * @test
+     * @dataProvider addIncorrectObjects
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionWhenAddingNonMeasurements($incorrectValue)
+    {
+        $this->createEmptyRepository()->add($incorrectValue);
+    }
+
+    public function addIncorrectObjects()
+    {
+        return [
+            [new \DateTimeImmutable("2018-02-03T00:00:00+0200")],
+            ["hello"]
+        ];
+    }
+
+    /**
+     * @test
+     */
     public function itShouldReturnExistingMeasurementById()
     {
         $id = MeasurementIdDataBuilder::aMeasurementId()->withValue("qwerty")->build();
