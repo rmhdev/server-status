@@ -26,26 +26,39 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
 {
     public function ofId(CheckId $id): ?Check
     {
-        // TODO: Implement ofId() method.
+        return $this->findOneBy(["id" => $id]);
     }
 
     public function add(Check $check): CheckRepository
     {
-        // TODO: Implement add() method.
+        $this->getEntityManager()->persist($check);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function remove(Check $check): CheckRepository
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($check);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function nextId(): CheckId
     {
-        // TODO: Implement nextId() method.
+        return new CheckId();
     }
 
     public function byCustomer(CustomerId $id): CheckCollection
     {
-        // TODO: Implement byCustomer() method.
+        return new CheckCollection(
+            $this->createQueryBuilder("a")
+                ->leftJoin("a.customer", "customer")
+                ->where("customer.id = :id")
+                ->setParameter("id", $id)
+                ->getQuery()
+                ->execute()
+        );
     }
 }

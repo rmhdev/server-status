@@ -4,7 +4,7 @@ ServerStatus\Domain\Model\Check\Check:
         id:
           column: id
           type:   CheckId
-    table: check
+    table: check_place
     repositoryClass: ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckRepository
     embedded:
         name:

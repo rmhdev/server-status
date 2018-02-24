@@ -26,10 +26,6 @@ class CustomerFixtures extends Fixture
         /* @var CustomerRepository $repository */
         $repository = $manager->getRepository(Customer::class);
         $data = new FixturesCustomerData($repository, new DoctrineCustomerFactory());
-        foreach ($data->values() as $customer) {
-            /* @var Customer $customer */
-            $repository->add($customer);
-            $this->addReference('customer-' . $customer->alias()->value(), $customer);
-        }
+        $data->load();
     }
 }

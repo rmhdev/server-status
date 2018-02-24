@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Fixtures\Customer;
 
+use ServerStatus\Domain\Model\Customer\CustomerAlias;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerFactory;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
-use ServerStatus\Tests\Domain\Model\Customer\CustomerAliasDataBuilder;
-use ServerStatus\Tests\Domain\Model\Customer\CustomerEmailDataBuilder;
 
 final class FixturesCustomerData
 {
@@ -51,9 +52,9 @@ final class FixturesCustomerData
         foreach ($this->customerValues() as $value) {
             yield(
                 $this->factory->build(
-                    $this->repository->nextId(),
-                    CustomerEmailDataBuilder::aCustomerEmail()->withValue($value["email"])->build(),
-                    CustomerAliasDataBuilder::aCustomerAlias()->withValue($value["alias"])->build()
+                    new CustomerId($value["id"]),
+                    new CustomerEmail($value["email"]),
+                    new CustomerAlias($value["alias"])
                 )
             );
         }
@@ -63,6 +64,7 @@ final class FixturesCustomerData
     {
         return [
             [
+                "id" => "rober",
                 "email" => "rober@example.com",
                 "alias" => "Roberto",
             ],
