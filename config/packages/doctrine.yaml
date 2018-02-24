@@ -16,10 +16,11 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
 
         types:
-            datetime:     ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
-            datetimetz:   ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
-            CustomerId:   ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerId
-            CheckId:      ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckId
+            datetime:       ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
+            datetimetz:     ServerStatus\Infrastructure\Persistence\Doctrine\DBAL\Types\UTCDateTimeType
+            CustomerId:     ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerId
+            CheckId:        ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckId
+            MeasurementId:  ServerStatus\Infrastructure\Domain\Model\Measurement\DoctrineMeasurementId
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore

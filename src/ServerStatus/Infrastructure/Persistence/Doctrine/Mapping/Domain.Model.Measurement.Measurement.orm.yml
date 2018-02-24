@@ -1,0 +1,28 @@
+ServerStatus\Domain\Model\Measurement\Measurement:
+    type: entity
+    id:
+        id:
+            column: id
+            type:   MeasurementId
+    table: measurement
+    repositoryClass: ServerStatus\Infrastructure\Domain\Model\Measurement\DoctrineMeasurementRepository
+    fields:
+        dateCreated:
+            type: datetime
+            nullable: true
+    embedded:
+        result:
+            class: ServerStatus\Domain\Model\Measurement\MeasurementResult
+            columnPrefix: "result_"
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [id]
+    manyToOne:
+        check: # many measurements have one check
+            targetEntity: ServerStatus\Domain\Model\Check\Check
+            inversedBy: measurements
+            joinColumn:
+                name: check_id
+                referencedColumnName: id
+                nullable: false
+                type: CheckId

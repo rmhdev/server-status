@@ -12,14 +12,37 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Check;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Measurement\Measurement;
 
 class Check
 {
+    /**
+     * @var CheckId
+     */
     private $id;
+
+    /**
+     * @var CheckName
+     */
     private $name;
+
+    /**
+     * @var CheckUrl
+     */
     private $url;
+
+    /**
+     * @var Customer
+     */
     private $customer;
+
+    /**
+     * @var Measurement[]|ArrayCollection
+     */
+    private $measurements;
+
 
     public function __construct(CheckId $id, CheckName $name, CheckUrl $url, Customer $customer)
     {
@@ -27,6 +50,7 @@ class Check
         $this->name = $name;
         $this->url = $url;
         $this->customer = $customer;
+        $this->measurements = new ArrayCollection();
     }
 
     public function id(): CheckId

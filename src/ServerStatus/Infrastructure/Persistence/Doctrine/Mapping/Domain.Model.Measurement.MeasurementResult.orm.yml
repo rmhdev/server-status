@@ -1,0 +1,8 @@
+ServerStatus\Domain\Model\Measurement\MeasurementResult:
+  type: embeddable
+  fields:
+    statusCode: { type: integer, length: 11, nullable: false }
+    reasonPhrase: { type: string, length: 255, nullable: false }
+    duration: { type: float, nullable: false }
+    memory: { type: integer, length: 11, nullable: false }
+
