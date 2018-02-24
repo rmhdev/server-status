@@ -23,6 +23,8 @@ use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
  */
 class DoctrineMeasurementRepository extends EntityRepository implements MeasurementRepository
 {
+    const BATCH_SIZE = 5000;
+
     public function ofId(MeasurementId $id): ?Measurement
     {
         return $this->findOneBy(["id" => $id]);
@@ -33,11 +35,15 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
         if (!is_iterable($measurement)) {
             $measurement = [$measurement];
         }
-        foreach ($measurement as $item) {
+        foreach ($measurement as $i => $item) {
             $this->assertAddMeasurement($item);
             $this->getEntityManager()->persist($item);
+            if (0 === ($i % self::BATCH_SIZE)) {
+                $this->getEntityManager()->flush();
+            }
         }
         $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
 
         return $this;
     }

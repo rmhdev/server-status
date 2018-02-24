@@ -68,6 +68,16 @@ final class FixturesCustomerData
                 "email" => "rober@example.com",
                 "alias" => "Roberto",
             ],
+            [
+                "id" => "laura",
+                "email" => "laura@example.com",
+                "alias" => "Laura Test",
+            ],
+            [
+                "id" => "alex",
+                "email" => "alex@example.com",
+                "alias" => "Alex Test",
+            ],
         ];
     }
 }

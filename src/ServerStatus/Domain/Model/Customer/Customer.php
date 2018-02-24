@@ -15,7 +15,7 @@ namespace ServerStatus\Domain\Model\Customer;
 use Doctrine\Common\Collections\ArrayCollection;
 use ServerStatus\Domain\Model\Check\Check;
 
-final class Customer
+class Customer
 {
     /**
      * @var CustomerId

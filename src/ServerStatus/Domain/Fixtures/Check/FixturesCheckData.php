@@ -76,7 +76,7 @@ final class FixturesCheckData
     {
         return [
             [
-                "id" => "rober-check-first",
+                "id" => "rober-check-1",
                 "name" => "My first check",
                 "slug" => "my-first-check",
                 "method" => "get",
@@ -84,6 +84,28 @@ final class FixturesCheckData
                 "domain" => "www.google.es",
                 "customer" => [
                     "id" => "rober"
+                ]
+            ],
+            [
+                "id" => "rober-check-2",
+                "name" => "My second check",
+                "slug" => "my-second-check",
+                "method" => "get",
+                "protocol" => "https",
+                "domain" => "www.yahoo.com",
+                "customer" => [
+                    "id" => "rober"
+                ]
+            ],
+            [
+                "id" => "laura-check-1",
+                "name" => "My first check",
+                "slug" => "my-first-check",
+                "method" => "get",
+                "protocol" => "https",
+                "domain" => "www.github.com",
+                "customer" => [
+                    "id" => "laura"
                 ]
             ],
         ];
