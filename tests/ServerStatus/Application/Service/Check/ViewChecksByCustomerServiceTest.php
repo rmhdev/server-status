@@ -150,7 +150,7 @@ class ViewChecksByCustomerServiceTest extends TestCase
             new ViewChecksByCustomerRequest($this->customerId)
         );
 
-        $this->assertEquals($this->customerId->value(), $data["customer"]["id"]);
+        $this->assertEquals($this->customerId->id(), $data["customer"]["id"]);
     }
 
     /**

@@ -24,8 +24,8 @@ class CustomerIdTest extends TestCase
     {
         $id = CustomerIdDataBuilder::aCustomerId()->withValue("")->build();
 
-        $this->assertInternalType("string", $id->value());
-        $this->assertGreaterThan(0, strlen($id->value()));
+        $this->assertInternalType("string", $id->id());
+        $this->assertGreaterThan(0, strlen($id->id()));
     }
 
     /**
@@ -35,7 +35,7 @@ class CustomerIdTest extends TestCase
     {
         $id = CustomerIdDataBuilder::aCustomerId()->withValue("loremipsum")->build();
 
-        $this->assertSame("loremipsum", $id->value());
+        $this->assertSame("loremipsum", $id->id());
     }
 
     /**

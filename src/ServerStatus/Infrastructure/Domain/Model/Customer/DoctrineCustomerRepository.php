@@ -24,21 +24,27 @@ class DoctrineCustomerRepository extends EntityRepository implements CustomerRep
 {
     public function ofId(CustomerId $id): ?Customer
     {
-        // TODO: Implement ofId() method.
+        return $this->findOneBy(["id" => $id]);
     }
 
     public function add(Customer $customer): CustomerRepository
     {
-        // TODO: Implement add() method.
+        $this->getEntityManager()->persist($customer);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function remove(Customer $customer): CustomerRepository
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($customer);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function nextId(): CustomerId
     {
-        // TODO: Implement nextId() method.
+        return new CustomerId();
     }
 }

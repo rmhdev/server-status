@@ -34,8 +34,8 @@ class InMemoryCustomerRepository implements CustomerRepository
      */
     public function ofId(CustomerId $id): ?Customer
     {
-        if (array_key_exists($id->value(), $this->customers)) {
-            return $this->customers[$id->value()];
+        if (array_key_exists($id->id(), $this->customers)) {
+            return $this->customers[$id->id()];
         }
 
         return null;
@@ -46,7 +46,7 @@ class InMemoryCustomerRepository implements CustomerRepository
      */
     public function add(Customer $customer): CustomerRepository
     {
-        $this->customers[$customer->id()->value()] = $customer;
+        $this->customers[$customer->id()->id()] = $customer;
 
         return $this;
     }
@@ -56,7 +56,7 @@ class InMemoryCustomerRepository implements CustomerRepository
      */
     public function remove(Customer $customer): CustomerRepository
     {
-        $id = $customer->id()->value();
+        $id = $customer->id()->id();
         if (!array_key_exists($id, $this->customers)) {
             throw new CustomerDoesNotExistException(sprintf(
                 'Customer with id "%s" does not exist',

@@ -46,7 +46,7 @@ class InMemoryCustomerRepositoryTest extends TestCase
         $repository = $this->createEmptyRepository();
         $repository->add($customer);
 
-        $this->assertSame("qwerty", $repository->ofId($id)->id()->value());
+        $this->assertSame("qwerty", $repository->ofId($id)->id()->id());
     }
 
     /**

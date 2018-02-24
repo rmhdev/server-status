@@ -43,3 +43,9 @@ phpmd:
 .PHONY:
 pdepend:
 	$(PHP) $(PDEPEND) --configuration="/$(PDEPEND_CONFIG)" $(FOLDERS)
+
+.PHONY: fixtures-dev
+fixtures-dev:
+	$(PHP) bin/console doctrine:schema:drop --env=dev --force
+	$(PHP) bin/console doctrine:schema:create --env=dev
+	$(PHP) bin/console doctrine:fixtures:load --env=dev --append --no-interaction
