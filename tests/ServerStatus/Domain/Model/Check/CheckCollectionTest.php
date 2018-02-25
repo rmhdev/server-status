@@ -74,4 +74,39 @@ class CheckCollectionTest extends TestCase
             ["hello"],
         ];
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnUniqueCheckUrls()
+    {
+        $urlA = CheckUrlDataBuilder::aCheckUrl()->withDomain("www.example.com")->build();
+        $urlB = CheckUrlDataBuilder::aCheckUrl()->withDomain("site.example.net")->build();
+        $collection = $this->createCollection([
+            CheckDataBuilder::aCheck()->withUrl($urlA)->build(),
+            CheckDataBuilder::aCheck()->withUrl($urlA)->build(),
+            CheckDataBuilder::aCheck()->withUrl($urlB)->build(),
+        ]);
+
+        $this->assertEquals([$urlA, $urlB], $collection->checkUrls());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnChecksWithAGivenUrl()
+    {
+        $urlA = CheckUrlDataBuilder::aCheckUrl()->withDomain("example.io")->build();
+        $urlB = CheckUrlDataBuilder::aCheckUrl()->withDomain("site.example.net")->build();
+        $check1 = CheckDataBuilder::aCheck()->withUrl($urlA)->build();
+        $check2 = CheckDataBuilder::aCheck()->withUrl($urlB)->build();
+        $check3 = CheckDataBuilder::aCheck()->withUrl($urlA)->build();
+        $collection = $this->createCollection([$check1, $check2, $check3]);
+
+        $this->assertEquals([$check1, $check3], $collection->byCheckUrl($urlA));
+        $this->assertEquals([$check2], $collection->byCheckUrl($urlB));
+
+        $otherUrl = CheckUrlDataBuilder::aCheckUrl()->build();
+        $this->assertEquals([], $collection->byCheckUrl($otherUrl), "Url is not defined in collection");
+    }
 }

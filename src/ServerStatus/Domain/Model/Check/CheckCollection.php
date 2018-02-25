@@ -60,4 +60,38 @@ final class CheckCollection implements \Countable, \IteratorAggregate
     {
         return $this->checks();
     }
+
+    /**
+     * @return CheckUrl[]
+     */
+    public function checkUrls(): array
+    {
+        return array_values(
+            array_unique(
+                array_map(
+                    function (Check $check) {
+                        return $check->url();
+                    },
+                    $this->checks()->getArrayCopy()
+                ),
+                SORT_STRING
+            )
+        );
+    }
+
+    /**
+     * @param CheckUrl $url
+     * @return Check[]
+     */
+    public function byCheckUrl(CheckUrl $url): array
+    {
+        return array_values(
+            array_filter(
+                $this->checks()->getArrayCopy(),
+                function (Check $check) use ($url) {
+                    return $check->url()->equals($url);
+                }
+            )
+        );
+    }
 }
