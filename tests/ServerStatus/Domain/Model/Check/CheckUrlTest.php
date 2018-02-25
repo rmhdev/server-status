@@ -128,4 +128,38 @@ class CheckUrlTest extends TestCase
             ["./index.html"]
         ];
     }
+
+    /**
+     * @test
+     */
+    public function itShouldHaveAToStringMethod()
+    {
+        $checkUrl = CheckUrlDataBuilder::aCheckUrl()
+            ->withMethod("GET")
+            ->withProtocol("https")
+            ->withDomain("test.example.com")
+            ->build();
+
+        $this->assertEquals("GET https://test.example.com", (string) $checkUrl);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldDetectIfIsEqualToOtherUrl()
+    {
+        $checkUrl = CheckUrlDataBuilder::aCheckUrl()
+            ->withMethod("GET")
+            ->withProtocol("https")
+            ->withDomain("test.example.com")
+            ->build();
+        $this->assertTrue($checkUrl->equals($checkUrl));
+
+        $diffMethod = CheckUrlDataBuilder::aCheckUrl()
+            ->withMethod("POST")
+            ->withProtocol("https")
+            ->withDomain("test.example.com")
+            ->build();
+        $this->assertFalse($checkUrl->equals($diffMethod));
+    }
 }

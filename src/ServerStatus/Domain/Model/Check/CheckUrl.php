@@ -129,6 +129,16 @@ class CheckUrl
         return sprintf("%s://%s", $this->protocol(), $this->domain());
     }
 
+    public function equals(CheckUrl $url): bool
+    {
+        return ((string) $this) === ((string) $url);
+    }
+
+    public function __toString()
+    {
+        return sprintf('%s %s', $this->method(), $this->url());
+    }
+
     /**
      * @return string[]
      */
