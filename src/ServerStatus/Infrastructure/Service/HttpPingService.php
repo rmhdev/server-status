@@ -16,6 +16,7 @@ use Http\Client\HttpClient;
 use Http\Client\Exception as HttpClientException;
 use Http\Message\MessageFactory;
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Check\CheckUrl;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
@@ -43,20 +44,20 @@ final class HttpPingService implements PingService
             new MeasurementId(),
             new \DateTimeImmutable("now"),
             $check,
-            $this->createMeasurementResult($check)
+            $this->createMeasurementResult($check->url())
         );
 
         return $measurement;
     }
 
-    private function createMeasurementResult(Check $check): MeasurementResult
+    private function createMeasurementResult(CheckUrl $checkUrl): MeasurementResult
     {
         $stopWatch = new Stopwatch(true);
         $stopWatch->start("measurement");
         try {
             $request = $this->messageFactory->createRequest(
-                $check->url()->method(),
-                $check->url()->url()
+                $checkUrl->method(),
+                $checkUrl->url()
             );
             $response = $this->httpClient->sendRequest($request);
             $code = $response->getStatusCode();
