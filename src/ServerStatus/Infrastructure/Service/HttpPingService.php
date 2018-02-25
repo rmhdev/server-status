@@ -15,10 +15,7 @@ namespace ServerStatus\Infrastructure\Service;
 use Http\Client\HttpClient;
 use Http\Client\Exception as HttpClientException;
 use Http\Message\MessageFactory;
-use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckUrl;
-use ServerStatus\Domain\Model\Measurement\Measurement;
-use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -33,21 +30,9 @@ final class HttpPingService implements PingService
         $this->messageFactory = $messageFactory;
     }
 
-    public function measure(Check $check): Measurement
+    public function measure(CheckUrl $checkUrl): MeasurementResult
     {
-        return $this->createMeasurement($check);
-    }
-
-    private function createMeasurement(Check $check)
-    {
-        $measurement = new Measurement(
-            new MeasurementId(),
-            new \DateTimeImmutable("now"),
-            $check,
-            $this->createMeasurementResult($check->url())
-        );
-
-        return $measurement;
+        return $this->createMeasurementResult($checkUrl);
     }
 
     private function createMeasurementResult(CheckUrl $checkUrl): MeasurementResult

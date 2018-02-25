@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Service;
 
-use ServerStatus\Domain\Model\Check\Check;
-use ServerStatus\Domain\Model\Measurement\Measurement;
+use ServerStatus\Domain\Model\Check\CheckUrl;
+use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 
 interface PingService
 {
-    public function measure(Check $check): Measurement;
+    public function measure(CheckUrl $checkUrl): MeasurementResult;
 }

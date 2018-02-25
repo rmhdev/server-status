@@ -17,7 +17,7 @@ use Http\Mock\Client as MockClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use ServerStatus\Infrastructure\Service\HttpPingService;
-use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckUrlDataBuilder;
 
 class HttpPingServiceTest extends TestCase
 {
@@ -29,11 +29,12 @@ class HttpPingServiceTest extends TestCase
         $client = new MockClient();
         $client->addResponse($this->createMockResponse(200));
 
-        $check = CheckDataBuilder::aCheck()->build();
         $service = new HttpPingService($client, MessageFactoryDiscovery::find());
-        $measurement = $service->measure($check);
+        $result = $service->measure(
+            CheckUrlDataBuilder::aCheckUrl()->build()
+        );
 
-        $this->assertEquals(200, $measurement->result()->statusCode());
+        $this->assertEquals(200, $result->statusCode());
     }
 
     /**
@@ -60,11 +61,12 @@ class HttpPingServiceTest extends TestCase
         $client = new MockClient();
         $client->addResponse($this->createMockResponse(500));
 
-        $check = CheckDataBuilder::aCheck()->build();
         $service = new HttpPingService($client, MessageFactoryDiscovery::find());
-        $measurement = $service->measure($check);
+        $result = $service->measure(
+            CheckUrlDataBuilder::aCheckUrl()->build()
+        );
 
-        $this->assertEquals(500, $measurement->result()->statusCode());
+        $this->assertEquals(500, $result->statusCode());
     }
 
     /**
@@ -75,12 +77,13 @@ class HttpPingServiceTest extends TestCase
         $client = new MockClient();
         $client->addResponse($this->createMockResponseWithException());
 
-        $check = CheckDataBuilder::aCheck()->build();
         $service = new HttpPingService($client, MessageFactoryDiscovery::find());
-        $measurement = $service->measure($check);
+        $result = $service->measure(
+            CheckUrlDataBuilder::aCheckUrl()->build()
+        );
 
-        $this->assertEquals(0, $measurement->result()->statusCode());
-        $this->assertEquals("This is an exception", $measurement->result()->reasonPhrase());
+        $this->assertEquals(0, $result->statusCode());
+        $this->assertEquals("This is an exception", $result->reasonPhrase());
     }
 
 
