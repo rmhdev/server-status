@@ -47,6 +47,9 @@ class CheckCollectionTest extends TestCase
         $this->assertEquals(3, $collection->count());
     }
 
+    /**
+     * @test
+     */
     public function itShouldAcceptASingleCheck()
     {
         $collection = $this->createCollection(CheckDataBuilder::aCheck()->build());
