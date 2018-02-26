@@ -103,21 +103,22 @@ class PingCommandTest extends KernelTestCase
      */
     public function itShouldCallAllAvailableChecksWhenExecuted()
     {
+        // Number of measurements before executing the command.
+        $countMeasurementsBefore = $this->measurementRepository->countAll();
+
         $kernel = self::bootKernel();
         $application = new Application($kernel);
         $application->add($this->findCommand());
-
-        $countMeasurementsBefore = $this->measurementRepository->countAll();
-
         $command = $application->find('server-status:ping');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(['command'  => $command->getName()], [ '--go' ]);
-
+        $commandTester->execute([
+            'command'  => $command->getName(),
+            '--go'     => true
+        ]);
         $output = $commandTester->getDisplay();
         $this->assertContains('Checks found: 3, unique urls: 2', $output);
 
         $countMeasurementsAfter = $this->measurementRepository->countAll();
-
         $this->assertEquals(3, $countMeasurementsAfter - $countMeasurementsBefore);
     }
 

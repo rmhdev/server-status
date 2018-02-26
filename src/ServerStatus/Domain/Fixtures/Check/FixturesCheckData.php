@@ -103,7 +103,7 @@ final class FixturesCheckData
                 "slug" => "my-first-check",
                 "method" => "get",
                 "protocol" => "https",
-                "domain" => "www.github.com",
+                "domain" => "github.com",
                 "customer" => [
                     "id" => "laura"
                 ]

@@ -81,7 +81,7 @@ class PingCommand extends Command
             $output->write(sprintf("%s > ", (string) $url));
             try {
                 $result = $this->pingService->measure($url);
-                $output->write($this->formatTime($result->duration()) . ", ");
+                $output->write(sprintf("[%d] %s, ", $result->statusCode(), $this->formatTime($result->duration())));
                 $this->createMeasurements($checks->byCheckUrl($url), $result, $output, $go);
             } catch (\Exception $e) {
                 $errors[] = $e;
@@ -90,12 +90,19 @@ class PingCommand extends Command
         }
 
         $event = $stopwatch->stop('ping');
-        $output->writeln("COMPLETED");
+        $output->writeln("Completed");
         $output->writeln(sprintf(
             "Time: %s, Memory: %s",
             $this->formatTime($event->getDuration()),
             $this->formatMemory($event->getMemory())
         ));
+        if ($errors) {
+            $output->writeln(sprintf('<error>%d errors found!</error>:', sizeof($errors)));
+            foreach ($errors as $i => $error) {
+                /* @var \Exception $error */
+                $output->writeln(sprintf("%d. %s", $i + 1, $error->getMessage()));
+            }
+        }
         if (true !== $go) {
             $output->writeln('<comment>No measurements were saved, add --go option</comment>');
         }

@@ -43,7 +43,6 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
             }
         }
         $this->getEntityManager()->flush();
-        $this->getEntityManager()->clear();
 
         return $this;
     }
