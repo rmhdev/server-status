@@ -55,4 +55,9 @@ interface MeasurementRepository
      * @return array
      */
     public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
+
+    /**
+     * @return int
+     */
+    public function countAll(): int;
 }

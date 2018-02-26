@@ -81,16 +81,18 @@ final class CheckCollection implements \Countable, \IteratorAggregate
 
     /**
      * @param CheckUrl $url
-     * @return Check[]
+     * @return CheckCollection
      */
-    public function byCheckUrl(CheckUrl $url): array
+    public function byCheckUrl(CheckUrl $url): CheckCollection
     {
-        return array_values(
-            array_filter(
-                $this->checks()->getArrayCopy(),
-                function (Check $check) use ($url) {
-                    return $check->url()->equals($url);
-                }
+        return new CheckCollection(
+            array_values(
+                array_filter(
+                    $this->checks()->getArrayCopy(),
+                    function (Check $check) use ($url) {
+                        return $check->url()->equals($url);
+                    }
+                )
             )
         );
     }

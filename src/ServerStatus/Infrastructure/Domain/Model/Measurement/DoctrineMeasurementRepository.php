@@ -86,4 +86,14 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
     {
         return [];
     }
+
+    public function countAll(): int
+    {
+        $qb = $this->createQueryBuilder("a");
+
+        return $qb
+            ->select($qb->expr()->count("a.id"))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

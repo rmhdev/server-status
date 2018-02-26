@@ -165,4 +165,9 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     {
         return $this->createSummaryBy($check, $from, $to, "Y-m-d H:00:00");
     }
+
+    public function countAll(): int
+    {
+        return sizeof($this->measurements);
+    }
 }
