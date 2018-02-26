@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Infrastructure\Persistence\InMemory\User;
 
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Domain\Model\Customer\Customer;
@@ -74,5 +75,20 @@ class InMemoryCustomerRepository implements CustomerRepository
     public function nextId(): CustomerId
     {
         return new CustomerId();
+    }
+
+    public function ofEmail(CustomerEmail $email): ?Customer
+    {
+        $customers = $this->customers;
+        $filtered = array_values(
+            array_filter($customers, function (Customer $customer) use ($email) {
+                return $customer->email()->equals($email);
+            })
+        );
+        if (sizeof($filtered) > 0) {
+            return $filtered[0];
+        }
+
+        return null;
     }
 }

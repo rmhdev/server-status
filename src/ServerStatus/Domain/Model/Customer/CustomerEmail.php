@@ -47,6 +47,11 @@ class CustomerEmail
         return $this->value;
     }
 
+    public function equals(CustomerEmail $email): bool
+    {
+        return $this->value() === $email->value();
+    }
+
     public function __toString(): string
     {
         return $this->value();

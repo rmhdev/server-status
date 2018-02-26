@@ -58,4 +58,17 @@ class CustomerEmailTest extends TestCase
 
         $this->assertEquals("hello@example.com", (string) $email);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeComparedWithOtherEmails()
+    {
+        $email = CustomerEmailDataBuilder::aCustomerEmail()->withValue("hello@example.com")->build();
+
+        $this->assertTrue($email->equals($email));
+        $this->assertFalse($email->equals(
+            CustomerEmailDataBuilder::aCustomerEmail()->withValue("different@example.net")->build()
+        ));
+    }
 }

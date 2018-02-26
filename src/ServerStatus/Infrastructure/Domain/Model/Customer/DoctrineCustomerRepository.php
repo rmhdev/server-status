@@ -14,6 +14,7 @@ namespace ServerStatus\Infrastructure\Domain\Model\Customer;
 
 use Doctrine\ORM\EntityRepository;
 use ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 
@@ -46,5 +47,10 @@ class DoctrineCustomerRepository extends EntityRepository implements CustomerRep
     public function nextId(): CustomerId
     {
         return new CustomerId();
+    }
+
+    public function ofEmail(CustomerEmail $email): ?Customer
+    {
+        return $this->findOneBy(["email" => $email]);
     }
 }

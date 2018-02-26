@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryCustomerRepository;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerEmailDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
 class InMemoryCustomerRepositoryTest extends TestCase
@@ -100,5 +101,21 @@ class InMemoryCustomerRepositoryTest extends TestCase
         $repository = $this->createEmptyRepository();
 
         $this->assertInstanceOf(CustomerId::class, $repository->nextId());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnCustomerByEmailIfExists()
+    {
+        $repository = $this->createEmptyRepository();
+        $email = CustomerEmailDataBuilder::aCustomerEmail()->withValue("username@example.com")->build();
+        $customer = CustomerDataBuilder::aCustomer()->withEmail($email)->build();
+        $repository->add($customer);
+
+        $this->assertTrue($repository->ofEmail($email)->id()->equals($customer->id()));
+        $this->assertNull($repository->ofEmail(
+            CustomerEmailDataBuilder::aCustomerEmail()->withValue("different@example.org")->build()
+        ));
     }
 }

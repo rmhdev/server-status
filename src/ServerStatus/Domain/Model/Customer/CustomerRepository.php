@@ -37,4 +37,10 @@ interface CustomerRepository
      * @return CustomerId
      */
     public function nextId(): CustomerId;
+
+    /**
+     * @param CustomerEmail $email
+     * @return null|Customer
+     */
+    public function ofEmail(CustomerEmail $email): ?Customer;
 }
