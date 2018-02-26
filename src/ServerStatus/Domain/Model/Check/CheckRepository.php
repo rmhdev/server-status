@@ -45,4 +45,9 @@ interface CheckRepository
      * @return CheckCollection
      */
     public function byCustomer(CustomerId $id): CheckCollection;
+
+    /**
+     * @return CheckCollection
+     */
+    public function enabled(): CheckCollection;
 }

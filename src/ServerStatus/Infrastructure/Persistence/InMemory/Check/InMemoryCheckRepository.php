@@ -96,4 +96,12 @@ class InMemoryCheckRepository implements CheckRepository
             })
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function enabled(): CheckCollection
+    {
+        return new CheckCollection($this->checks());
+    }
 }

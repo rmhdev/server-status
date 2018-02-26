@@ -133,4 +133,19 @@ class InMemoryCheckRepositoryTest extends TestCase
             'Customer "other" should have two Checks'
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnEnabledChecks()
+    {
+        $repository = $this->createEmptyRepository();
+        $repository
+            ->add(CheckDataBuilder::aCheck()->build())
+            ->add(CheckDataBuilder::aCheck()->build())
+            ->add(CheckDataBuilder::aCheck()->build())
+        ;
+
+        $this->assertEquals(3, $repository->enabled()->count());
+    }
 }

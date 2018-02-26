@@ -24,11 +24,17 @@ use ServerStatus\Domain\Model\Customer\CustomerId;
  */
 class DoctrineCheckRepository extends EntityRepository implements CheckRepository
 {
+    /**
+     * @inheritdoc
+     */
     public function ofId(CheckId $id): ?Check
     {
         return $this->findOneBy(["id" => $id]);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function add(Check $check): CheckRepository
     {
         $this->getEntityManager()->persist($check);
@@ -37,6 +43,9 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function remove(Check $check): CheckRepository
     {
         $this->getEntityManager()->remove($check);
@@ -45,11 +54,17 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function nextId(): CheckId
     {
         return new CheckId();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function byCustomer(CustomerId $id): CheckCollection
     {
         return new CheckCollection(
@@ -57,6 +72,18 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
                 ->leftJoin("a.customer", "customer")
                 ->where("customer.id = :id")
                 ->setParameter("id", $id)
+                ->getQuery()
+                ->execute()
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function enabled(): CheckCollection
+    {
+        return new CheckCollection(
+            $this->createQueryBuilder("a")
                 ->getQuery()
                 ->execute()
         );
