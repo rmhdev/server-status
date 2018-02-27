@@ -42,4 +42,46 @@ class PercentileCalculatorTest extends TestCase
 
         $this->assertEquals(25, $calculator->percentile(PercentDataBuilder::aPercent()->build())->value());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculateCorrectPercentileWithManyValues()
+    {
+        $values = range(0, 99, 1);
+        $calculator = PercentileCalculatorDataBuilder::aPercentileCalculator()->withValues($values)->build();
+
+        $this->assertEquals(
+            95,
+            $calculator->percentile(PercentDataBuilder::aPercent()->withValue(0.95)->build())->value()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculateCorrectPercentileWithFewValues()
+    {
+        $values = range(0, 9, 1);
+        $calculator = PercentileCalculatorDataBuilder::aPercentileCalculator()->withValues($values)->build();
+
+        $this->assertEquals(
+            9,
+            $calculator->percentile(PercentDataBuilder::aPercent()->withValue(0.95)->build())->value()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculateCorrectPercentileWithUnorderedList()
+    {
+        $values = array_reverse(range(0, 99, 1), false);
+        $calculator = PercentileCalculatorDataBuilder::aPercentileCalculator()->withValues($values)->build();
+
+        $this->assertEquals(
+            95,
+            $calculator->percentile(PercentDataBuilder::aPercent()->withValue(0.95)->build())->value()
+        );
+    }
 }

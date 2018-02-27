@@ -42,7 +42,7 @@ final class PercentileCalculator
         if (!$size) {
             return new Percentile($percent, 0);
         }
-        $position = (int) round($percent->percentage() / $size, 0);
+        $position = (int) floor($percent->decimal() * $size);
         $value = $this->values[$position];
 
         return new Percentile($percent, $value);

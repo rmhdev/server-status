@@ -41,6 +41,24 @@ class PercentTest extends TestCase
 
     /**
      * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionForNegativeValues()
+    {
+        PercentDataBuilder::aPercent()->withValue(-0.123456)->build();
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionForValuesGreaterThanOne()
+    {
+        PercentDataBuilder::aPercent()->withValue(1.001)->build();
+    }
+
+    /**
+     * @test
      */
     public function itShouldReturnFormattedValueWhenCastedToString()
     {
