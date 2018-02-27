@@ -1,0 +1,60 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This file is part of the server-status package.
+ *
+ * (c) Roberto Martin <rmh.dev@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace ServerStatus\Tests\Domain\Model\Measurement;
+
+use PHPUnit\Framework\TestCase;
+
+class MeasurementStatusTest extends TestCase
+{
+    /**
+     * @test
+     */
+    public function itShouldBeSuccessfulWhenResponseCodeIsCorrect()
+    {
+        $result = $this->createWithCode(200);
+
+        $this->assertTrue($result->isSuccessful());
+        $this->assertFalse($result->isInformational());
+        $this->assertFalse($result->isRedirection());
+        $this->assertFalse($result->isClientError());
+        $this->assertFalse($result->isServerError());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheStatusCodeName()
+    {
+        $this->assertEquals("informational", $this->createWithCode(100)->statusName());
+        $this->assertEquals("successful", $this->createWithCode(200)->statusName());
+        $this->assertEquals("redirection", $this->createWithCode(300)->statusName());
+        $this->assertEquals("client_error", $this->createWithCode(400)->statusName());
+        $this->assertEquals("server_error", $this->createWithCode(500)->statusName());
+    }
+
+    private function createWithCode($code)
+    {
+        return MeasurementStatusDataBuilder::aMeasurementStatus()->withCode($code)->build();
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTrueIfIsInternalError()
+    {
+        $result = $this->createWithCode(0);
+
+        $this->assertTrue($result->isInternalError());
+        $this->assertEquals('error', $result->statusName());
+    }
+}
