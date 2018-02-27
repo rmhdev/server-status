@@ -31,4 +31,23 @@ class MeasurementTest extends TestCase
             'The returned date should be a new object'
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeComparableUsingTheCreationDate()
+    {
+        $date = new \DateTimeImmutable("2018-01-28 23:00:00", new \DateTimeZone("Europe/Madrid"));
+        $measurement = MeasurementDataBuilder::aMeasurement()->withDate($date)->build();
+
+        $this->assertEquals(1, $measurement->compareTo(
+            MeasurementDataBuilder::aMeasurement()->withDate($date->modify("-1 second"))->build()
+        ));
+        $this->assertEquals(0, $measurement->compareTo(
+            MeasurementDataBuilder::aMeasurement()->withDate($date)->build()
+        ));
+        $this->assertEquals(-1, $measurement->compareTo(
+            MeasurementDataBuilder::aMeasurement()->withDate($date->modify("+1 second"))->build()
+        ));
+    }
 }

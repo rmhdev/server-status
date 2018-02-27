@@ -61,4 +61,22 @@ class Measurement
     {
         return $this->result;
     }
+
+    /**
+     * @return int &lt; 0 if $this is less than
+     * $measurement; &gt; 0 if $this
+     * is greater than $measurement, and 0 if they are
+     * equal.
+     */
+    public function compareTo(Measurement $measurement): int
+    {
+        if ($measurement->dateCreated() > $this->dateCreated()) {
+            return -1;
+        }
+        if ($measurement->dateCreated() < $this->dateCreated()) {
+            return 1;
+        }
+
+        return 0;
+    }
 }
