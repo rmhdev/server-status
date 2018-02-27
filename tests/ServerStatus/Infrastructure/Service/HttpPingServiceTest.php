@@ -34,7 +34,7 @@ class HttpPingServiceTest extends TestCase
             CheckUrlDataBuilder::aCheckUrl()->build()
         );
 
-        $this->assertEquals(200, $result->statusCode());
+        $this->assertEquals(200, $result->status()->statusCode());
     }
 
     /**
@@ -66,7 +66,7 @@ class HttpPingServiceTest extends TestCase
             CheckUrlDataBuilder::aCheckUrl()->build()
         );
 
-        $this->assertEquals(500, $result->statusCode());
+        $this->assertEquals(500, $result->status()->statusCode());
     }
 
     /**
@@ -82,8 +82,8 @@ class HttpPingServiceTest extends TestCase
             CheckUrlDataBuilder::aCheckUrl()->build()
         );
 
-        $this->assertEquals(0, $result->statusCode());
-        $this->assertEquals("This is an exception", $result->reasonPhrase());
+        $this->assertEquals(0, $result->status()->statusCode());
+        $this->assertEquals("This is an exception", $result->status()->reasonPhrase());
     }
 
 

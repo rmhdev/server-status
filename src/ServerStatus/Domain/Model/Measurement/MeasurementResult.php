@@ -16,23 +16,20 @@ class MeasurementResult
 {
     const STATUS_CODE_CLASS_SUCCESSFUL = 2;
 
-    private $statusCode;
-    private $reasonPhrase;
+    private $status;
     private $duration;
     private $memory;
 
     /**
-     * @param integer $statusCode The response status Code
-     * @param string $reasonPhrase The response reason phrase
+     * @param MeasurementStatus $status The response status
      * @param float $duration The duration (in milliseconds)
      * @param int $memory The memory usage (in bytes)
      */
-    public function __construct(int $statusCode, string $reasonPhrase = "", float $duration = 0, int $memory = 0)
+    public function __construct(MeasurementStatus $status, float $duration = 0, int $memory = 0)
     {
         $this->assertDuration($duration);
         $this->assertMemory($memory);
-        $this->statusCode = $statusCode;
-        $this->reasonPhrase = $reasonPhrase;
+        $this->status = $status;
         $this->duration = $duration;
         $this->memory = $memory;
     }
@@ -57,27 +54,14 @@ class MeasurementResult
         }
     }
 
-    /**
-     * @return int The response status code
-     */
     public function statusCode(): int
     {
-        return $this->statusCode;
+        return $this->status()->statusCode();
     }
 
-    public function reasonPhrase(): string
+    public function status(): MeasurementStatus
     {
-        return $this->reasonPhrase;
-    }
-
-    public function isSuccessful(): bool
-    {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_SUCCESSFUL);
-    }
-
-    private function isStatusCodeClass(int $classNumber): bool
-    {
-        return $classNumber === (int) substr((string) $this->statusCode(), 0, 1);
+        return $this->status;
     }
 
     /**

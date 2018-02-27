@@ -17,6 +17,7 @@ use Http\Client\Exception as HttpClientException;
 use Http\Message\MessageFactory;
 use ServerStatus\Domain\Model\Check\CheckUrl;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 final class HttpPingService implements PingService
@@ -57,6 +58,10 @@ final class HttpPingService implements PingService
         }
         $event = $stopWatch->stop("measurement");
 
-        return new MeasurementResult($code, $reasonPhrase, $event->getDuration(), $event->getMemory());
+        return new MeasurementResult(
+            new MeasurementStatus($code, $reasonPhrase),
+            $event->getDuration(),
+            $event->getMemory()
+        );
     }
 }

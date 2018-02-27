@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement;
 
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 
 class MeasurementResultDataBuilder
 {
+    private $status;
     private $statusCode;
     private $reasonPhrase;
     private $duration;
@@ -23,12 +25,22 @@ class MeasurementResultDataBuilder
 
     public function __construct()
     {
-        $this->statusCode = 200;
-        $this->reasonPhrase = "";
+        $this->status = MeasurementStatusDataBuilder::aMeasurementStatus()
+            ->withCode(200)->withReasonPhrase("test")->build();
         $this->duration = 0;
         $this->memory = 0;
     }
 
+    public function withStatus(MeasurementStatus $status): MeasurementResultDataBuilder
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     */
     public function withStatusCode(int $statusCode): MeasurementResultDataBuilder
     {
         $this->statusCode = $statusCode;
@@ -36,6 +48,9 @@ class MeasurementResultDataBuilder
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function withReasonPhrase(string $reasonPhrase): MeasurementResultDataBuilder
     {
         $this->reasonPhrase = $reasonPhrase;
@@ -59,7 +74,7 @@ class MeasurementResultDataBuilder
 
     public function build(): MeasurementResult
     {
-        return new MeasurementResult($this->statusCode, $this->reasonPhrase, $this->duration, $this->memory);
+        return new MeasurementResult($this->status, $this->duration, $this->memory);
     }
 
     public static function aMeasurementResult(): MeasurementResultDataBuilder

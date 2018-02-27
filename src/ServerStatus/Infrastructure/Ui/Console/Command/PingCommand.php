@@ -81,7 +81,11 @@ class PingCommand extends Command
             $output->write(sprintf("%s > ", (string) $url));
             try {
                 $result = $this->pingService->measure($url);
-                $output->write(sprintf("[%d] %s, ", $result->statusCode(), $this->formatTime($result->duration())));
+                $output->write(sprintf(
+                    "[%d] %s, ",
+                    $result->status()->statusCode(),
+                    $this->formatTime($result->duration())
+                ));
                 $this->createMeasurements($checks->byCheckUrl($url), $result, $output, $go);
             } catch (\Exception $e) {
                 $errors[] = $e;

@@ -19,58 +19,6 @@ class MeasurementResultTest extends TestCase
     /**
      * @test
      */
-    public function itShouldBeSuccessfulWhenResponseCodeIsCorrect()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(200)->build();
-
-        $this->assertTrue($result->isSuccessful());
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldNotBeSuccessfulWhenResponseCodeIsInformational()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(100)->build();
-
-        $this->assertFalse($result->isSuccessful());
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldNotBeSuccessfulWhenResponseCodeIsClientError()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(404)->build();
-
-        $this->assertFalse($result->isSuccessful());
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldNotBeSuccessfulWhenResponseCodeIsServerError()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(500)->build();
-
-        $this->assertFalse($result->isSuccessful());
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldNotBeSuccessfulWhenResponseCodeIsUnexpected()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(0)->build();
-        $this->assertFalse($result->isSuccessful());
-
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->withStatusCode(600)->build();
-        $this->assertFalse($result->isSuccessful());
-    }
-
-    /**
-     * @test
-     */
     public function itShouldReturnZeroWhenNotDurationIsDefined()
     {
         $result = MeasurementResultDataBuilder::aMeasurementResult()->build();
