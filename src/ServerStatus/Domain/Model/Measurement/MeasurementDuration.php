@@ -34,14 +34,17 @@ class MeasurementDuration
         }
     }
 
-    private function milliseconds(): float
+    /**
+     * @return float duration (in milliseconds)
+     */
+    public function value(): float
     {
         return $this->time;
     }
 
     public function formatted(): string
     {
-        $ms = abs($this->milliseconds());
+        $ms = abs($this->value());
         // 1 second
         if (1000 > $ms) {
             return sprintf("%d ms", $ms);
@@ -73,5 +76,23 @@ class MeasurementDuration
         }
 
         return sprintf("%dh %02dm %02ds", $hours, $minutes, $seconds);
+    }
+
+    /**
+     * @return int &lt; 0 if $this is less than
+     * $measurement; &gt; 0 if $this
+     * is greater than $measurement, and 0 if they are
+     * equal.
+     */
+    public function compareTo(MeasurementDuration $duration): int
+    {
+        if ($duration->value() < $this->value()) {
+            return 1;
+        }
+        if ($duration->value() > $this->value()) {
+            return -1;
+        }
+
+        return 0;
     }
 }

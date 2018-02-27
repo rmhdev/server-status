@@ -54,4 +54,22 @@ class MeasurementDurationTest extends TestCase
     {
         MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(-1.0)->build();
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeComparableWithOtherDuration()
+    {
+        $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1000)->build();
+
+        $this->assertEquals(1, $duration->compareTo(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(999)->build()
+        ));
+        $this->assertEquals(0, $duration->compareTo(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1000)->build()
+        ));
+        $this->assertEquals(-1, $duration->compareTo(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1001)->build()
+        ));
+    }
 }
