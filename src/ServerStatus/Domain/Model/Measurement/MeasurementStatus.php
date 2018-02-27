@@ -23,7 +23,7 @@ class MeasurementStatus
     /**
      * @var int
      */
-    private $statusCode;
+    private $code;
 
     /**
      * @var string
@@ -37,16 +37,16 @@ class MeasurementStatus
      */
     public function __construct(int $statusCode, string $reasonPhrase = "")
     {
-        $this->statusCode = $statusCode;
+        $this->code = $statusCode;
         $this->reasonPhrase = $reasonPhrase;
     }
 
     /**
      * @return int The response status code
      */
-    public function statusCode(): int
+    public function code(): int
     {
-        return $this->statusCode;
+        return $this->code;
     }
 
     public function reasonPhrase(): string
@@ -109,6 +109,6 @@ class MeasurementStatus
 
     private function statusCodeClass(): int
     {
-        return (int) substr((string) $this->statusCode(), 0, 1);
+        return (int) substr((string) $this->code(), 0, 1);
     }
 }

@@ -1,8 +1,9 @@
 ServerStatus\Domain\Model\Measurement\MeasurementResult:
   type: embeddable
+  embedded:
+      status:
+          class: ServerStatus\Domain\Model\Measurement\MeasurementStatus
+          columnPrefix: "status_"
   fields:
-    statusCode: { type: integer, length: 11, nullable: false }
-    reasonPhrase: { type: string, length: 255, nullable: false }
-    duration: { type: float, nullable: false }
-    memory: { type: integer, length: 11, nullable: false }
-
+      duration: { type: float, nullable: false }
+      memory: { type: integer, length: 11, nullable: false }

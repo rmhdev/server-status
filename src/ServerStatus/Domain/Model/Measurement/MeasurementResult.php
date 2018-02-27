@@ -56,7 +56,7 @@ class MeasurementResult
 
     public function statusCode(): int
     {
-        return $this->status()->statusCode();
+        return $this->status()->code();
     }
 
     public function status(): MeasurementStatus

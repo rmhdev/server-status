@@ -20,6 +20,7 @@ use ServerStatus\Domain\Model\Measurement\MeasurementFactory;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 
 final class FixturesMeasurementData
 {
@@ -150,6 +151,6 @@ final class FixturesMeasurementData
             $reasonPhrase = "something happened!";
         }
 
-        return new MeasurementResult($code, $reasonPhrase, max(50, $duration), $memory);
+        return new MeasurementResult(new MeasurementStatus($code, $reasonPhrase), max(50, $duration), $memory);
     }
 }

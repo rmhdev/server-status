@@ -23,10 +23,11 @@ endif
 .PHONY:
 help:
 	@echo "ServerStatus: please use \`make <target>\` where <target> is one of:"
-	@echo "  test       launch tests"
-	@echo "  phpcs      show code sniffer result"
-	@echo "  phpmd      show mess detector result"
-	@echo "  pdepend    show quality of design result"
+	@echo "  test           launch tests"
+	@echo "  phpcs          show code sniffer result"
+	@echo "  phpmd          show mess detector result"
+	@echo "  pdepend        show quality of design result"
+	@echo "  fixtures-dev   load fixtures in dev environment's db"
 
 .PHONY:
 test:
