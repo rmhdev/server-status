@@ -65,15 +65,14 @@ final class Performance
         return $this->successfulMeasurements;
     }
 
-    public function uptimePercent(): float
+    public function uptimePercent(): Percent
     {
         if (1 > $this->totalMeasurements()) {
-            return round(0, self::UPTIME_PERCENT_PRECISION);
+            return Percent::createFromDecimalFraction(round(0, self::UPTIME_PERCENT_PRECISION));
         }
 
-        return round(
-            $this->successfulMeasurements() / $this->totalMeasurements(),
-            self::UPTIME_PERCENT_PRECISION
+        return Percent::createFromDecimalFraction(
+            $this->successfulMeasurements() / $this->totalMeasurements()
         );
     }
 
@@ -88,7 +87,7 @@ final class Performance
     /**
      * @return Percentile
      */
-    public function responseTime95th(): Percentile
+    public function responseTimePercentile(): Percentile
     {
         return new Percentile(
             Percent::createFromPercentage(95),

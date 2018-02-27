@@ -29,7 +29,10 @@ class PerformanceTest extends TestCase
             ->withSuccessfulMeasurements(99)
             ->build();
 
-        $this->assertEquals(0.99, $performance->uptimePercent());
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(0.99)->build(),
+            $performance->uptimePercent()
+        );
     }
 
     /**
@@ -43,7 +46,7 @@ class PerformanceTest extends TestCase
         )->build();
 
         $this->assertSame(0.00, $performance->responseTimeMean());
-        $this->assertEquals($expectedPercentile, $performance->responseTime95th());
+        $this->assertEquals($expectedPercentile, $performance->responseTimePercentile());
     }
 
     /**
@@ -60,6 +63,6 @@ class PerformanceTest extends TestCase
         )->build();
 
         $this->assertSame(123.1234, $performance->responseTimeMean());
-        $this->assertEquals($expectedPercentile, $performance->responseTime95th());
+        $this->assertEquals($expectedPercentile, $performance->responseTimePercentile());
     }
 }
