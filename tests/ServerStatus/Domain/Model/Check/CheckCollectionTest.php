@@ -78,6 +78,16 @@ class CheckCollectionTest extends TestCase
     /**
      * @test
      */
+    public function itShouldBeIterable()
+    {
+        $collection = $this->createCollection();
+
+        $this->assertTrue(is_iterable($collection));
+    }
+
+    /**
+     * @test
+     */
     public function itShouldReturnUniqueCheckUrls()
     {
         $urlA = CheckUrlDataBuilder::aCheckUrl()->withDomain("www.example.com")->build();

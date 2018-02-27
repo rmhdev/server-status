@@ -12,17 +12,47 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement;
 
-final class MeasurementCollection implements \Countable
+final class MeasurementCollection implements \Countable, \IteratorAggregate
 {
     private $measurements;
 
     public function __construct($measurements = [])
     {
-        $this->measurements = $measurements;
+        $this->measurements = $this->processMeasurements($measurements);
+    }
+
+    private function processMeasurements($measurements = [])
+    {
+        $measurements = is_iterable($measurements) ? $measurements : [$measurements];
+        $iterator = new \ArrayIterator();
+        foreach ($measurements as $measurement) {
+            $this->assertMeasurement($measurement);
+            $iterator->append($measurement);
+        }
+
+        return $iterator;
+    }
+
+    private function assertMeasurement($measurement)
+    {
+        if (!is_object($measurement) || !$measurement instanceof Measurement) {
+            throw new \UnexpectedValueException(sprintf(
+                'MeasurementCollection only accepts "Measurement" objects, "%s" received',
+                gettype($measurement)
+            ));
+        }
     }
 
     public function count(): int
     {
-        return 0;
+        return sizeof($this->measurements);
+    }
+
+    /**
+     * @return \Iterator|Measurement[]
+     */
+    public function getIterator(): \Iterator
+    {
+        return $this->measurements;
     }
 }

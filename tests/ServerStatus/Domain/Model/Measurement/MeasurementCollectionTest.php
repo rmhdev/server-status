@@ -14,6 +14,7 @@ namespace ServerStatus\Tests\Domain\Model\Measurement;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Measurement\MeasurementCollection;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class MeasurementCollectionTest extends TestCase
 {
@@ -44,5 +45,43 @@ class MeasurementCollectionTest extends TestCase
         ]);
 
         $this->assertEquals(3, $collection->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldAcceptASingleMeasurement()
+    {
+        $collection = $this->createCollection(MeasurementDataBuilder::aMeasurement()->build());
+
+        $this->assertEquals(1, $collection->count());
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     * @dataProvider incorrectItemDataProvider
+     */
+    public function itShouldThrowExceptionIfSomethingDifferentToMeasurementIsUsed($item)
+    {
+        $this->createCollection($item);
+    }
+
+    public function incorrectItemDataProvider()
+    {
+        return [
+            [CustomerDataBuilder::aCustomer()->build()],
+            ["hello"],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeIterable()
+    {
+        $collection = $this->createCollection();
+
+        $this->assertTrue(is_iterable($collection));
     }
 }

@@ -23,7 +23,7 @@ final class CheckCollection implements \Countable, \IteratorAggregate
 
     private function processChecks($checks = [])
     {
-        $checks = is_array($checks) ? $checks : [$checks];
+        $checks = is_iterable($checks) ? $checks : [$checks];
         $iterator = new \ArrayIterator();
         foreach ($checks as $check) {
             $this->assertCheck($check);
