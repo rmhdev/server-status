@@ -14,6 +14,8 @@ namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Measurement\Performance\Performance;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentileDataBuilder;
 
 class PerformanceTest extends TestCase
 {
@@ -36,9 +38,12 @@ class PerformanceTest extends TestCase
     public function itShouldReturnZeroWhenNoDataIsDefined()
     {
         $performance = PerformanceDataBuilder::aPerformance()->build();
+        $expectedPercentile = PercentileDataBuilder::aPercentile()->withValue(0)->withPercent(
+            PercentDataBuilder::aPercent()->withValue(0.95)->build()
+        )->build();
 
         $this->assertSame(0.00, $performance->responseTimeMean());
-        $this->assertSame(0.00, $performance->responseTime95th());
+        $this->assertEquals($expectedPercentile, $performance->responseTime95th());
     }
 
     /**
@@ -50,8 +55,11 @@ class PerformanceTest extends TestCase
             Performance::FIELD_MEAN => 123.1234,
             Performance::FIELD_MEAN_95TH_PERCENTILE => 567.5678,
         ])->build();
+        $expectedPercentile = PercentileDataBuilder::aPercentile()->withValue(567.5678)->withPercent(
+            PercentDataBuilder::aPercent()->withValue(0.95)->build()
+        )->build();
 
         $this->assertSame(123.1234, $performance->responseTimeMean());
-        $this->assertSame(567.5678, $performance->responseTime95th());
+        $this->assertEquals($expectedPercentile, $performance->responseTime95th());
     }
 }

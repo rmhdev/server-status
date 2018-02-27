@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
+
 final class Performance
 {
     const UPTIME_PERCENT_PRECISION = 4;
@@ -83,11 +86,14 @@ final class Performance
     }
 
     /**
-     * @return float Value in milliseconds
+     * @return Percentile
      */
-    public function responseTime95th(): float
+    public function responseTime95th(): Percentile
     {
-        return $this->getResponseMeanTime(self::FIELD_MEAN_95TH_PERCENTILE, 0);
+        return new Percentile(
+            Percent::createFromPercentage(95),
+            $this->getResponseMeanTime(self::FIELD_MEAN_95TH_PERCENTILE, 0)
+        );
     }
 
     private function getResponseMeanTime($name, $default = 0): float
