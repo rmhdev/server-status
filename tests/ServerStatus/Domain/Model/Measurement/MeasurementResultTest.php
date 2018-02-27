@@ -19,25 +19,6 @@ class MeasurementResultTest extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnZeroWhenNotDurationIsDefined()
-    {
-        $result = MeasurementResultDataBuilder::aMeasurementResult()->build();
-
-        $this->assertEquals(0, $result->duration());
-    }
-
-    /**
-     * @test
-     * @expectedException \UnexpectedValueException
-     */
-    public function itShouldThrowExceptionWhenDurationIsNegative()
-    {
-        MeasurementResultDataBuilder::aMeasurementResult()->withDuration(-1)->build();
-    }
-
-    /**
-     * @test
-     */
     public function itShouldReturnZeroWhenNotMemoryIsDefined()
     {
         $result = MeasurementResultDataBuilder::aMeasurementResult()->build();

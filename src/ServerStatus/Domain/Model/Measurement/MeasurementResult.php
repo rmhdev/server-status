@@ -22,26 +22,15 @@ class MeasurementResult
 
     /**
      * @param MeasurementStatus $status The response status
-     * @param float $duration The duration (in milliseconds)
+     * @param MeasurementDuration $duration The duration
      * @param int $memory The memory usage (in bytes)
      */
-    public function __construct(MeasurementStatus $status, float $duration = 0, int $memory = 0)
+    public function __construct(MeasurementStatus $status, MeasurementDuration $duration, int $memory = 0)
     {
-        $this->assertDuration($duration);
         $this->assertMemory($memory);
         $this->status = $status;
         $this->duration = $duration;
         $this->memory = $memory;
-    }
-
-    private function assertDuration(float $duration): void
-    {
-        if (0 > $duration) {
-            throw new \UnexpectedValueException(sprintf(
-                'Duration should not be negative, "%s" milliseconds received',
-                $duration
-            ));
-        }
     }
 
     private function assertMemory(int $memory): void
@@ -64,10 +53,7 @@ class MeasurementResult
         return $this->status;
     }
 
-    /**
-     * @return float The duration (in milliseconds)
-     */
-    public function duration(): float
+    public function duration(): MeasurementDuration
     {
         return $this->duration;
     }
