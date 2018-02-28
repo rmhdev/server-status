@@ -1,0 +1,4 @@
+ServerStatus\Domain\Model\Measurement\MeasurementDuration:
+  type: embeddable
+  fields:
+    time: { type: float, nullable: false }

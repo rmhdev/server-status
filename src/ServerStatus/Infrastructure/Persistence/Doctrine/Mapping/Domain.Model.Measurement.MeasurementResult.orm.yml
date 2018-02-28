@@ -4,6 +4,8 @@ ServerStatus\Domain\Model\Measurement\MeasurementResult:
       status:
           class: ServerStatus\Domain\Model\Measurement\MeasurementStatus
           columnPrefix: "status_"
+      duration:
+          class: ServerStatus\Domain\Model\Measurement\MeasurementDuration
+          columnPrefix: "duration_"
   fields:
-      duration: { type: float, nullable: false }
       memory: { type: integer, length: 11, nullable: false }

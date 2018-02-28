@@ -16,6 +16,7 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\Measurement;
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementFactory;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -151,6 +152,10 @@ final class FixturesMeasurementData
             $reasonPhrase = "something happened!";
         }
 
-        return new MeasurementResult(new MeasurementStatus($code, $reasonPhrase), max(50, $duration), $memory);
+        return new MeasurementResult(
+            new MeasurementStatus($code, $reasonPhrase),
+            new MeasurementDuration(max(50, $duration)),
+            $memory
+        );
     }
 }
