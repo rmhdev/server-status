@@ -13,16 +13,44 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
-interface PerformanceReport
+final class PerformanceReport
 {
-    public function check(): Check;
+    /**
+     * @var Check
+     */
+    private $check;
 
-    public function name(): string;
+    /**
+     * @var DateRange
+     */
+    private $dateRange;
 
-    public function from(): \DateTimeImmutable;
+    /**
+     * @var Performance
+     */
+    private $performance;
 
-    public function to(): \DateTimeImmutable;
+    public function __construct(Check $check, DateRange $dateRange, Performance $performance)
+    {
+        $this->check = $check;
+        $this->dateRange = $dateRange;
+        $this->performance = $performance;
+    }
 
-    public function performance(): Performance;
+    public function check(): Check
+    {
+        return $this->check;
+    }
+
+    public function dateRange(): DateRange
+    {
+        return $this->dateRange;
+    }
+
+    public function performance(): Performance
+    {
+        return $this->performance;
+    }
 }
