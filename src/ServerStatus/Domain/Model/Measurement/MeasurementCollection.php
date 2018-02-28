@@ -24,13 +24,13 @@ final class MeasurementCollection implements \Countable, \IteratorAggregate
     private function processMeasurements($measurements = [])
     {
         $measurements = is_iterable($measurements) ? $measurements : [$measurements];
-        $iterator = new \ArrayIterator();
+        $processed = [];
         foreach ($measurements as $measurement) {
             $this->assertMeasurement($measurement);
-            $iterator->append($measurement);
+            $processed[] = $measurement;
         }
 
-        return $iterator;
+        return $processed;
     }
 
     private function assertMeasurement($measurement)
@@ -53,6 +53,6 @@ final class MeasurementCollection implements \Countable, \IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        return $this->measurements;
+        return new \ArrayIterator($this->measurements);
     }
 }

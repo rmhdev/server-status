@@ -24,13 +24,13 @@ final class CheckCollection implements \Countable, \IteratorAggregate
     private function processChecks($checks = [])
     {
         $checks = is_iterable($checks) ? $checks : [$checks];
-        $iterator = new \ArrayIterator();
+        $processed = [];
         foreach ($checks as $check) {
             $this->assertCheck($check);
-            $iterator->append($check);
+            $processed[] = $check;
         }
 
-        return $iterator;
+        return $processed;
     }
 
     private function assertCheck($check)
@@ -43,22 +43,22 @@ final class CheckCollection implements \Countable, \IteratorAggregate
         }
     }
 
-    private function checks(): \ArrayIterator
+    private function checks(): array
     {
         return $this->checks;
     }
 
     public function count(): int
     {
-        return $this->checks()->count();
+        return sizeof($this->checks);
     }
 
     /**
-     * @return \ArrayIterator|Check[]
+     * @return \Iterator|Check[]
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Iterator
     {
-        return $this->checks();
+        return new \ArrayIterator($this->checks());
     }
 
     /**
@@ -72,7 +72,7 @@ final class CheckCollection implements \Countable, \IteratorAggregate
                     function (Check $check) {
                         return $check->url();
                     },
-                    $this->checks()->getArrayCopy()
+                    $this->checks()
                 ),
                 SORT_STRING
             )
@@ -88,7 +88,7 @@ final class CheckCollection implements \Countable, \IteratorAggregate
         return new CheckCollection(
             array_values(
                 array_filter(
-                    $this->checks()->getArrayCopy(),
+                    $this->checks(),
                     function (Check $check) use ($url) {
                         return $check->url()->equals($url);
                     }

@@ -88,6 +88,24 @@ class CheckCollectionTest extends TestCase
     /**
      * @test
      */
+    public function itShouldBeImmutable()
+    {
+        $collection = $this->createCollection([]);
+        $iterator = $collection->getIterator();
+        if (method_exists($iterator, 'append')) {
+            /* @var \ArrayIterator $iterator */
+            $iterator->append(
+                CheckDataBuilder::aCheck()->build()
+            );
+            $this->assertEquals(0, $collection->count(), 'Appending new objects should not change the collection');
+        } else {
+            $this->assertTrue(true, 'Iterator has not an append method');
+        }
+    }
+
+    /**
+     * @test
+     */
     public function itShouldReturnUniqueCheckUrls()
     {
         $urlA = CheckUrlDataBuilder::aCheckUrl()->withDomain("www.example.com")->build();

@@ -24,7 +24,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
         $this->measureSummaries = $this->processValues($measureSummaries);
     }
 
-    private function processValues($measureSummaries = []): \ArrayIterator
+    private function processValues($measureSummaries = []): array
     {
         if (!\is_iterable($measureSummaries)) {
             $measureSummaries = [$measureSummaries];
@@ -35,7 +35,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
             $values[] = $measureSummary;
         }
 
-        return new \ArrayIterator($values);
+        return $values;
     }
 
     private function assertMeasureSummary($measureSummary)
@@ -56,7 +56,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
 
     private function measureSummaries(): \ArrayIterator
     {
-        return $this->measureSummaries;
+        return new \ArrayIterator($this->measureSummaries);
     }
 
     public function count(): int
@@ -64,7 +64,7 @@ final class MeasureSummaryCollection implements \Countable, \IteratorAggregate
         return $this->measureSummaries()->count();
     }
 
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Iterator
     {
         return $this->measureSummaries();
     }

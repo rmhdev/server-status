@@ -10,27 +10,25 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Tests\Domain\Model\Measurement;
+namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Measurement\MeasurementCollection;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
-class MeasurementCollectionTest extends TestCase
+class PerformanceStatusCollectionTest extends TestCase
 {
     /**
      * @test
      */
-    public function itShouldAcceptAnEmptyListOfMeasurements()
+    public function itShouldAcceptEmptyList()
     {
-        $collection = $this->createCollection();
-
-        $this->assertEquals(0, $collection->count());
+        $this->assertEquals(0, $this->createCollection([])->count());
     }
 
-    private function createCollection($measurements = []): MeasurementCollection
+    private function createCollection($values)
     {
-        return MeasurementCollectionDataBuilder::aMeasurementCollection()->withMeasurements($measurements)->build();
+        return PerformanceStatusCollectionDataBuilder::aPerformanceStatusCollection()
+            ->withValues($values)->build();
     }
 
     /**
@@ -39,9 +37,9 @@ class MeasurementCollectionTest extends TestCase
     public function itShouldCountMeasurements()
     {
         $collection = $this->createCollection([
-            MeasurementDataBuilder::aMeasurement()->build(),
-            MeasurementDataBuilder::aMeasurement()->build(),
-            MeasurementDataBuilder::aMeasurement()->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()->build(),
         ]);
 
         $this->assertEquals(3, $collection->count());
@@ -50,9 +48,9 @@ class MeasurementCollectionTest extends TestCase
     /**
      * @test
      */
-    public function itShouldAcceptASingleMeasurement()
+    public function itShouldAcceptASingleItem()
     {
-        $collection = $this->createCollection(MeasurementDataBuilder::aMeasurement()->build());
+        $collection = $this->createCollection(PerformanceStatusDataBuilder::aPerformanceStatus()->build());
 
         $this->assertEquals(1, $collection->count());
     }
@@ -62,7 +60,7 @@ class MeasurementCollectionTest extends TestCase
      * @expectedException \UnexpectedValueException
      * @dataProvider incorrectItemDataProvider
      */
-    public function itShouldThrowExceptionIfSomethingDifferentToMeasurementIsUsed($item)
+    public function itShouldThrowExceptionIfSomethingDifferentToPerformanceStatusIsUsed($item)
     {
         $this->createCollection($item);
     }
@@ -80,7 +78,7 @@ class MeasurementCollectionTest extends TestCase
      */
     public function itShouldBeIterable()
     {
-        $collection = $this->createCollection();
+        $collection = $this->createCollection([]);
 
         $this->assertTrue(is_iterable($collection));
     }
@@ -96,7 +94,7 @@ class MeasurementCollectionTest extends TestCase
         if (method_exists($iterator, 'append')) {
             /* @var \ArrayIterator $iterator */
             $iterator->append(
-                MeasurementDataBuilder::aMeasurement()->build()
+                PerformanceStatusDataBuilder::aPerformanceStatus()->build()
             );
             $this->assertEquals(0, $collection->count(), 'Appending new objects should not change the collection');
         } else {
