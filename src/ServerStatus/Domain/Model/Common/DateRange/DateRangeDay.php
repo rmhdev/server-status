@@ -14,6 +14,8 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 
 final class DateRangeDay extends DateRangeAbstract implements DateRange
 {
+    const NAME = "day";
+
     public function from(): \DateTimeImmutable
     {
         return $this->date()->setTime(0, 0, 0);
@@ -26,7 +28,7 @@ final class DateRangeDay extends DateRangeAbstract implements DateRange
 
     public function name(): string
     {
-        return "day";
+        return self::NAME;
     }
 
     public function formatted(): string

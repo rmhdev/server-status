@@ -14,6 +14,8 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 
 final class DateRangeLast24Hours extends DateRangeAbstract implements DateRange
 {
+    const NAME = "last_24_hours";
+
     public function from(): \DateTimeImmutable
     {
         return $this->to()->modify("-24 hours");
@@ -26,7 +28,7 @@ final class DateRangeLast24Hours extends DateRangeAbstract implements DateRange
 
     public function name(): string
     {
-        return "last_24_hours";
+        return self::NAME;
     }
 
     public function formatted(): string

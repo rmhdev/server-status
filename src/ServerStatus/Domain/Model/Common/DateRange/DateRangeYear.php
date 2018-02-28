@@ -14,6 +14,8 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 
 final class DateRangeYear extends DateRangeAbstract implements DateRange
 {
+    const NAME = "year";
+
     public function from(): \DateTimeImmutable
     {
         return $this->date()->setDate((int) $this->date()->format("Y"), 1, 1)->setTime(0, 0, 0);
@@ -26,7 +28,7 @@ final class DateRangeYear extends DateRangeAbstract implements DateRange
 
     public function name(): string
     {
-        return "year";
+        return self::NAME;
     }
 
     public function formatted(): string

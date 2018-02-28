@@ -14,6 +14,8 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 
 final class DateRangeWeek extends DateRangeAbstract implements DateRange
 {
+    const NAME = "week";
+
     public function from(): \DateTimeImmutable
     {
         return $this->date()->modify("monday this week")->setTime(0, 0, 0);
@@ -26,7 +28,7 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
 
     public function name(): string
     {
-        return "week";
+        return self::NAME;
     }
 
     public function formatted(): string
