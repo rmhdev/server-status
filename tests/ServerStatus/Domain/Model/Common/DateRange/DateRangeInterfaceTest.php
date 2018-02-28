@@ -11,10 +11,6 @@
 
 namespace ServerStatus\Tests\Domain\Model\Common\DateRange;
 
-use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
-
 interface DateRangeInterfaceTest
 {
     public function isShouldReturnCorrectFromDate();
@@ -26,4 +22,10 @@ interface DateRangeInterfaceTest
     public function itShouldReturnTheDateFormatted();
 
     public function itShouldBeAbleToCastToStringWithTheFormattedDate();
+
+    public function itShouldDetectWhenADateIsInBounds();
+
+    public function itShouldDetectWhenALowerDateIsNotInBounds();
+
+    public function itShouldDetectWhenAGreaterDateIsNotInBounds();
 }

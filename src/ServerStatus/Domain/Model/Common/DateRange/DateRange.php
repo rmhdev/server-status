@@ -21,4 +21,6 @@ interface DateRange
     public function name(): string;
 
     public function formatted(): string;
+
+    public function isInBounds(\DateTimeInterface $dateTime): bool ;
 }

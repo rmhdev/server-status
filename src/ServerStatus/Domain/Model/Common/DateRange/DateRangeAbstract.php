@@ -33,4 +33,9 @@ abstract class DateRangeAbstract implements DateRange
     {
         return $this->formatted();
     }
+
+    public function isInBounds(\DateTimeInterface $dateTime): bool
+    {
+        return $this->from() <= $dateTime && $this->to() > $dateTime;
+    }
 }

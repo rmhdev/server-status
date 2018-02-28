@@ -12,11 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\Common\DateRange;
 
-use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeWeek;
 
-class DateRangeWeekTest extends TestCase implements DateRangeInterfaceTest
+class DateRangeWeekTest extends DateRangeTestCase implements DateRangeInterfaceTest
 {
     /**
      * @test
@@ -28,7 +27,7 @@ class DateRangeWeekTest extends TestCase implements DateRangeInterfaceTest
         $this->assertEquals(new \DateTimeImmutable("2018-01-29T00:00:00+0200"), $dateRange->from());
     }
 
-    private function createDateRange(\DateTimeInterface $date): DateRange
+    protected function createDateRange(\DateTimeInterface $date): DateRange
     {
         return new DateRangeWeek($date);
     }
