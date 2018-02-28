@@ -12,8 +12,9 @@
 namespace ServerStatus\Application\Service\Measurement;
 
 use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDataTransformer;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 
 class ViewMeasurementSummaryService
 {
@@ -36,10 +37,14 @@ class ViewMeasurementSummaryService
         if (!$request) {
             return [];
         }
-        $measureSummary = new MeasureDaySummary(
+        $dateRange = new DateRangeCustom($request->from(), $request->to());
+        $measureSummary = new MeasureSummary(
             $request->check(),
-            $this->repository->summaryByMinute($request->check(), $request->from(), $request->to()),
-            $request->from()
+            $this->repository->summaryByMinute(
+                $request->check(),
+                $dateRange
+            ),
+            $dateRange
         );
         $this->transformer->write($measureSummary);
 

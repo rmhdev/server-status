@@ -12,23 +12,11 @@
 namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Measurement\Summary\SummaryAverage;
 
 class SummaryAverageTest extends TestCase
 {
-    /**
-     * @test
-     * @expectedException \OutOfBoundsException
-     */
-    public function itShouldThrowExceptionWhenLastDateIsLowerThanFirstDate()
-    {
-        return new SummaryAverage(
-            new \DateTimeImmutable("2018-02-03T15:20:00+0200"),
-            new \DateTimeImmutable("2018-02-03T15:19:59+0200"),
-            []
-        );
-    }
-
     /**
      * @test
      */
@@ -42,8 +30,10 @@ class SummaryAverageTest extends TestCase
     private function createSummaryAverageWithValues($values = []): SummaryAverage
     {
         return new SummaryAverage(
-            new \DateTimeImmutable("2018-02-03T15:20:00+0200"),
-            new \DateTimeImmutable("2018-02-03T15:30:00+0200"),
+            new DateRangeCustom(
+                new \DateTimeImmutable("2018-02-03T15:20:00+0200"),
+                new \DateTimeImmutable("2018-02-03T15:30:00+0200")
+            ),
             $values
         );
     }

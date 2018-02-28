@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
@@ -28,10 +28,9 @@ class MeasureSummaryFactoryTest extends TestCase
     public function itShouldGenerateAMeasureSummaryByName($name, $className)
     {
         $measureSummary = MeasureSummaryFactory::create(
-            $name,
             CheckDataBuilder::aCheck()->build(),
             new InMemoryMeasurementRepository(),
-            new \DateTimeImmutable("2018-02-02T15:24:10+0200")
+            DateRangeFactory::create($name, new \DateTimeImmutable("2018-02-02T15:24:10+0200"))
         );
 
         $this->assertEquals($name, $measureSummary->name());
@@ -41,8 +40,7 @@ class MeasureSummaryFactoryTest extends TestCase
     public function measureSummaryDataProvider()
     {
         return [
-            ["day", MeasureDaySummary::class],
-            ["last_24_hours", MeasureLast24HoursSummary::class],
+            ["day", MeasureSummary::class],
         ];
     }
 
@@ -54,10 +52,9 @@ class MeasureSummaryFactoryTest extends TestCase
     public function itShouldThrowExceptionWithIncorrectNames($incorrectName)
     {
         MeasureSummaryFactory::create(
-            $incorrectName,
             CheckDataBuilder::aCheck()->build(),
             new InMemoryMeasurementRepository(),
-            new \DateTimeImmutable("2018-02-02T15:24:10+0200")
+            DateRangeFactory::create($incorrectName, new \DateTimeImmutable("2018-02-02T15:24:10+0200"))
         );
     }
 

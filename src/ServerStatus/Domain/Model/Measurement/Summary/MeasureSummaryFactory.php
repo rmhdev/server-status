@@ -13,46 +13,24 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 
 final class MeasureSummaryFactory
 {
     public static function create(
-        string $name,
         Check $check,
         MeasurementRepository $repository,
-        \DateTimeInterface $date = null
+        DateRange $dateRange
     ): MeasureSummary {
-        switch ($name) {
-            case MeasureLast24HoursSummary::NAME:
-                $base = new MeasureLast24HoursSummary($check, [], $date);
 
-                return new MeasureLast24HoursSummary(
-                    $check,
-                    $repository->summaryByMinute(
-                        $check,
-                        $base->from(),
-                        $base->to()
-                    ),
-                    $date
-                );
-            case MeasureDaySummary::NAME:
-                $base = new MeasureDaySummary($check, [], $date);
-
-                return new MeasureDaySummary(
-                    $check,
-                    $repository->summaryByMinute(
-                        $check,
-                        $base->from(),
-                        $base->to()
-                    ),
-                    $date
-                );
-            default:
-                throw new \UnexpectedValueException(sprintf(
-                    'Unknown MeasureSummary name "%s"',
-                    $name
-                ));
-        }
+        return new MeasureSummary(
+            $check,
+            $repository->summaryByMinute(
+                $check,
+                $dateRange
+            ),
+            $dateRange
+        );
     }
 }

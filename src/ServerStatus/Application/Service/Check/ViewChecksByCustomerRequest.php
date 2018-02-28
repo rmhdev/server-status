@@ -12,21 +12,26 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\Service\Check;
 
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureLast24HoursSummary;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 
 class ViewChecksByCustomerRequest
 {
     private $customerId;
     private $date;
-    private $name;
+    private $dateRange;
 
-    public function __construct(CustomerId $customerId, \DateTimeInterface $dateTime = null, string $name = "")
-    {
+    public function __construct(
+        CustomerId $customerId,
+        \DateTimeInterface $dateTime = null,
+        string $name = DateRangeLast24Hours::NAME
+    ) {
         $date = $dateTime ? $dateTime : new \DateTime("now");
         $this->date = $date->format(DATE_ISO8601);
+        $this->dateRange = DateRangeFactory::create($name, $date);
         $this->customerId = $customerId;
-        $this->name = strlen($name) ? $name : MeasureLast24HoursSummary::NAME;
     }
 
     public function customerId(): CustomerId
@@ -34,13 +39,26 @@ class ViewChecksByCustomerRequest
         return $this->customerId;
     }
 
+    /**
+     * @deprecated
+     * @return \DateTimeImmutable
+     */
     public function date(): \DateTimeImmutable
     {
         return new \DateTimeImmutable($this->date);
     }
 
+    public function dateRange(): DateRange
+    {
+        return $this->dateRange;
+    }
+
+    /**
+     * @deprecated
+     * @return string
+     */
     public function name(): string
     {
-        return $this->name;
+        return $this->dateRange()->name();
     }
 }

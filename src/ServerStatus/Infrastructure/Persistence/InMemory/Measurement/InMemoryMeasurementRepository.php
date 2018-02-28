@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Infrastructure\Persistence\InMemory\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementDoesNotExistException;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
@@ -98,19 +99,18 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     /**
      * @inheritdoc
      */
-    public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function summaryByMinute(Check $check, DateRange $dateRange)
     {
-        return $this->createSummaryBy($check, $from, $to, "Y-m-d H:i:00");
+        return $this->createSummaryBy($check, $dateRange, "Y-m-d H:i:00");
     }
 
     private function createSummaryBy(
         Check $check,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end,
+        DateRange $dateRange,
         $groupByDateFormat = "Y-m-d H:00:00"
     ): array {
         $rawData = [];
-        foreach ($this->filterByDateRange($check, $start, $end) as $measurement) {
+        foreach ($this->filterByDateRange($check, $dateRange) as $measurement) {
             $groupBy = $measurement->dateCreated()->format($groupByDateFormat);
             if (!array_key_exists($groupBy, $rawData)) {
                 $rawData[$groupBy] = [
@@ -136,16 +136,13 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     /**
      * @return Measurement[]
      */
-    private function filterByDateRange(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    private function filterByDateRange(Check $check, DateRange $dateRange)
     {
-        return array_filter($this->measurements(), function (Measurement $measurement) use ($check, $from, $to) {
+        return array_filter($this->measurements(), function (Measurement $measurement) use ($check, $dateRange) {
             if (!$measurement->check()->id()->equals($check->id())) {
                 return false;
             }
-            if ($measurement->dateCreated() < $from) {
-                return false;
-            }
-            if ($measurement->dateCreated() > $to) {
+            if (!$dateRange->isInBounds($measurement->dateCreated())) {
                 return false;
             }
 
@@ -161,9 +158,9 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         return $this->measurements;
     }
 
-    public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function summaryByHour(Check $check, DateRange $dateRange)
     {
-        return $this->createSummaryBy($check, $from, $to, "Y-m-d H:00:00");
+        return $this->createSummaryBy($check, $dateRange, "Y-m-d H:00:00");
     }
 
     public function countAll(): int

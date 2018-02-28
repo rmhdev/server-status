@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Infrastructure\Persistence\InMemory\Measurement;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
@@ -157,8 +158,10 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         }
         $sameMinuteSummaries = $repository->summaryByMinute(
             $check,
-            new \DateTimeImmutable("2018-02-03T00:00:10+0200"),
-            new \DateTimeImmutable("2018-02-03T00:02:00+0200")
+            new DateRangeCustom(
+                new \DateTimeImmutable("2018-02-03T00:00:10+0200"),
+                new \DateTimeImmutable("2018-02-03T00:02:00+0200")
+            )
         );
 
         $this->assertEquals(1, sizeof($sameMinuteSummaries), "items outside the date range are ignored");
@@ -184,8 +187,10 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         }
         $differentMinuteSummaries = $repository->summaryByMinute(
             $check,
-            new \DateTime("2018-02-03T00:00:00+0200"),
-            new \DateTime("2018-02-03T00:04:59+0200")
+            new DateRangeCustom(
+                new \DateTime("2018-02-03T00:00:00+0200"),
+                new \DateTime("2018-02-03T00:04:59+0200")
+            )
         );
         $this->assertEquals(5, sizeof($differentMinuteSummaries), "Summary for different minutes");
         $this->assertEquals("2018-02-03 00:00:00", $differentMinuteSummaries[0]['date']);
@@ -211,15 +216,19 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         }
         $summaries = $repository->summaryByHour(
             $check,
-            new \DateTimeImmutable("2018-02-03T00:00:51+0200"),
-            new \DateTimeImmutable("2018-02-03T00:01:49+0200")
+            new DateRangeCustom(
+                new \DateTimeImmutable("2018-02-03T00:00:51+0200"),
+                new \DateTimeImmutable("2018-02-03T00:01:50+0200")
+            )
         );
         $this->assertEquals(0, sizeof($summaries));
 
         $summaries = $repository->summaryByHour(
             $check,
-            new \DateTimeImmutable("2018-02-03T00:00:50+0200"),
-            new \DateTimeImmutable("2018-02-03T00:01:50+0200")
+            new DateRangeCustom(
+                new \DateTimeImmutable("2018-02-03T00:00:50+0200"),
+                new \DateTimeImmutable("2018-02-03T00:01:51+0200")
+            )
         );
         $this->assertEquals(1, sizeof($summaries));
         $this->assertEquals(2, $summaries[0]["count"]);
@@ -250,8 +259,10 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         }
         $summaries = $repository->summaryByHour(
             $check,
-            new \DateTime("2018-02-03T00:00:00+0200"),
-            new \DateTime("2018-02-03T02:30:00+0200")
+            new DateRangeCustom(
+                new \DateTime("2018-02-03T00:00:00+0200"),
+                new \DateTime("2018-02-03T02:30:00+0200")
+            )
         );
         $this->assertEquals(3, sizeof($summaries), "Summary for different minutes");
         $this->assertEquals("2018-02-03 00:00:00", $summaries[0]['date']);

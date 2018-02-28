@@ -30,7 +30,10 @@ abstract class DateRangeTestCase extends TestCase
     {
         $dateRange = $this->newDateRange();
 
-        $this->assertTrue($dateRange->isInBounds($dateRange->to()->modify("-1 second")));
+        $this->assertTrue(
+            $dateRange->isInBounds($dateRange->to()->modify("-1 minute")),
+            $dateRange
+        );
     }
 
     /**

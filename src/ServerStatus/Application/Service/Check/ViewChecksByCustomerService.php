@@ -68,10 +68,9 @@ class ViewChecksByCustomerService
         $summaries = [];
         foreach ($checkCollection as $check) {
             $summaries[] = MeasureSummaryFactory::create(
-                $request->name(),
                 $check,
                 $this->measurementRepository,
-                $request->date()
+                $request->dateRange()
             );
         }
         $this->transformer->write(

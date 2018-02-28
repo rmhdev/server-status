@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
 interface MeasurementRepository
 {
@@ -42,19 +43,17 @@ interface MeasurementRepository
 
     /**
      * @param Check $check
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
+     * @param DateRange $dateRange
      * @return array
      */
-    public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
+    public function summaryByMinute(Check $check, DateRange $dateRange);
 
     /**
      * @param Check $check
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
+     * @param DateRange $dateRange
      * @return array
      */
-    public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to);
+    public function summaryByHour(Check $check, DateRange $dateRange);
 
     /**
      * @return int

@@ -14,7 +14,8 @@ namespace ServerStatus\Tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Check\Check;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureDaySummary;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
@@ -74,10 +75,9 @@ class MeasureSummaryCollectionTest extends TestCase
     private function createMeasureSummary(Check $check = null)
     {
         return MeasureSummaryFactory::create(
-            MeasureDaySummary::NAME,
             $check ? $check : CheckDataBuilder::aCheck()->build(),
             $this->measurementRepository,
-            new \DateTimeImmutable("2018-02-02T15:24:10+0200")
+            DateRangeFactory::create(DateRangeDay::NAME, new \DateTimeImmutable("2018-02-02T15:24:10+0200"))
         );
     }
 

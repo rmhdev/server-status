@@ -21,7 +21,12 @@ abstract class DateRangeAbstract implements DateRange
 
     public function __construct(\DateTimeInterface $dateTime)
     {
-        $this->date = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $dateTime->format(DATE_ISO8601));
+        $this->date = $this->createImmutableCopy($dateTime);
+    }
+
+    protected function createImmutableCopy(\DateTimeInterface $dateTime)
+    {
+        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $dateTime->format(DATE_ISO8601));
     }
 
     protected function date(): \DateTimeImmutable

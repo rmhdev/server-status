@@ -14,6 +14,7 @@ namespace ServerStatus\Infrastructure\Domain\Model\Measurement;
 
 use Doctrine\ORM\EntityRepository;
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -76,12 +77,12 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
         return new MeasurementId();
     }
 
-    public function summaryByMinute(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function summaryByMinute(Check $check, DateRange $dateRange)
     {
         return [];
     }
 
-    public function summaryByHour(Check $check, \DateTimeInterface $from, \DateTimeInterface $to)
+    public function summaryByHour(Check $check, DateRange $dateRange)
     {
         return [];
     }

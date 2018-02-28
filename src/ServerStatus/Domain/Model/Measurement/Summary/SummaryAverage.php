@@ -12,19 +12,16 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+
 class SummaryAverage
 {
     const FIELD_RESPONSE_TIME = "response_time";
 
     /**
-     * @var \DateTimeImmutable
+     * @var DateRange
      */
-    private $from;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $to;
+    private $dateRange;
 
     /**
      * @var array
@@ -32,24 +29,10 @@ class SummaryAverage
     private $values;
 
 
-    public function __construct(\DateTimeInterface $from, \DateTimeImmutable $to, $values = [])
+    public function __construct(DateRange $dateRange, $values = [])
     {
-        $this->assertDatesAreCorrect($from, $to);
-        $this->from = $from->format(DATE_ISO8601);
-        $this->to = $to->format(DATE_ISO8601);
+        $this->dateRange = $dateRange;
         $this->values = $this->formatValues($values);
-    }
-
-    private function assertDatesAreCorrect(\DateTimeInterface $from, \DateTimeInterface $to): void
-    {
-        if ($from <= $to) {
-            return;
-        }
-        throw new \OutOfBoundsException(sprintf(
-            'Date "to" (%s) should be greater or equal than date "from" (%s)',
-            $from->format(DATE_ISO8601),
-            $to->format(DATE_ISO8601)
-        ));
     }
 
     private function formatValues($values = []): array
@@ -63,14 +46,27 @@ class SummaryAverage
         return $values;
     }
 
-    public function from(): \DateTimeImmutable
+    public function dateRange(): DateRange
     {
-        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->from);
+        return $this->dateRange;
     }
 
+    /**
+     * @deprecated
+     * @return \DateTimeImmutable
+     */
+    public function from(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateRange()->from()->format(DATE_ISO8601));
+    }
+
+    /**
+     * @deprecated
+     * @return \DateTimeImmutable
+     */
     public function to(): \DateTimeImmutable
     {
-        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->to);
+        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateRange()->to()->format(DATE_ISO8601));
     }
 
     private function values(): array
