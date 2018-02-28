@@ -16,6 +16,8 @@ use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDa
 use ServerStatus\Application\Service\Measurement\ViewDayMeasurementSummaryRequest;
 use ServerStatus\Application\Service\Measurement\ViewMeasurementSummaryService;
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
@@ -78,7 +80,7 @@ class ViewMeasurementSummaryServiceTest extends TestCase
     {
         $request = new ViewDayMeasurementSummaryRequest(
             $this->check,
-            new \DateTimeImmutable("2018-02-03T23:59:59+0200")
+            DateRangeFactory::create(DateRangeDay::NAME, new \DateTimeImmutable("2018-02-03T23:59:59+0200"))
         );
 
         $service = new ViewMeasurementSummaryService($this->repository, $this->transformer);

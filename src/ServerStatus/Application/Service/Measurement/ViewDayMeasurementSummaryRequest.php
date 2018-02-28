@@ -12,17 +12,32 @@
 namespace ServerStatus\Application\Service\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 
 class ViewDayMeasurementSummaryRequest
 {
+    /**
+     * @var Check
+     */
     private $check;
-    private $date;
 
-    public function __construct(Check $check, \DateTimeInterface $dateTime = null)
+    /**
+     * @var DateRange
+     */
+    private $dateRange;
+
+
+    public function __construct(Check $check, DateRange $dateRange = null)
     {
-        $date = $dateTime ? $dateTime : new \DateTime("now");
-        $this->date = $date->format(DATE_ISO8601);
         $this->check = $check;
+        $this->dateRange = $dateRange ? $dateRange : $this->defaultDateRange();
+    }
+
+    private function defaultDateRange(): DateRange
+    {
+        return DateRangeFactory::create(DateRangeLast24Hours::NAME, new \DateTimeImmutable("now"));
     }
 
     public function check(): Check
@@ -30,18 +45,8 @@ class ViewDayMeasurementSummaryRequest
         return $this->check;
     }
 
-    public function date(): \DateTimeImmutable
+    public function dateRange(): DateRange
     {
-        return new \DateTimeImmutable($this->date);
-    }
-
-    public function from(): \DateTimeImmutable
-    {
-        return $this->date()->setTime(0, 0, 0);
-    }
-
-    public function to(): \DateTimeImmutable
-    {
-        return $this->date()->setTime(23, 59, 59);
+        return $this->dateRange;
     }
 }
