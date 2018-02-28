@@ -52,4 +52,28 @@ abstract class DateRangeTestCase extends TestCase
 
         $this->assertFalse($dateRange->isInBounds($dateRange->from()->modify("-1 second")));
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheNextDateRange()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+        $expectedNext = $this->createDateRange($dateRange->to());
+
+        $this->assertEquals($expectedNext->from(), $dateRange->next()->from());
+        $this->assertEquals($expectedNext->to(), $dateRange->next()->to());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnThePreviousDateRange()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+        $expectedPrevious = $this->createDateRange($dateRange->from()->modify("-1 second"));
+
+        $this->assertEquals($expectedPrevious->from(), $dateRange->previous()->from());
+        $this->assertEquals($expectedPrevious->to(), $dateRange->previous()->to());
+    }
 }

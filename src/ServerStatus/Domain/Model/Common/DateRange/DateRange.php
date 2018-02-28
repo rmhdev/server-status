@@ -22,5 +22,9 @@ interface DateRange
 
     public function formatted(): string;
 
-    public function isInBounds(\DateTimeInterface $dateTime): bool ;
+    public function isInBounds(\DateTimeInterface $dateTime): bool;
+
+    public function next(): DateRange;
+
+    public function previous(): DateRange;
 }

@@ -38,4 +38,18 @@ abstract class DateRangeAbstract implements DateRange
     {
         return $this->from() <= $dateTime && $this->to() > $dateTime;
     }
+
+    public function next(): DateRange
+    {
+        $that = get_called_class();
+
+        return new $that($this->to());
+    }
+
+    public function previous(): DateRange
+    {
+        $that = get_called_class();
+
+        return new $that($this->from()->modify("-1 second"));
+    }
 }
