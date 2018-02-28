@@ -12,11 +12,11 @@
 namespace ServerStatus\Tests\Application\Service\Measurement;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Application\Service\Measurement\ViewDayMeasurementSummaryRequest;
+use ServerStatus\Application\Service\Measurement\ViewMeasurementSummaryRequest;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
-class ViewDayMeasurementSummaryRequestTest extends TestCase
+class ViewMeasurementSummaryRequestTest extends TestCase
 {
     /**
      * @test
@@ -24,7 +24,7 @@ class ViewDayMeasurementSummaryRequestTest extends TestCase
     public function itShouldHaveADefaultDateWhenEmpty()
     {
         $check = CheckDataBuilder::aCheck()->build();
-        $request = new ViewDayMeasurementSummaryRequest($check);
+        $request = new ViewMeasurementSummaryRequest($check);
 
         $this->assertInstanceOf(DateRangeLast24Hours::class, $request->dateRange());
     }

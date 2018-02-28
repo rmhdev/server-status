@@ -16,7 +16,7 @@ use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 
-class ViewDayMeasurementSummaryRequest
+class ViewMeasurementSummaryRequest
 {
     /**
      * @var Check

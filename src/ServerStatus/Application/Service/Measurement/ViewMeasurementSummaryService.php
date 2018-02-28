@@ -28,7 +28,7 @@ class ViewMeasurementSummaryService
     }
 
     /**
-     * @param ViewDayMeasurementSummaryRequest $request
+     * @param ViewMeasurementSummaryRequest $request
      * @return array
      */
     public function execute($request = null)

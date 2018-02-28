@@ -13,7 +13,7 @@ namespace ServerStatus\Tests\Application\Service\Measurement;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer;
-use ServerStatus\Application\Service\Measurement\ViewDayMeasurementSummaryRequest;
+use ServerStatus\Application\Service\Measurement\ViewMeasurementSummaryRequest;
 use ServerStatus\Application\Service\Measurement\ViewMeasurementSummaryService;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
@@ -78,7 +78,7 @@ class ViewMeasurementSummaryServiceTest extends TestCase
      */
     public function isShouldReturnAnExactNumberOfValuesForDaySummary()
     {
-        $request = new ViewDayMeasurementSummaryRequest(
+        $request = new ViewMeasurementSummaryRequest(
             $this->check,
             DateRangeFactory::create(DateRangeDay::NAME, new \DateTimeImmutable("2018-02-03T23:59:59+0200"))
         );
