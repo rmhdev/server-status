@@ -52,4 +52,23 @@ abstract class DateRangeAbstract implements DateRange
 
         return new $that($this->from()->modify("-1 second"));
     }
+
+    public function compareTo(DateRange $range): int
+    {
+        if ($range->from() < $this->from()) {
+            return 1;
+        }
+        if ($range->from() > $this->from()) {
+            return -1;
+        }
+
+        if ($range->to() > $this->to()) {
+            return -1;
+        }
+        if ($range->to() < $this->to()) {
+            return 1;
+        }
+
+        return 0;
+    }
 }

@@ -71,4 +71,44 @@ class DateRangeLast24HoursTest extends DateRangeTestCase implements DateRangeInt
 
         $this->assertEquals('2018-02-18 12:00, 2018-02-19 12:00', (string) $dateRange);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheNextDateRange()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+        $expectedNext = $this->createDateRange($dateRange->to()->modify("+1 day"));
+
+        $this->assertEquals(
+            $expectedNext->from(),
+            $dateRange->next()->from(),
+            $dateRange->name() . ", " . $dateRange
+        );
+        $this->assertEquals(
+            $expectedNext->to(),
+            $dateRange->next()->to(),
+            $dateRange->name() . ", " . $dateRange
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnThePreviousDateRange()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+        $expectedPrevious = $this->createDateRange($dateRange->from()->modify("-1 day"));
+
+        $this->assertEquals(
+            $expectedPrevious->from(),
+            $dateRange->previous()->from(),
+            $dateRange->name() . ", " . $dateRange
+        );
+        $this->assertEquals(
+            $expectedPrevious->to(),
+            $dateRange->previous()->to(),
+            $dateRange->name() . ", " . $dateRange
+        );
+    }
 }

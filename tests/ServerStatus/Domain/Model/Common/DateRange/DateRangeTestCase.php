@@ -61,8 +61,16 @@ abstract class DateRangeTestCase extends TestCase
         $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
         $expectedNext = $this->createDateRange($dateRange->to());
 
-        $this->assertEquals($expectedNext->from(), $dateRange->next()->from());
-        $this->assertEquals($expectedNext->to(), $dateRange->next()->to());
+        $this->assertEquals(
+            $expectedNext->from(),
+            $dateRange->next()->from(),
+            $dateRange->name() . ", " . $dateRange
+        );
+        $this->assertEquals(
+            $expectedNext->to(),
+            $dateRange->next()->to(),
+            $dateRange->name() . ", " . $dateRange
+        );
     }
 
     /**
@@ -73,7 +81,35 @@ abstract class DateRangeTestCase extends TestCase
         $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
         $expectedPrevious = $this->createDateRange($dateRange->from()->modify("-1 second"));
 
-        $this->assertEquals($expectedPrevious->from(), $dateRange->previous()->from());
-        $this->assertEquals($expectedPrevious->to(), $dateRange->previous()->to());
+        $this->assertEquals(
+            $expectedPrevious->from(),
+            $dateRange->previous()->from(),
+            $dateRange->name() . ", " . $dateRange
+        );
+        $this->assertEquals(
+            $expectedPrevious->to(),
+            $dateRange->previous()->to(),
+            $dateRange->name() . ", " . $dateRange
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCompareToOtherDateRanges()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+
+        $this->assertEquals(0, $dateRange->compareTo($dateRange), $dateRange->name() . ", " . $dateRange);
+        $this->assertEquals(
+            -1,
+            $dateRange->compareTo($dateRange->next()),
+            $dateRange->name() . ", " . $dateRange . " -> " . $dateRange->next()
+        );
+        $this->assertEquals(
+            1,
+            $dateRange->compareTo($dateRange->previous()),
+            $dateRange->name() . ", " . $dateRange . " -> " . $dateRange->previous()
+        );
     }
 }

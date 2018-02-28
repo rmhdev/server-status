@@ -37,4 +37,22 @@ final class DateRangeLast24Hours extends DateRangeAbstract implements DateRange
             $this->to()->format("Y-m-d H:i")
         );
     }
+
+    /**
+     * 24 hours is a custom range, that's why we need to force to select the next day
+     * @return DateRange
+     */
+    public function next(): DateRange
+    {
+        return new self($this->to()->modify("+1 day"));
+    }
+
+    /**
+     * 24 hours is a custom range, that's why we need to force to select the previous day
+     * @return DateRange
+     */
+    public function previous(): DateRange
+    {
+        return new self($this->from()->modify("-1 day"));
+    }
 }

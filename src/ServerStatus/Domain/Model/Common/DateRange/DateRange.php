@@ -27,4 +27,15 @@ interface DateRange
     public function next(): DateRange;
 
     public function previous(): DateRange;
+
+    /**
+     * @param DateRange $range
+     * @return int &lt; 0 if $this is less than
+     * $range; &gt; 0 if $this
+     * is greater than $range, and 0 if they are
+     * equal.
+     */
+    public function compareTo(DateRange $range): int;
+
+    public function __toString(): string;
 }
