@@ -12,30 +12,28 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
-use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
-
 final class PerformanceStatusCollection implements \Countable, \IteratorAggregate
 {
     /**
-     * @var MeasurementStatus[]
+     * @var PerformanceStatus[]
      */
-    private $values;
+    private $performanceStatuses;
 
 
-    public function __construct($values = [])
+    public function __construct($performanceStatuses = [])
     {
-        $this->values = $this->processValues($values);
+        $this->performanceStatuses = $this->processPerformanceStatuses($performanceStatuses);
     }
 
-    private function processValues($values = []): array
+    private function processPerformanceStatuses($performanceStatuses = []): array
     {
-        if (!is_iterable($values)) {
-            $values = [$values];
+        if (!is_iterable($performanceStatuses)) {
+            $performanceStatuses = [$performanceStatuses];
         }
         $processed = [];
-        foreach ($values as $value) {
-            $this->assertPerformanceStatus($value);
-            $processed[] = $value;
+        foreach ($performanceStatuses as $performanceStatus) {
+            $this->assertPerformanceStatus($performanceStatus);
+            $processed[] = $performanceStatus;
         }
 
         return $processed;
@@ -53,11 +51,11 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
 
     public function count(): int
     {
-        return sizeof($this->values);
+        return sizeof($this->performanceStatuses);
     }
 
     public function getIterator(): \Iterator
     {
-        return new \ArrayIterator($this->values);
+        return new \ArrayIterator($this->performanceStatuses);
     }
 }
