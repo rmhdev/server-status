@@ -19,9 +19,21 @@ use ServerStatus\Domain\Model\Customer\CustomerId;
 
 class ViewChecksByCustomerRequest
 {
+    /**
+     * @var CustomerId
+     */
     private $customerId;
+
+    /**
+     * @var string
+     */
     private $date;
+
+    /**
+     * @var DateRange
+     */
     private $dateRange;
+
 
     public function __construct(
         CustomerId $customerId,
@@ -40,7 +52,6 @@ class ViewChecksByCustomerRequest
     }
 
     /**
-     * @deprecated
      * @return \DateTimeImmutable
      */
     public function date(): \DateTimeImmutable
@@ -51,14 +62,5 @@ class ViewChecksByCustomerRequest
     public function dateRange(): DateRange
     {
         return $this->dateRange;
-    }
-
-    /**
-     * @deprecated
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->dateRange()->name();
     }
 }

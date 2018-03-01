@@ -38,6 +38,6 @@ class ViewChecksByUserRequestTest extends TestCase
         $id = CustomerIdDataBuilder::aCustomerId()->build();
         $request = new ViewChecksByCustomerRequest($id);
 
-        $this->assertEquals(DateRangeLast24Hours::NAME, $request->name());
+        $this->assertEquals(DateRangeLast24Hours::NAME, $request->dateRange()->name());
     }
 }
