@@ -22,11 +22,16 @@ class PerformanceStatusCollectionDataBuilder
      */
     private $values;
 
+
     public function __construct()
     {
         $this->values = [];
     }
 
+    /**
+     * @param PerformanceStatus[] $values
+     * @return PerformanceStatusCollectionDataBuilder
+     */
     public function withValues($values): PerformanceStatusCollectionDataBuilder
     {
         $this->values = $values;
