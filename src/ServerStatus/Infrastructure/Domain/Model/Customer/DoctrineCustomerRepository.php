@@ -51,6 +51,8 @@ class DoctrineCustomerRepository extends EntityRepository implements CustomerRep
 
     public function ofEmail(CustomerEmail $email): ?Customer
     {
-        return $this->findOneBy(["email" => $email]);
+        return $this->createQueryBuilder("a")->where("a.email = :email")->setParameter("email", $email)
+            ->getQuery()->getOneOrNullResult();
+        //return $this->findOneBy(["email" => $email->value()]);
     }
 }
