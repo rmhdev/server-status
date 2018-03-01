@@ -26,6 +26,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    # repositories:
     ServerStatus\Domain\Model\Check\CheckRepository:
         class: Doctrine\ORM\EntityRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -36,6 +37,11 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             $entityName: 'ServerStatus\Domain\Model\Measurement\Measurement'
+    ServerStatus\Domain\Model\Customer\CustomerRepository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            $entityName: 'ServerStatus\Domain\Model\Customer\Customer'
 
     Http\Client\HttpClient:
         factory: ['Http\Discovery\HttpClientDiscovery', find]
@@ -43,5 +49,9 @@ services:
         factory: ['Http\Discovery\MessageFactoryDiscovery', find]
     ServerStatus\Infrastructure\Service\PingService:
         class: ServerStatus\Infrastructure\Service\HttpPingService
+
+    # custom commands:
     ServerStatus\Infrastructure\Ui\Console\Command\PingCommand:
+        public: false
+    ServerStatus\Infrastructure\Ui\Console\Command\CustomerChecksCommand:
         public: false
