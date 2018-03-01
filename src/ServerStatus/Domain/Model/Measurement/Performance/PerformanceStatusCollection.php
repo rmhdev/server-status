@@ -77,14 +77,33 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
         return new MeasurementDuration(array_sum($durations) / sizeof($durations));
     }
 
-    private function filterByStatus(MeasurementStatus $status = null): \ArrayIterator
+    public function filterByStatus(MeasurementStatus $status = null): \ArrayIterator
     {
         if (is_null($status)) {
             return $this->getIterator();
         }
         $filtered = [];
         foreach ($this->performanceStatuses as $performanceStatus) {
-            if ($performanceStatus->status()->code() == $status->code()) {
+            if ($performanceStatus->status()->equals($status)) {
+                $filtered[] = $performanceStatus;
+            }
+        }
+
+        return new \ArrayIterator($filtered);
+    }
+
+    /**
+     * @param int|int[] $classResponses
+     * @return \ArrayIterator
+     */
+    public function filterByClassResponse($classResponses): \ArrayIterator
+    {
+        if (!is_array($classResponses)) {
+            $classResponses = [$classResponses];
+        }
+        $filtered = [];
+        foreach ($this->performanceStatuses as $performanceStatus) {
+            if (in_array($performanceStatus->status()->classResponse(), $classResponses)) {
                 $filtered[] = $performanceStatus;
             }
         }

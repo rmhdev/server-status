@@ -12,56 +12,48 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
 use ServerStatus\Domain\Model\Measurement\Performance\Performance;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentileDataBuilder;
 
 class PerformanceDataBuilder
 {
     /**
-     * @var int
+     * @var PerformanceStatusCollection
      */
-    private $totalMeasurements;
+    private $performanceStatusCollection;
 
     /**
-     * @var int
+     * @var Percentile
      */
-    private $successfulMeasurements;
+    private $percentile;
 
-    /**
-     * @var array
-     */
-    private $means;
 
     public function __construct()
     {
-        $this->totalMeasurements = 0;
-        $this->successfulMeasurements = 0;
-        $this->means = [];
+        $this->performanceStatusCollection = PerformanceStatusCollectionDataBuilder::aPerformanceStatusCollection()
+            ->build();
+        $this->percentile = PercentileDataBuilder::aPercentile()->build();
     }
 
-    public function withTotalMeasurements($totalMeasurements): PerformanceDataBuilder
+    public function withPerformanceStatusCollection(PerformanceStatusCollection $collection): PerformanceDataBuilder
     {
-        $this->totalMeasurements = $totalMeasurements;
+        $this->performanceStatusCollection = $collection;
 
         return $this;
     }
 
-    public function withSuccessfulMeasurements($successfulMeasurements): PerformanceDataBuilder
+    public function withPercentile(Percentile $percentile): PerformanceDataBuilder
     {
-        $this->successfulMeasurements = $successfulMeasurements;
-
-        return $this;
-    }
-
-    public function withMeans($means): PerformanceDataBuilder
-    {
-        $this->means = $means;
+        $this->percentile = $percentile;
 
         return $this;
     }
 
     public function build(): Performance
     {
-        return new Performance($this->totalMeasurements, $this->successfulMeasurements, $this->means);
+        return new Performance($this->performanceStatusCollection, $this->percentile);
     }
 
     public static function aPerformance(): PerformanceDataBuilder

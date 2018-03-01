@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDurationDataBuilder;
@@ -165,5 +166,47 @@ class PerformanceStatusCollectionTest extends TestCase
         $this->assertEquals($expected, $this->createCollectionWithData()->averageDuration(
             MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(200)->build()
         ));
+    }
+
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToFilterByClassResponse()
+    {
+        $this->assertEquals(
+            2,
+            $this->createCollectionWithData()->filterByClassResponse(
+                MeasurementStatus::CLASS_RESPONSE_SUCCESSFUL
+            )->count()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToFilterByMultipleClassResponses()
+    {
+        $this->assertEquals(
+            4,
+            $this->createCollectionWithData()->filterByClassResponse([
+                MeasurementStatus::CLASS_RESPONSE_INFORMATIONAL,
+                MeasurementStatus::CLASS_RESPONSE_SUCCESSFUL,
+                MeasurementStatus::CLASS_RESPONSE_REDIRECTION
+            ])->count()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToFilterByMeasurementStatus()
+    {
+        $this->assertEquals(
+            1,
+            $this->createCollectionWithData()->filterByStatus(
+                MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(404)->build()
+            )->count()
+        );
     }
 }

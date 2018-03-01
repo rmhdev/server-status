@@ -12,76 +12,91 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
 
 final class Performance
 {
-    const UPTIME_PERCENT_PRECISION = 4;
-    const FIELD_MEAN = "mean";
-    const FIELD_MEAN_95TH_PERCENTILE = "mean_95th";
+    /**
+     * @var PerformanceStatusCollection
+     */
+    private $performanceStatusCollection;
 
     /**
+     * @var Percentile
+     */
+    private $percentile;
+
+    /**
+     * Internal variable
+     *
      * @var int
      */
     private $totalMeasurements;
 
     /**
+     * Internal variable
+     *
      * @var int
      */
     private $successfulMeasurements;
 
-    private $responseMeanTimes;
 
-    public function __construct(int $totalMeasurements, int $successfulMeasurements, $responseMeanTimes = [])
+    public function __construct(PerformanceStatusCollection $collection, Percentile $percentile)
     {
-        $this->totalMeasurements = $totalMeasurements;
-        $this->successfulMeasurements = $successfulMeasurements;
-        $this->responseMeanTimes = $this->processResponseMeanTimes($responseMeanTimes);
+        $this->performanceStatusCollection = $collection;
+        $this->percentile = $percentile;
+        $this->totalMeasurements = null;
+        $this->successfulMeasurements = null;
     }
 
-    private function processResponseMeanTimes($responseMeanTimes = [])
+    public function performanceStatusCollection(): PerformanceStatusCollection
     {
-        $processed = [
-            self::FIELD_MEAN => 0,
-            self::FIELD_MEAN_95TH_PERCENTILE => 0
-        ];
-        foreach ($processed as $field => $value) {
-            if (array_key_exists($field, $responseMeanTimes)) {
-                $processed[$field] = $responseMeanTimes[$field];
-            }
-        }
+        return $this->performanceStatusCollection;
+    }
 
-        return $processed;
+    public function percentile(): Percentile
+    {
+        return $this->percentile;
     }
 
     public function totalMeasurements(): int
     {
+        if (is_null($this->totalMeasurements)) {
+            $this->totalMeasurements = $this->performanceStatusCollection()->count();
+        }
         return $this->totalMeasurements;
     }
 
-    public function successfulMeasurements(): int
+    public function correctMeasurements(): int
     {
+        if (is_null($this->successfulMeasurements)) {
+            $this->successfulMeasurements = $this->performanceStatusCollection()->filterByClassResponse(
+                MeasurementStatus::correctClassResponses()
+            )->count();
+        }
         return $this->successfulMeasurements;
     }
 
     public function uptimePercent(): Percent
     {
         if (1 > $this->totalMeasurements()) {
-            return Percent::createFromDecimalFraction(round(0, self::UPTIME_PERCENT_PRECISION));
+            return Percent::createFromDecimalFraction(0.00);
         }
 
         return Percent::createFromDecimalFraction(
-            $this->successfulMeasurements() / $this->totalMeasurements()
+            $this->correctMeasurements() / $this->totalMeasurements()
         );
     }
 
     /**
-     * @return float Value in milliseconds
+     * @return MeasurementDuration
      */
-    public function responseTimeMean(): float
+    public function responseTimeMean(): MeasurementDuration
     {
-        return $this->getResponseMeanTime(self::FIELD_MEAN, 0);
+        return $this->performanceStatusCollection()->averageDuration();
     }
 
     /**
@@ -89,18 +104,6 @@ final class Performance
      */
     public function responseTimePercentile(): Percentile
     {
-        return new Percentile(
-            Percent::createFromPercentage(95),
-            $this->getResponseMeanTime(self::FIELD_MEAN_95TH_PERCENTILE, 0)
-        );
-    }
-
-    private function getResponseMeanTime($name, $default = 0): float
-    {
-        if (!array_key_exists($name, $this->responseMeanTimes)) {
-            return $default;
-        }
-
-        return $this->responseMeanTimes[$name];
+        return $this->percentile();
     }
 }

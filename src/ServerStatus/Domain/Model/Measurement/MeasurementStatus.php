@@ -137,4 +137,38 @@ class MeasurementStatus
     {
         return $this->classResponse() === $status->classResponse();
     }
+
+    /**
+     * @return int[]
+     */
+    public static function correctClassResponses(): array
+    {
+        return [
+            self::CLASS_RESPONSE_INFORMATIONAL,
+            self::CLASS_RESPONSE_SUCCESSFUL,
+            self::CLASS_RESPONSE_REDIRECTION
+        ];
+    }
+
+    /**
+     * @return int[]
+     */
+    public static function incorrectClassResponses(): array
+    {
+        return array_diff(self::classResponses(), self::correctClassResponses());
+    }
+
+    /**
+     * @return int[]
+     */
+    public static function classResponses(): array
+    {
+        return [
+            self::CLASS_RESPONSE_INFORMATIONAL,
+            self::CLASS_RESPONSE_SUCCESSFUL,
+            self::CLASS_RESPONSE_REDIRECTION,
+            self::CLASS_RESPONSE_CLIENT_ERROR,
+            self::CLASS_RESPONSE_SERVER_ERROR,
+        ];
+    }
 }
