@@ -14,11 +14,11 @@ namespace ServerStatus\Domain\Model\Measurement;
 
 class MeasurementStatus
 {
-    const STATUS_CODE_CLASS_INFORMATIONAL = 1;
-    const STATUS_CODE_CLASS_SUCCESSFUL = 2;
-    const STATUS_CODE_CLASS_REDIRECTION = 3;
-    const STATUS_CODE_CLASS_CLIENT_ERROR = 4;
-    const STATUS_CODE_CLASS_SERVER_ERROR = 5;
+    const CLASS_RESPONSE_INFORMATIONAL = 1;
+    const CLASS_RESPONSE_SUCCESSFUL = 2;
+    const CLASS_RESPONSE_REDIRECTION = 3;
+    const CLASS_RESPONSE_CLIENT_ERROR = 4;
+    const CLASS_RESPONSE_SERVER_ERROR = 5;
 
     /**
      * @var int
@@ -56,46 +56,46 @@ class MeasurementStatus
 
     public function isInformational(): bool
     {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_INFORMATIONAL);
+        return $this->isStatusCodeClass(self::CLASS_RESPONSE_INFORMATIONAL);
     }
 
     public function isSuccessful(): bool
     {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_SUCCESSFUL);
+        return $this->isStatusCodeClass(self::CLASS_RESPONSE_SUCCESSFUL);
     }
 
     public function isRedirection(): bool
     {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_REDIRECTION);
+        return $this->isStatusCodeClass(self::CLASS_RESPONSE_REDIRECTION);
     }
 
     public function isClientError(): bool
     {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_CLIENT_ERROR);
+        return $this->isStatusCodeClass(self::CLASS_RESPONSE_CLIENT_ERROR);
     }
 
     public function isServerError(): bool
     {
-        return $this->isStatusCodeClass(self::STATUS_CODE_CLASS_SERVER_ERROR);
+        return $this->isStatusCodeClass(self::CLASS_RESPONSE_SERVER_ERROR);
     }
 
     public function isInternalError(): bool
     {
-        return 0 == $this->statusCodeClass();
+        return 0 == $this->classResponse();
     }
 
     public function statusName(): string
     {
-        switch ($this->statusCodeClass()) {
-            case self::STATUS_CODE_CLASS_INFORMATIONAL:
+        switch ($this->classResponse()) {
+            case self::CLASS_RESPONSE_INFORMATIONAL:
                 return "informational";
-            case self::STATUS_CODE_CLASS_SUCCESSFUL:
+            case self::CLASS_RESPONSE_SUCCESSFUL:
                 return "successful";
-            case self::STATUS_CODE_CLASS_REDIRECTION:
+            case self::CLASS_RESPONSE_REDIRECTION:
                 return "redirection";
-            case self::STATUS_CODE_CLASS_CLIENT_ERROR:
+            case self::CLASS_RESPONSE_CLIENT_ERROR:
                 return "client_error";
-            case self::STATUS_CODE_CLASS_SERVER_ERROR:
+            case self::CLASS_RESPONSE_SERVER_ERROR:
                 return "server_error";
             default:
                 return "error";
@@ -104,12 +104,7 @@ class MeasurementStatus
 
     private function isStatusCodeClass(int $classNumber): bool
     {
-        return $classNumber === $this->statusCodeClass();
-    }
-
-    private function statusCodeClass(): int
-    {
-        return (int) substr((string) $this->code(), 0, 1);
+        return $classNumber === $this->classResponse();
     }
 
     public function equals(MeasurementStatus $status): bool
@@ -126,5 +121,20 @@ class MeasurementStatus
     public function compareTo(MeasurementStatus $status): int
     {
         return strcmp((string) $this->code(), (string) $status->code());
+    }
+
+    /**
+     * First digit of the status code.
+     *
+     * @return int
+     */
+    public function classResponse(): int
+    {
+        return (int) substr((string) $this->code(), 0, 1);
+    }
+
+    public function hasSameClassResponse(MeasurementStatus $status): bool
+    {
+        return $this->classResponse() === $status->classResponse();
     }
 }

@@ -80,4 +80,26 @@ class MeasurementStatusTest extends TestCase
         $this->assertSame(-1, $result->compareTo($this->createWithCode(201)));
         $this->assertSame(1, $result->compareTo($this->createWithCode(199)));
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheClassResponse()
+    {
+        $this->assertSame(1, $this->createWithCode(100)->classResponse());
+        $this->assertSame(2, $this->createWithCode(200)->classResponse());
+        $this->assertSame(3, $this->createWithCode(301)->classResponse());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnIfAStatusHasSameClassResponse()
+    {
+        $result = $this->createWithCode(200);
+
+        $this->assertTrue($result->hasSameClassResponse($this->createWithCode(200)));
+        $this->assertTrue($result->hasSameClassResponse($this->createWithCode(201)));
+        $this->assertFalse($result->hasSameClassResponse($this->createWithCode(301)));
+    }
 }
