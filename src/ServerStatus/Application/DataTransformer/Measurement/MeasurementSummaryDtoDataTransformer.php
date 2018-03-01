@@ -39,8 +39,8 @@ final class MeasurementSummaryDtoDataTransformer implements MeasurementSummaryDa
         ];
         foreach ($this->measureSummary()->averages() as $average) {
             $data["averages"][] = [
-                "from" => $average->from()->format(DATE_ISO8601),
-                "to" => $average->to()->format(DATE_ISO8601),
+                "from" => $average->dateRange()->from()->format(DATE_ISO8601),
+                "to" => $average->dateRange()->to()->format(DATE_ISO8601),
                 "response_time" => $average->responseTime()
             ];
         }

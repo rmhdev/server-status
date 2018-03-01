@@ -51,24 +51,6 @@ class SummaryAverage
         return $this->dateRange;
     }
 
-    /**
-     * @deprecated
-     * @return \DateTimeImmutable
-     */
-    public function from(): \DateTimeImmutable
-    {
-        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateRange()->from()->format(DATE_ISO8601));
-    }
-
-    /**
-     * @deprecated
-     * @return \DateTimeImmutable
-     */
-    public function to(): \DateTimeImmutable
-    {
-        return \DateTimeImmutable::createFromFormat(DATE_ISO8601, $this->dateRange()->to()->format(DATE_ISO8601));
-    }
-
     private function values(): array
     {
         return $this->values;

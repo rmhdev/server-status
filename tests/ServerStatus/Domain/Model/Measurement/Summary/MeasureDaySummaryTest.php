@@ -88,8 +88,6 @@ class MeasureDaySummaryTest extends TestCase
         $summary = $this->createSummary(new \DateTime("2018-02-03T15:24:10+0200"), $rawValues);
         $average = $summary->average(new \DateTime("2018-02-03T15:23:00+0200"));
 
-        $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:20:00+0200"), $average->from());
-        $this->assertEquals(new \DateTimeImmutable("2018-02-03T15:29:59+0200"), $average->to());
         $this->assertEquals(1.000250, $average->responseTime());
     }
 }

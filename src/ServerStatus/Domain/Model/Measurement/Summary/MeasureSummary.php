@@ -67,7 +67,7 @@ class MeasureSummary
     }
 
     /**
-     * @inheritdoc
+     * @return SummaryAverage[]
      */
     public function averages(): array
     {
