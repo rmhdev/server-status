@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 
 final class PerformanceStatus
@@ -22,14 +23,20 @@ final class PerformanceStatus
     private $status;
 
     /**
+     * @var MeasurementDuration
+     */
+    private $durationAverage;
+
+    /**
      * @var integer
      */
     private $count;
 
-    public function __construct(MeasurementStatus $status, int $count = 0)
+    public function __construct(MeasurementStatus $status, MeasurementDuration $durationAverage, int $count = 0)
     {
         $this->assertCount($count);
         $this->status = $status;
+        $this->durationAverage = $durationAverage;
         $this->count = $count;
     }
 
@@ -46,6 +53,11 @@ final class PerformanceStatus
     public function status(): MeasurementStatus
     {
         return $this->status;
+    }
+
+    public function durationAverage(): MeasurementDuration
+    {
+        return $this->durationAverage;
     }
 
     public function count(): int

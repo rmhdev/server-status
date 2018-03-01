@@ -48,6 +48,16 @@ class MeasurementDurationTest extends TestCase
 
     /**
      * @test
+     */
+    public function itShouldBeAbleToConvertToString()
+    {
+        $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(7261000)->build();
+
+        $this->assertEquals("2h 01m 01s", (string) $duration);
+    }
+
+    /**
+     * @test
      * @expectedException \UnexpectedValueException
      */
     public function itShouldThrowExceptionWhenDurationIsNegative()

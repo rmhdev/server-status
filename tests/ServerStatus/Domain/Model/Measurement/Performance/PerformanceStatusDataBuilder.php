@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatus;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDurationDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementStatusDataBuilder;
 
 class PerformanceStatusDataBuilder
@@ -24,6 +26,11 @@ class PerformanceStatusDataBuilder
     private $status;
 
     /**
+     * @var MeasurementDuration
+     */
+    private $durationAverage;
+
+    /**
      * @var int
      */
     private $count;
@@ -32,12 +39,20 @@ class PerformanceStatusDataBuilder
     public function __construct()
     {
         $this->status = MeasurementStatusDataBuilder::aMeasurementStatus()->build();
+        $this->durationAverage = MeasurementDurationDataBuilder::aMeasurementDuration()->build();
         $this->count = 0;
     }
 
     public function withStatus(MeasurementStatus $status): PerformanceStatusDataBuilder
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function withDurationAverage(MeasurementDuration $duration): PerformanceStatusDataBuilder
+    {
+        $this->durationAverage = $duration;
 
         return $this;
     }
@@ -51,7 +66,7 @@ class PerformanceStatusDataBuilder
 
     public function build(): PerformanceStatus
     {
-        return new PerformanceStatus($this->status, $this->count);
+        return new PerformanceStatus($this->status, $this->durationAverage, $this->count);
     }
 
     public static function aPerformanceStatus(): PerformanceStatusDataBuilder

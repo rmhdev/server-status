@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement\Performance;
 
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
+
 final class PerformanceStatusCollection implements \Countable, \IteratorAggregate
 {
     /**
@@ -54,8 +57,38 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
         return sizeof($this->performanceStatuses);
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->performanceStatuses);
+    }
+
+    public function averageDuration(MeasurementStatus $status = null): MeasurementDuration
+    {
+        $durations = array_map(
+            function (PerformanceStatus $status) {
+                return $status->durationAverage()->value();
+            },
+            $this->filterByStatus($status)->getArrayCopy()
+        );
+        if (!sizeof($durations)) {
+            return new MeasurementDuration(0);
+        }
+
+        return new MeasurementDuration(array_sum($durations) / sizeof($durations));
+    }
+
+    private function filterByStatus(MeasurementStatus $status = null): \ArrayIterator
+    {
+        if (is_null($status)) {
+            return $this->getIterator();
+        }
+        $filtered = [];
+        foreach ($this->performanceStatuses as $performanceStatus) {
+            if ($performanceStatus->status()->code() == $status->code()) {
+                $filtered[] = $performanceStatus;
+            }
+        }
+
+        return new \ArrayIterator($filtered);
     }
 }

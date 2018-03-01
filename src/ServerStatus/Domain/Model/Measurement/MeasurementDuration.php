@@ -95,4 +95,9 @@ class MeasurementDuration
 
         return 0;
     }
+
+    public function __toString(): string
+    {
+        return $this->formatted();
+    }
 }

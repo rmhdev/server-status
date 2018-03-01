@@ -111,4 +111,20 @@ class MeasurementStatus
     {
         return (int) substr((string) $this->code(), 0, 1);
     }
+
+    public function equals(MeasurementStatus $status): bool
+    {
+        return $status->code() === $this->code();
+    }
+
+    /**
+     * @return int &lt; 0 if $this is less than
+     * $status; &gt; 0 if $this
+     * is greater than $status, and 0 if they are
+     * equal.
+     */
+    public function compareTo(MeasurementStatus $status): int
+    {
+        return strcmp((string) $this->code(), (string) $status->code());
+    }
 }

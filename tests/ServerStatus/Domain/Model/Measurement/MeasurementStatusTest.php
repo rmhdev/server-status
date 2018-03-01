@@ -57,4 +57,27 @@ class MeasurementStatusTest extends TestCase
         $this->assertTrue($result->isInternalError());
         $this->assertEquals('error', $result->statusName());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldSayIfOtherMeasurementIsEqualByCode()
+    {
+        $result = $this->createWithCode(200);
+
+        $this->assertTrue($result->equals($this->createWithCode(200)));
+        $this->assertFalse($result->equals($this->createWithCode(201)));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeComparableUsingTheCode()
+    {
+        $result = $this->createWithCode(200);
+
+        $this->assertSame(0, $result->compareTo($this->createWithCode(200)));
+        $this->assertSame(-1, $result->compareTo($this->createWithCode(201)));
+        $this->assertSame(1, $result->compareTo($this->createWithCode(199)));
+    }
 }
