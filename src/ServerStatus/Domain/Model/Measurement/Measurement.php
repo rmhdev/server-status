@@ -16,10 +16,26 @@ use ServerStatus\Domain\Model\Check\Check;
 
 class Measurement
 {
+    /**
+     * @var MeasurementId
+     */
     private $id;
+
+    /**
+     * @var bool|\DateTime
+     */
     private $dateCreated;
+
+    /**
+     * @var Check
+     */
     private $check;
+
+    /**
+     * @var MeasurementResult
+     */
     private $result;
+
 
     public function __construct(
         MeasurementId $id,

@@ -12,19 +12,24 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Ui\Console\Command;
 
+use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
-use Symfony\Component\Console\Command\Command;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReportFactory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
-class CustomerChecksCommand extends Command
+class CustomerChecksCommand extends AbstractCommand
 {
     /**
      * @var CustomerRepository
@@ -67,27 +72,72 @@ class CustomerChecksCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->startWatch();
+
         $email = $input->getArgument('email');
         $date = $input->getOption('date');
         $type = $input->getOption('type');
         $dateRange = DateRangeFactory::create($type, new \DateTimeImmutable($date));
-
         $customer = $this->customerRepository->ofId(new CustomerId($email));
 
-        $output->writeln(sprintf(
-            'Customer: %s',
-            $customer ? '<info>found</info>' : '<error>not found</error>'
-        ));
+        $output->writeln(sprintf('Customer: %s', $customer ? '<info>found</info>' : '<error>not found</error>'));
+        if (!$customer) {
+            return;
+        }
 
         $checks = $this->checkRepository->byCustomer($customer->id());
+        $output->writeln(sprintf('Checks: %d', $checks->count()));
+        $output->writeln(sprintf('Date range: %s (%s)', $dateRange->name(), $dateRange->formatted()));
+
+        foreach ($checks as $check) {
+            $this->showCheck($check, $dateRange, $output);
+        }
+
+        $this->writeCompletedMessage($output, $this->stopWatch());
+    }
+
+    private function showCheck(Check $check, DateRange $dateRange, OutputInterface $output)
+    {
+        $output->writeln((string) $check->url());
+        $factory = new PerformanceReportFactory($this->measurementRepository);
+        $performanceReport = $factory->create($check, $dateRange);
+
+        $percentile = $performanceReport->performance()->percentile();
         $output->writeln(sprintf(
-            'Checks: %d',
-            $checks->count()
+            '  uptime: %s, mean response time: %s, %s percentile: %s',
+            $performanceReport->performance()->uptimePercent(),
+            $performanceReport->performance()->responseTimeMean()->formatted(),
+            $percentile->percent(),
+            (new MeasurementDuration($percentile->value()))->formatted()
         ));
-        $output->writeln(sprintf(
-            'Date range: %s (%s)',
-            $dateRange->name(),
-            $dateRange->formatted()
-        ));
+
+        foreach ($performanceReport->performance()->performanceStatusCollection() as $performanceStatus) {
+            $output->writeln(sprintf(
+                '  status %s: %s',
+                $this->formatStatusCode($performanceStatus->status()),
+                $performanceStatus->durationAverage()->formatted()
+            ));
+        }
+    }
+
+    private function formatStatusCode($status)
+    {
+        if (is_numeric($status)) {
+            $status = new MeasurementStatus($status);
+        }
+        if (!$status instanceof MeasurementStatus) {
+            return (string) $status;
+        }
+        $tag = "info";
+        if ($status->isClientError() || $status->isServerError()) {
+            $tag = 'error';
+        } elseif ($status->isInternalError()) {
+            $tag = 'error';
+        } elseif ($status->isInformational()) {
+            $tag = 'comment';
+        } elseif ($status->isRedirection()) {
+            $tag = 'question';
+        }
+        return sprintf('<%s>%3s</%s>', $tag, $status->code(), $tag);
     }
 }

@@ -16,8 +16,19 @@ class MeasurementResult
 {
     const STATUS_CODE_CLASS_SUCCESSFUL = 2;
 
+    /**
+     * @var MeasurementStatus
+     */
     private $status;
+
+    /**
+     * @var MeasurementDuration
+     */
     private $duration;
+
+    /**
+     * @var int
+     */
     private $memory;
 
     /**

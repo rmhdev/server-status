@@ -24,6 +24,8 @@ use ServerStatus\Tests\Domain\Model\Check\CheckUrlDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerEmailDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -113,7 +115,30 @@ class CustomerChecksCommandTest extends KernelTestCase
 
     private function createMeasurementRepository(): MeasurementRepository
     {
-        return new InMemoryMeasurementRepository();
+        $repository = new InMemoryMeasurementRepository();
+        $customer = $this->customerRepository->ofEmail(
+            CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+        );
+        $date = new \DateTimeImmutable("2018-03-01T00:00:00+0200");
+        $codes = [
+            200, 200, 200, 200, 100, 404, 100, 500
+        ];
+        foreach ($this->checkRepository->byCustomer($customer->id()) as $check) {
+            foreach ($codes as $i => $code) {
+                $measurement = MeasurementDataBuilder::aMeasurement()
+                    ->withCheck($check)
+                    ->withDate($date->modify(sprintf("+%d minutes", 30 * $i)))
+                    ->withResult(
+                        MeasurementResultDataBuilder::aMeasurementResult()
+                            ->withDuration(100 * $i + $code)
+                            ->withStatus($code)
+                            ->build()
+                    )->build();
+                $repository->add($measurement);
+            }
+        }
+
+        return $repository;
     }
 
     /**
@@ -142,5 +167,24 @@ class CustomerChecksCommandTest extends KernelTestCase
             $this->checkRepository,
             $this->measurementRepository
         );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldShowDataForEachAndEveryStatusCode()
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $application->add($this->findCommand());
+        $command = $application->find('server-status:checks');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command'  => $command->getName(),
+            'email'    => self::DEFAULT_CUSTOMER_EMAIL
+        ]);
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains("status 200:", $output);
     }
 }

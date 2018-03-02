@@ -18,13 +18,12 @@ use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
 use ServerStatus\Infrastructure\Service\PingService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class PingCommand extends Command
+class PingCommand extends AbstractCommand
 {
     /**
      * @var CheckRepository
@@ -69,9 +68,9 @@ class PingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->startWatch();
         $go = $input->getOption("go");
-        $stopwatch = new Stopwatch(true);
-        $stopwatch->start('ping');
+
 
         $checks = $this->checkRepository->enabled();
         $urls = $checks->checkUrls();
@@ -93,13 +92,8 @@ class PingCommand extends Command
             }
         }
 
-        $event = $stopwatch->stop('ping');
-        $output->writeln("Completed");
-        $output->writeln(sprintf(
-            "Time: %s, Memory: %s",
-            $this->formatTime($event->getDuration()),
-            $this->formatMemory($event->getMemory())
-        ));
+        $this->writeCompletedMessage($output, $this->stopWatch());
+
         if ($errors) {
             $output->writeln(sprintf('<error>%d errors found!</error>:', sizeof($errors)));
             foreach ($errors as $i => $error) {
@@ -132,35 +126,5 @@ class PingCommand extends Command
             $numMeasurements > 1 ? $numMeasurements . " " : "",
             $go ? "ok" : "not saved"
         ), true);
-    }
-
-    /**
-     * Taken from sebastianbergmann/php-timer package
-     *
-     * @param float $time
-     * @return string
-     */
-    private function formatTime(float $time)
-    {
-        $times = array(
-            'hour'   => 3600000,
-            'minute' => 60000,
-            'second' => 1000
-        );
-        $ms = $time;
-        foreach ($times as $unit => $value) {
-            if ($ms >= $value) {
-                $time = floor($ms / $value * 100.0) / 100.0;
-
-                return $time . ' ' . ($time == 1 ? $unit : $unit . 's');
-            }
-        }
-
-        return $ms . ' ms';
-    }
-
-    private function formatMemory(int $bytes = 0, $precision = 2)
-    {
-        return sprintf("%4.2fMB", round($bytes / 2**20, $precision));
     }
 }
