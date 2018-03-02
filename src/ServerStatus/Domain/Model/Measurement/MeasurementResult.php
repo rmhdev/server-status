@@ -43,6 +43,10 @@ class MeasurementResult
         }
     }
 
+    /**
+     * @return int
+     * @deprecated
+     */
     public function statusCode(): int
     {
         return $this->status()->code();

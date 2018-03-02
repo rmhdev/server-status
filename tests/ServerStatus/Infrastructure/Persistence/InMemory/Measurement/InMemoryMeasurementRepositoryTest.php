@@ -13,13 +13,22 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Infrastructure\Persistence\InMemory\Measurement;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatus;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementStatusDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentileDataBuilder;
 
 class InMemoryMeasurementRepositoryTest extends TestCase
 {
@@ -267,5 +276,99 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         $this->assertEquals(3, sizeof($summaries), "Summary for different minutes");
         $this->assertEquals("2018-02-03 00:00:00", $summaries[0]['date']);
         $this->assertEquals("2018-02-03 02:00:00", $summaries[2]['date']);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculatePercentile()
+    {
+        $check = CheckDataBuilder::aCheck()->build();
+        $date = new \DateTimeImmutable("2018-03-01T00:00:00+0200");
+        $repository = $this->createEmptyRepository();
+        $this->addMeasurementsForPercentileCalculation($repository, $check, $date);
+        $dateRange = DateRangeFactory::create(DateRangeDay::NAME, $date);
+        $percent = PercentDataBuilder::aPercent()
+            ->withValue(0.95)
+            ->build();
+
+        $expectedPercentile = PercentileDataBuilder::aPercentile()
+            ->withValue(195)
+            ->withPercent($percent)
+            ->build();
+
+        $this->assertEquals(
+            $expectedPercentile,
+            $repository->findPercentile($check, $dateRange, $percent),
+            "Calculate the {$percent} percentile for Check {$check}"
+        );
+    }
+
+    private function addMeasurementsForPercentileCalculation(
+        MeasurementRepository $repository,
+        Check $check,
+        \DateTimeImmutable $date
+    ) {
+        for ($i = 0; $i < 100; $i += 1) {
+            $measurement = MeasurementDataBuilder::aMeasurement()
+                ->withDate(
+                    $date->modify(sprintf("+%d minutes", 10 * $i))
+                )->withCheck($check)
+                ->withResult(
+                    MeasurementResultDataBuilder::aMeasurementResult()
+                        ->withStatus(200)->withDuration(100 + $i)->build()
+                )->build();
+
+            $repository->add($measurement);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCalculatePerformanceStatus()
+    {
+        $check = CheckDataBuilder::aCheck()->build();
+        $date = new \DateTimeImmutable("2018-03-01T00:00:00+0200");
+        $repository = $this->createEmptyRepository();
+        foreach ($this->performanceStatusCalculationMeasurements($check, $date) as $measurement) {
+            $repository->add($measurement);
+        }
+        $dateRange = DateRangeFactory::create(DateRangeDay::NAME, $date);
+        $collection = $repository->calculatePerformanceStatus($check, $dateRange);
+
+        /* @var PerformanceStatus $performanceStatusSuccessful */
+        $performanceStatusSuccessful = $collection->filterByStatus(
+            MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(200)->build()
+        )->getIterator()->current();
+
+        $this->assertEquals(200, $performanceStatusSuccessful->status()->code());
+        $this->assertEquals(3, $performanceStatusSuccessful->count(), 'Number of measurements with the status');
+        $this->assertEquals(105.3, $performanceStatusSuccessful->durationAverage()->value(), "average duration", 0.1);
+    }
+
+    /**
+     * @param Check $check
+     * @param \DateTimeImmutable $date
+     * @return \Generator|Measurement[]
+     */
+    private function performanceStatusCalculationMeasurements(
+        Check $check,
+        \DateTimeImmutable $date
+    ): \Generator {
+        $codes = [
+            200, 202, 301, 404, 100, 200, 205, 500, 404, 404, 101, 200
+        ];
+
+        foreach ($codes as $i => $code) {
+            yield MeasurementDataBuilder::aMeasurement()
+                ->withDate(
+                    $date->modify(sprintf("+%d minutes", 10 * $i))
+                )->withCheck($check)
+                ->withResult(
+                    MeasurementResultDataBuilder::aMeasurementResult()
+                        ->withStatus($code)->withDuration(100 + $i)->build()
+                )->build();
+        }
     }
 }

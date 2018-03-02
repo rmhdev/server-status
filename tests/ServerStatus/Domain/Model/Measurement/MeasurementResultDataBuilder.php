@@ -42,15 +42,21 @@ class MeasurementResultDataBuilder
         $this->memory = 0;
     }
 
-    public function withStatus(MeasurementStatus $status): MeasurementResultDataBuilder
+    public function withStatus($status): MeasurementResultDataBuilder
     {
+        if (is_numeric($status)) {
+            $status = MeasurementStatusDataBuilder::aMeasurementStatus()->withCode($status)->build();
+        }
         $this->status = $status;
 
         return $this;
     }
 
-    public function withDuration(MeasurementDuration $duration): MeasurementResultDataBuilder
+    public function withDuration($duration): MeasurementResultDataBuilder
     {
+        if (is_numeric($duration)) {
+            $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration($duration)->build();
+        }
         $this->duration = $duration;
 
         return $this;

@@ -43,15 +43,21 @@ class PerformanceStatusDataBuilder
         $this->count = 0;
     }
 
-    public function withStatus(MeasurementStatus $status): PerformanceStatusDataBuilder
+    public function withStatus($status): PerformanceStatusDataBuilder
     {
+        if (is_numeric($status)) {
+            $status = MeasurementStatusDataBuilder::aMeasurementStatus()->withCode($status)->build();
+        }
         $this->status = $status;
 
         return $this;
     }
 
-    public function withDurationAverage(MeasurementDuration $duration): PerformanceStatusDataBuilder
+    public function withDurationAverage($duration): PerformanceStatusDataBuilder
     {
+        if (is_numeric($duration)) {
+            $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration($duration)->build();
+        }
         $this->durationAverage = $duration;
 
         return $this;

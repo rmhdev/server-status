@@ -14,6 +14,9 @@ namespace ServerStatus\Domain\Model\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
 
 interface MeasurementRepository
 {
@@ -59,4 +62,19 @@ interface MeasurementRepository
      * @return int
      */
     public function countAll(): int;
+
+    /**
+     * @param Check $check
+     * @param DateRange $dateRange
+     * @param Percent $percent
+     * @return Percentile
+     */
+    public function findPercentile(Check $check, DateRange $dateRange, Percent $percent): Percentile;
+
+    /**
+     * @param Check $check
+     * @param DateRange $dateRange
+     * @return PerformanceStatusCollection
+     */
+    public function calculatePerformanceStatus(Check $check, DateRange $dateRange): PerformanceStatusCollection;
 }

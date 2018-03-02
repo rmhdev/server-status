@@ -57,6 +57,9 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
         return sizeof($this->performanceStatuses);
     }
 
+    /**
+     * @return \ArrayIterator|PerformanceStatus[]
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->performanceStatuses);
@@ -68,7 +71,7 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
             function (PerformanceStatus $status) {
                 return $status->durationAverage()->value();
             },
-            $this->filterByStatus($status)->getArrayCopy()
+            $this->filterByStatus($status)->getIterator()->getArrayCopy()
         );
         if (!sizeof($durations)) {
             return new MeasurementDuration(0);
@@ -77,10 +80,10 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
         return new MeasurementDuration(array_sum($durations) / sizeof($durations));
     }
 
-    public function filterByStatus(MeasurementStatus $status = null): \ArrayIterator
+    public function filterByStatus(MeasurementStatus $status = null): PerformanceStatusCollection
     {
         if (is_null($status)) {
-            return $this->getIterator();
+            return new PerformanceStatusCollection($this->performanceStatuses);
         }
         $filtered = [];
         foreach ($this->performanceStatuses as $performanceStatus) {
@@ -89,7 +92,7 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
             }
         }
 
-        return new \ArrayIterator($filtered);
+        return new PerformanceStatusCollection($filtered);
     }
 
     /**

@@ -18,6 +18,9 @@ use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
 
 /**
  * @method Measurement|null findOneBy(array $criteria, array $orderBy = null)
@@ -95,5 +98,15 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
             ->select($qb->expr()->count("a.id"))
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function findPercentile(Check $check, DateRange $dateRange, Percent $percent): Percentile
+    {
+        // TODO: Implement findPercentile() method.
+    }
+
+    public function calculatePerformanceStatus(Check $check, DateRange $dateRange): PerformanceStatusCollection
+    {
+        // TODO: Implement calculatePerformanceStatus() method.
     }
 }

@@ -16,13 +16,16 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
-use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
 
 final class PerformanceReportFactory
 {
     const DEFAULT_PERCENTILE = 0.95;
 
+    /**
+     * @var MeasurementRepository
+     */
     private $measurementRepository;
+
 
     public function __construct(MeasurementRepository $repository)
     {
@@ -41,8 +44,13 @@ final class PerformanceReportFactory
     private function createPerformance(Check $check, DateRange $dateRange)
     {
         return new Performance(
-            new PerformanceStatusCollection([]),
-            new Percentile(new Percent(self::DEFAULT_PERCENTILE), 0)
+            $this->measurementRepository->calculatePerformanceStatus($check, $dateRange),
+            $this->measurementRepository->findPercentile($check, $dateRange, self::defaultPercent())
         );
+    }
+
+    public static function defaultPercent(): Percent
+    {
+        return new Percent(self::DEFAULT_PERCENTILE);
     }
 }

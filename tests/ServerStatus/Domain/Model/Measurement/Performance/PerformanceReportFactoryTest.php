@@ -13,18 +13,12 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement\Performance;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
-use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReport;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReportFactory;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
-use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
-use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
-use ServerStatus\Tests\Domain\Model\Measurement\MeasurementStatusDataBuilder;
-use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentileDataBuilder;
 
 class PerformanceReportFactoryTest extends TestCase
@@ -53,9 +47,7 @@ class PerformanceReportFactoryTest extends TestCase
                     ->withValues($performanceStatuses)->build()
             )
             ->withPercentile(
-                PercentileDataBuilder::aPercentile()->withValue(0)->withPercent(
-                    PercentDataBuilder::aPercent()->withValue(0.95)->build()
-                )->build()
+                PercentileDataBuilder::aPercentile()->withValue(0)->withPercent(0.95)->build()
             )
             ->build();
     }
@@ -70,50 +62,19 @@ class PerformanceReportFactoryTest extends TestCase
     /**
      * @test
      */
-    public function isShouldReturnReportWithDayData()
+    public function isShouldReturnDefaultPercentile()
     {
-        $date = new \DateTimeImmutable("2018-01-28T23:00:00+0200");
         $check = CheckDataBuilder::aCheck()->build();
-        $dateRange = DateRangeFactory::create(DateRangeDay::NAME, $date);
-        $factory = $this->createPerformanceReportFactory($check, $date);
-        $performanceReport = $factory->create($check, $dateRange);
+        $dateRange = DateRangeFactory::create(
+            DateRangeDay::NAME,
+            new \DateTimeImmutable("2018-01-28T23:00:00+0200")
+        );
+        $factory = $this->createEmptyPerformanceReportFactory();
 
-        $this->assertEquals(12, $performanceReport->performance()->totalMeasurements());
-    }
-
-    private function createPerformanceReportFactory(Check $check, \DateTimeImmutable $date): PerformanceReportFactory
-    {
-        $repo = new InMemoryMeasurementRepository();
-        foreach ($this->measurementsForCheckAndDay($check, $date) as $measurement) {
-            $repo->add($measurement);
-        }
-        return new PerformanceReportFactory($repo);
-    }
-
-    /**
-     * @param Check $check
-     * @param \DateTimeImmutable $date
-     * @return Measurement[]
-     */
-    private function measurementsForCheckAndDay(Check $check, \DateTimeImmutable $date): array
-    {
-        $statusCodes = [
-            200, 200, 301, 200, 301, 404, 200, 200, 500, 200, 200, 200,
-            200, 200, 301, 200, 301, 404, 200, 200, 500, 200, 200
-        ];
-
-        $measurements = [];
-        foreach ($statusCodes as $i => $statusCode) {
-            $measurements[] = MeasurementDataBuilder::aMeasurement()
-                ->withCheck($check)
-                ->withDate($date->setTime($i, 0, 0))
-                ->withResult(
-                    MeasurementResultDataBuilder::aMeasurementResult()
-                        ->withStatus(MeasurementStatusDataBuilder::aMeasurementStatus()->withCode($statusCode)->build())
-                        ->build()
-                )->build();
-        }
-
-        return $measurements;
+        $this->assertEquals(
+            0.95,
+            $factory->create($check, $dateRange)->performance()->percentile()->percent()->decimal(),
+            'It should return the default percentile percent'
+        );
     }
 }

@@ -101,6 +101,7 @@ final class Performance
 
     /**
      * @return Percentile
+     * @deprecated
      */
     public function responseTimePercentile(): Percentile
     {

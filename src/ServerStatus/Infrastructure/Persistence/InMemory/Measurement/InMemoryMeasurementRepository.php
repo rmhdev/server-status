@@ -16,8 +16,15 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementDoesNotExistException;
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
+use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatus;
+use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
+use ServerStatus\ServerStatus\Domain\Model\Measurement\Percentile\PercentileCalculator;
 
 class InMemoryMeasurementRepository implements MeasurementRepository
 {
@@ -166,5 +173,63 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     public function countAll(): int
     {
         return sizeof($this->measurements);
+    }
+
+    public function findPercentile(Check $check, DateRange $dateRange, Percent $percent): Percentile
+    {
+        $times = [];
+        $byStatus = [];
+        foreach ($this->filterByDateRange($check, $dateRange) as $measurement) {
+            $times[] = $measurement->result()->duration()->value();
+            $statusCode = $measurement->result()->status()->code();
+            if (!array_key_exists($statusCode, $byStatus)) {
+                $byStatus[$statusCode] = [
+                    "status" => $measurement->result()->status(),
+                    "duration" => 0,
+                    "count" => 0
+                ];
+            }
+            $byStatus[$statusCode]["duration"] += $measurement->result()->duration()->value();
+            $byStatus[$statusCode]["count"] += 1;
+        }
+        $performanceStatuses = [];
+        foreach ($byStatus as $statusCode => $value) {
+            $performanceStatuses[] = new PerformanceStatus(
+                $value["status"],
+                new MeasurementDuration($byStatus[$statusCode]["duration"] / $byStatus[$statusCode]["count"]),
+                $byStatus[$statusCode]["count"]
+            );
+        }
+        $percentileCalculator = new PercentileCalculator($times);
+
+        return $percentileCalculator->percentile($percent);
+    }
+
+    public function calculatePerformanceStatus(Check $check, DateRange $dateRange): PerformanceStatusCollection
+    {
+        $values = [];
+        foreach ($this->filterByDateRange($check, $dateRange) as $measurement) {
+            $code = $measurement->result()->status()->code();
+            if (!array_key_exists($code, $values)) {
+                $values[$code] = [
+                    "status" => $code,
+                    "count" => 0,
+                    "duration" => 0,
+                ];
+            }
+            $values[$code]["count"] += 1;
+            $values[$code]["duration"] += $measurement->result()->duration()->value();
+        }
+        $performanceStatuses = [];
+        foreach ($values as $code => $value) {
+            $avgDuration = $values[$code]["duration"] / $values[$code]["count"];
+            $performanceStatuses[] = new PerformanceStatus(
+                new MeasurementStatus($code),
+                new MeasurementDuration($avgDuration),
+                $values[$code]["count"]
+            );
+        }
+
+        return new PerformanceStatusCollection($performanceStatuses);
     }
 }

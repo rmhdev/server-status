@@ -33,8 +33,11 @@ final class PercentileDataBuilder
         $this->value = 0;
     }
 
-    public function withPercent(Percent $percent): PercentileDataBuilder
+    public function withPercent($percent): PercentileDataBuilder
     {
+        if (is_numeric($percent)) {
+            $percent = PercentDataBuilder::aPercent()->withValue($percent)->build();
+        }
         $this->percent = $percent;
 
         return $this;
