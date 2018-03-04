@@ -25,7 +25,7 @@ class Customer
     /**
      * @var CustomerEmail
      */
-    private $email;
+    protected $email;
 
     /**
      * @var CustomerAlias

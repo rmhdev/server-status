@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Domain\Model\Measurement;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use ServerStatus\Domain\Model\Check\Check;
@@ -121,7 +120,8 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
             ->where("a.check = :check")
             ->andWhere("a.dateCreated >= :from")
             ->andWhere("a.dateCreated < :to")
-            ->orderBy("a.dateCreated", "ASC") // TODO: it should be ordered by duration!!!
+            ->orderBy("a.result.duration.time", "ASC")
+                
             ->setFirstResult($percentileIndex)
             ->setMaxResults(1)
             ->setParameters([
@@ -161,13 +161,10 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
     {
         $qb = $this->createQueryBuilder("a");
         $qb
-            ->select("a")
-            //->select($qb->expr()->count("a.id"))
-            //->addSelect("a.result.duration as duration")
-            //->addSelect("a.result.status as status")
-            //->groupBy("duration")
-            //->addGroupBy("status")
-
+            ->select($qb->expr()->count("a.id") . " as total")
+            ->addSelect($qb->expr()->avg("a.result.duration.time") . " as duration_time")
+            ->addSelect("a.result.status.code as status_code")
+            ->groupBy("status_code")
             ->where("a.check = :check")
             ->andWhere("a.dateCreated >= :from")
             ->andWhere("a.dateCreated < :to")
@@ -177,31 +174,13 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
                 'to' => $dateRange->to(),
             ])
         ;
-
-        $values = [];
-        $durations = [];
         $measurements = $qb->getQuery()->setHydrationMode(Query::HYDRATE_ARRAY)->execute();
-        foreach ($measurements as $measurement) {
-            $code = $measurement["result.status.code"];
-            if (!array_key_exists($code, $values)) {
-                $values[$code] = [
-                    "status" => $code,
-                    "count" => 0,
-                    "duration" => 0,
-                ];
-            }
-            $values[$code]["count"] += 1;
-            $values[$code]["duration"] += $measurement["result.duration.time"];
-
-            $durations[] = $measurement["result.duration.time"];
-        }
         $performanceStatuses = [];
-        foreach ($values as $code => $value) {
-            $avgDuration = $values[$code]["duration"] / $values[$code]["count"];
+        foreach ($measurements as $measurementValue) {
             $performanceStatuses[] = new PerformanceStatus(
-                new MeasurementStatus($code),
-                new MeasurementDuration($avgDuration),
-                $values[$code]["count"]
+                new MeasurementStatus((int) $measurementValue["status_code"]),
+                new MeasurementDuration((float) $measurementValue["duration_time"]),
+                (int) $measurementValue["total"]
             );
         }
 

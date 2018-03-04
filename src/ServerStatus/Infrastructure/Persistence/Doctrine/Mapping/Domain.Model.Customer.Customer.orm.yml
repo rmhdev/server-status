@@ -16,3 +16,15 @@ ServerStatus\Domain\Model\Customer\Customer:
   constraints:
     - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
         fields: [id]
+  oneToMany:
+      checks: # one customer has many checks
+          #orderBy: { 'dates.start': 'DESC' }
+          orphanRemoval: true
+          mappedBy: customer
+          cascade: ["all"]
+          targetEntity: ServerStatus\Domain\Model\Check\Check
+          joinColumn:
+              name: check_id
+              referencedColumnName: id
+              nullable: false
+              type: CheckId

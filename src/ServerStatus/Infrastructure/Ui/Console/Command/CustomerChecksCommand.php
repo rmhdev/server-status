@@ -27,7 +27,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class CustomerChecksCommand extends AbstractCommand
 {
@@ -104,8 +103,12 @@ class CustomerChecksCommand extends AbstractCommand
 
         $percentile = $performanceReport->performance()->percentile();
         $output->writeln(sprintf(
-            '  uptime: %s, mean response time: %s, %s percentile: %s',
+            '  uptime: %s, measurements: %s',
             $performanceReport->performance()->uptimePercent(),
+            $performanceReport->performance()->totalMeasurements()
+        ));
+        $output->writeln(sprintf(
+            '  Response times > mean: %s, %s percentile: %s',
             $performanceReport->performance()->responseTimeMean()->formatted(),
             $percentile->percent(),
             (new MeasurementDuration($percentile->value()))->formatted()
@@ -113,8 +116,9 @@ class CustomerChecksCommand extends AbstractCommand
 
         foreach ($performanceReport->performance()->performanceStatusCollection() as $performanceStatus) {
             $output->writeln(sprintf(
-                '  status %s: %s',
+                '  status %s x [%4s]: %s',
                 $this->formatStatusCode($performanceStatus->status()),
+                $performanceStatus->count(),
                 $performanceStatus->durationAverage()->formatted()
             ));
         }

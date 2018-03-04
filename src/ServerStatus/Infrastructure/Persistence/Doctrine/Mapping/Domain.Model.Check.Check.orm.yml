@@ -26,3 +26,15 @@ ServerStatus\Domain\Model\Check\Check:
                 referencedColumnName: id
                 nullable: false
                 type: CustomerId
+    oneToMany:
+        measurements: # one check has many measurements
+            #orderBy: { 'dates.start': 'DESC' }
+            orphanRemoval: true
+            mappedBy: check
+            cascade: ["all"]
+            targetEntity: ServerStatus\Domain\Model\Measurement\Measurement
+            joinColumn:
+                name: measurement_id
+                referencedColumnName: id
+                nullable: false
+                type: MeasurementId
