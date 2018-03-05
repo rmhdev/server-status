@@ -17,7 +17,7 @@ use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 
-class MeasureDaySummaryTest extends TestCase
+class MeasureSummaryTest extends TestCase
 {
     /**
      * @test
