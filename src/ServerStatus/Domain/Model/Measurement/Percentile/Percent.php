@@ -50,7 +50,7 @@ final class Percent
 
     public function __toString(): string
     {
-        return sprintf("%s%%", round($this->percentage(), 2));
+        return sprintf("%s%%", round($this->percentage(), 4));
     }
 
     public static function createFromDecimalFraction(float $value): Percent

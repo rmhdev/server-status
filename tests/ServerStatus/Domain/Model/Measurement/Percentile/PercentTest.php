@@ -62,8 +62,8 @@ class PercentTest extends TestCase
      */
     public function itShouldReturnFormattedValueWhenCastedToString()
     {
-        $this->assertEquals("25.11%", (string) PercentDataBuilder::aPercent()->withValue(0.2511499)->build());
-        $this->assertEquals("25.12%", (string) PercentDataBuilder::aPercent()->withValue(0.2511500)->build());
+        $this->assertEquals("25.1111%", (string) PercentDataBuilder::aPercent()->withValue(0.25111149)->build());
+        $this->assertEquals("25.1112%", (string) PercentDataBuilder::aPercent()->withValue(0.25111150)->build());
     }
 
     /**
