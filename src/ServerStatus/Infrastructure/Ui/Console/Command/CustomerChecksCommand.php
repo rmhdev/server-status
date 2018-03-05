@@ -108,9 +108,9 @@ class CustomerChecksCommand extends AbstractCommand
             $performanceReport->performance()->totalMeasurements()
         ));
         $output->writeln(sprintf(
-            '  Response times > mean: %s, %s percentile: %s',
-            $performanceReport->performance()->responseTimeMean()->formatted(),
+            '  Response times (mean; %s percentile): %s; %s',
             $percentile->percent(),
+            $performanceReport->performance()->responseTimeMean()->formatted(),
             (new MeasurementDuration($percentile->value()))->formatted()
         ));
 

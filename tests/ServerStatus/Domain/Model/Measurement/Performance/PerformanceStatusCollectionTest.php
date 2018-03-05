@@ -209,4 +209,35 @@ class PerformanceStatusCollectionTest extends TestCase
             )->count()
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldCountTheTotalNumberOfMeasurements()
+    {
+        $collection = $this->createCollection([
+            PerformanceStatusDataBuilder::aPerformanceStatus()
+                ->withStatus(100)
+                ->withDurationAverage(100)
+                ->withCount(5)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()
+                ->withStatus(200)
+                ->withDurationAverage(100)
+                ->withCount(15)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()
+                ->withStatus(300)
+                ->withDurationAverage(100)
+                ->withCount(7)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()
+                ->withStatus(404)
+                ->withDurationAverage(100)
+                ->withCount(3)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()
+                ->withStatus(500)
+                ->withDurationAverage(100)
+                ->withCount(2)->build()
+        ]);
+
+        $this->assertEquals(32, $collection->totalMeasurements());
+    }
 }

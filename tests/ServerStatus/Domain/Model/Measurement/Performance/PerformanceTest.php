@@ -61,7 +61,7 @@ class PerformanceTest extends TestCase
     /**
      * @test
      */
-    public function itShouldSumTheTotalNumberOfMeasurements()
+    public function itShouldSumTheNumberOfMeasurements()
     {
         $performanceStatuses = [
             PerformanceStatusDataBuilder::aPerformanceStatus()->withStatus(
@@ -82,5 +82,6 @@ class PerformanceTest extends TestCase
             ->build();
 
         $this->assertEquals(17, $performance->totalMeasurements());
+        $this->assertEquals(15, $performance->correctMeasurements());
     }
 }

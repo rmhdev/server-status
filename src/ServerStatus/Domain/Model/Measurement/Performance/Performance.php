@@ -84,7 +84,7 @@ final class Performance
         if (is_null($this->successfulMeasurements)) {
             $this->successfulMeasurements = $this->performanceStatusCollection()->filterByClassResponse(
                 MeasurementStatus::correctClassResponses()
-            )->count();
+            )->totalMeasurements();
         }
         return $this->successfulMeasurements;
     }

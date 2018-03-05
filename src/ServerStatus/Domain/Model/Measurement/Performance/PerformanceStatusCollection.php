@@ -22,6 +22,11 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
      */
     private $performanceStatuses;
 
+    /**
+     * @internal cache the calculation of measurements.
+     */
+    private $totalMeasurements;
+
 
     public function __construct($performanceStatuses = [])
     {
@@ -97,9 +102,9 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
 
     /**
      * @param int|int[] $classResponses
-     * @return \ArrayIterator
+     * @return PerformanceStatusCollection
      */
-    public function filterByClassResponse($classResponses): \ArrayIterator
+    public function filterByClassResponse($classResponses): PerformanceStatusCollection
     {
         if (!is_array($classResponses)) {
             $classResponses = [$classResponses];
@@ -111,6 +116,19 @@ final class PerformanceStatusCollection implements \Countable, \IteratorAggregat
             }
         }
 
-        return new \ArrayIterator($filtered);
+        return new PerformanceStatusCollection($filtered);
+    }
+
+    public function totalMeasurements(): int
+    {
+        if (is_null($this->totalMeasurements)) {
+            $this->totalMeasurements = array_sum(
+                array_map(function (PerformanceStatus $status) {
+                    return $status->count();
+                }, $this->performanceStatuses)
+            );
+        }
+
+        return $this->totalMeasurements;
     }
 }
