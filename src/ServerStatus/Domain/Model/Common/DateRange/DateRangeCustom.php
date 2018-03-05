@@ -21,7 +21,7 @@ final class DateRangeCustom extends DateRangeAbstract implements DateRange
     public function __construct(\DateTimeInterface $from, \DateTimeInterface $to)
     {
         $this->assertDatesHaveSameTimezone($from, $to);
-        $this->assertToIsGreaterEqualThanFrom($from, $to);
+        $this->assertDatesDiff($from, $to);
         $this->to = $this->createImmutableCopy($to);
         parent::__construct($from);
     }
@@ -37,9 +37,9 @@ final class DateRangeCustom extends DateRangeAbstract implements DateRange
         }
     }
 
-    private function assertToIsGreaterEqualThanFrom(\DateTimeInterface $from, \DateTimeInterface $to)
+    private function assertDatesDiff(\DateTimeInterface $from, \DateTimeInterface $to)
     {
-        if ($from > $to) {
+        if ($from >= $to) {
             throw new \UnexpectedValueException(sprintf(
                 'date "from" ("%s") is greater than "to" ("%s")',
                 $from->format(DATE_ISO8601),

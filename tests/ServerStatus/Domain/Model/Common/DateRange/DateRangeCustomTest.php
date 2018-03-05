@@ -148,6 +148,17 @@ class DateRangeCustomTest extends DateRangeTestCase implements DateRangeInterfac
      * @test
      * @expectedException \UnexpectedValueException
      */
+    public function itShouldThrowExceptionIfDatesAreEqual()
+    {
+        $from = new \DateTimeImmutable("2018-02-18T12:00:00+0200");
+
+        new DateRangeCustom($from, $from);
+    }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
     public function itShouldThrowExceptionIfDatesHaveDifferentTimezones()
     {
         new DateRangeCustom(
