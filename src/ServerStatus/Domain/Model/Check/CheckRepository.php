@@ -47,6 +47,13 @@ interface CheckRepository
     public function byCustomer(CustomerId $id): CheckCollection;
 
     /**
+     * @param CustomerId $id
+     * @param CheckName $slug
+     * @return null|Check
+     */
+    public function byCustomerAndSlug(CustomerId $id, CheckName $slug): ?Check;
+
+    /**
      * @return CheckCollection
      */
     public function enabled(): CheckCollection;

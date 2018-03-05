@@ -15,6 +15,7 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\Check;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckId;
+use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Check\CheckCollection;
@@ -95,6 +96,21 @@ class InMemoryCheckRepository implements CheckRepository
                 return $check->customer()->id()->equals($id);
             })
         );
+    }
+
+    public function byCustomerAndSlug(CustomerId $id, CheckName $slug): ?Check
+    {
+        $checks = $this->checks();
+        $collection = new CheckCollection(
+            array_filter($checks, function (Check $check) use ($id, $slug) {
+                return $check->customer()->id()->equals($id) && $check->name()->slug() == $slug->slug();
+            })
+        );
+        if (1 != $collection->count()) {
+            return null;
+        }
+
+        return $collection->getIterator()->current();
     }
 
     /**

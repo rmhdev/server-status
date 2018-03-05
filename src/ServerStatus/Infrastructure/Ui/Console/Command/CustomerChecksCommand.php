@@ -102,7 +102,8 @@ class CustomerChecksCommand extends AbstractCommand
 
     private function showCheck(Check $check, DateRange $dateRange, OutputInterface $output)
     {
-        $output->writeln((string) $check->url());
+        $output->writeln(sprintf('%s (%s): "%s"', $check->name(), $check->name()->slug(), $check->url()));
+
         $factory = new PerformanceReportFactory($this->measurementRepository);
         $performanceReport = $factory->create($check, $dateRange);
 

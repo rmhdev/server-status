@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityRepository;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\Domain\Model\Check\CheckId;
+use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 
@@ -75,6 +76,18 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
                 ->getQuery()
                 ->execute()
         );
+    }
+
+    public function byCustomerAndSlug(CustomerId $id, CheckName $slug): ?Check
+    {
+        return $this->createQueryBuilder("a")
+            ->leftJoin("a.customer", "customer")
+            ->where("customer.id = :id")
+            ->andWhere("a.name.slug = :slug")
+            ->setParameter("id", $id)
+            ->setParameter("slug", $slug->slug())
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

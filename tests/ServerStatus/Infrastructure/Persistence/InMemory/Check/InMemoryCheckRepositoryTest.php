@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckNameDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
@@ -147,5 +148,23 @@ class InMemoryCheckRepositoryTest extends TestCase
         ;
 
         $this->assertEquals(3, $repository->enabled()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnEmptyByCustomerAndSlugWhenCheckIsNotRelatedToCustomer()
+    {
+        $customer = CustomerDataBuilder::aCustomer()->build();
+        $repository = $this->createEmptyRepository();
+        $repository
+            ->add(CheckDataBuilder::aCheck()->withName("check-one")->withCustomer($customer)->build())
+            ->add(CheckDataBuilder::aCheck()->withName("check-two")->build())
+        ;
+
+        $this->assertNull($repository->byCustomerAndSlug(
+            $customer->id(),
+            CheckNameDataBuilder::aCheckName()->withName("check-two")->withSlug("check-two")->build()
+        ));
     }
 }
