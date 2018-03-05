@@ -45,4 +45,14 @@ final class DateRangeFactory
 
         throw new \UnexpectedValueException(sprintf('DateRange name "" is unknown', $name));
     }
+
+    /**
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     * @return DateRangeCustom
+     */
+    public static function createCustom(\DateTimeInterface $from, \DateTimeInterface $to): DateRange
+    {
+        return new DateRangeCustom($from, $to);
+    }
 }
