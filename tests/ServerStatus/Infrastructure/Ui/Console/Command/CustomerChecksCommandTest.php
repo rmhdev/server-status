@@ -168,23 +168,4 @@ class CustomerChecksCommandTest extends KernelTestCase
             $this->measurementRepository
         );
     }
-
-    /**
-     * @test
-     */
-    public function itShouldShowDataForEachAndEveryStatusCode()
-    {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
-        $application->add($this->findCommand());
-        $command = $application->find('server-status:checks');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command'  => $command->getName(),
-            'email'    => self::DEFAULT_CUSTOMER_EMAIL
-        ]);
-        $output = $commandTester->getDisplay();
-
-        $this->assertContains("status 200:", $output);
-    }
 }
