@@ -40,7 +40,7 @@ class PerformanceStatusDataBuilder
     {
         $this->status = MeasurementStatusDataBuilder::aMeasurementStatus()->build();
         $this->durationAverage = MeasurementDurationDataBuilder::aMeasurementDuration()->build();
-        $this->count = 0;
+        $this->count = 1;
     }
 
     public function withStatus($status): PerformanceStatusDataBuilder

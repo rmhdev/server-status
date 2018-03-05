@@ -65,8 +65,17 @@ final class Performance
     public function totalMeasurements(): int
     {
         if (is_null($this->totalMeasurements)) {
-            $this->totalMeasurements = $this->performanceStatusCollection()->count();
+            // TODO: calculate correct number of measurements.
+            $this->totalMeasurements = array_sum(
+                array_map(
+                    function (PerformanceStatus $status) {
+                        return $status->count();
+                    },
+                    $this->performanceStatusCollection()->getIterator()->getArrayCopy()
+                )
+            );
         }
+
         return $this->totalMeasurements;
     }
 

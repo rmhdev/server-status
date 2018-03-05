@@ -57,4 +57,30 @@ class PerformanceTest extends TestCase
             PerformanceDataBuilder::aPerformance()->build()->responseTimeMean()
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldSumTheTotalNumberOfMeasurements()
+    {
+        $performanceStatuses = [
+            PerformanceStatusDataBuilder::aPerformanceStatus()->withStatus(
+                MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(200)->build()
+            )->withCount(10)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()->withStatus(
+                MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(300)->build()
+            )->withCount(5)->build(),
+            PerformanceStatusDataBuilder::aPerformanceStatus()->withStatus(
+                MeasurementStatusDataBuilder::aMeasurementStatus()->withCode(404)->build()
+            )->withCount(2)->build(),
+        ];
+        $collection = PerformanceStatusCollectionDataBuilder::aPerformanceStatusCollection()
+            ->withValues($performanceStatuses)
+            ->build();
+        $performance = PerformanceDataBuilder::aPerformance()
+            ->withPerformanceStatusCollection($collection)
+            ->build();
+
+        $this->assertEquals(17, $performance->totalMeasurements());
+    }
 }
