@@ -17,7 +17,7 @@ use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
-use ServerStatus\Domain\Model\Customer\CustomerId;
+use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -77,7 +77,7 @@ class CustomerChecksCommand extends AbstractCommand
         $date = $input->getOption('date');
         $type = $input->getOption('type');
         $dateRange = DateRangeFactory::create($type, new \DateTimeImmutable($date));
-        $customer = $this->customerRepository->ofId(new CustomerId($email));
+        $customer = $this->customerRepository->ofEmail(new CustomerEmail($email));
 
         $output->writeln(sprintf('Customer: %s', $customer ? '<info>found</info>' : '<error>not found</error>'));
         if (!$customer) {
