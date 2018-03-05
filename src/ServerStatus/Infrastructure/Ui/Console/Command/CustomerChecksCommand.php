@@ -79,14 +79,19 @@ class CustomerChecksCommand extends AbstractCommand
         $dateRange = DateRangeFactory::create($type, new \DateTimeImmutable($date));
         $customer = $this->customerRepository->ofEmail(new CustomerEmail($email));
 
-        $output->writeln(sprintf('Customer: %s', $customer ? '<info>found</info>' : '<error>not found</error>'));
+        $output->writeln(sprintf(
+            'Customer: %s',
+            $customer ?
+            sprintf('<info>found</info> (%s)', $customer->email()) :
+            '<error>not found</error>'
+        ));
         if (!$customer) {
             return;
         }
 
         $checks = $this->checkRepository->byCustomer($customer->id());
-        $output->writeln(sprintf('Checks: %d', $checks->count()));
         $output->writeln(sprintf('Date range: %s (%s)', $dateRange->name(), $dateRange->formatted()));
+        $output->writeln(sprintf('Checks: %d', $checks->count()));
 
         foreach ($checks as $check) {
             $this->showCheck($check, $dateRange, $output);

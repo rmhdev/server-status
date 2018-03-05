@@ -43,7 +43,7 @@ final class DateRangeFactory
             }
         }
 
-        throw new \UnexpectedValueException(sprintf('DateRange name "" is unknown', $name));
+        throw new \UnexpectedValueException(sprintf('DateRange name "%s" is unknown', $name));
     }
 
     /**

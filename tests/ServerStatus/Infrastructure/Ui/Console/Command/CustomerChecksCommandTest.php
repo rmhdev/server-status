@@ -168,4 +168,23 @@ class CustomerChecksCommandTest extends KernelTestCase
             $this->measurementRepository
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnMessageWhenCustomerIsNotFound()
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $application->add($this->findCommand());
+        $command = $application->find('server-status:checks');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command'  => $command->getName(),
+            'email'    => "unknown@example.com"
+        ]);
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains("Customer: not found", $output);
+    }
 }
