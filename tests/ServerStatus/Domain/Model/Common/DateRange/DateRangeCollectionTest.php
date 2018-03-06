@@ -107,4 +107,16 @@ class DateRangeCollectionTest extends TestCase
             $this->assertTrue(true, 'Iterator has not an append method');
         }
     }
+
+    /**
+     * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionIfDifferentDateRangeTypesAreAdded()
+    {
+        $this->createCollection([
+            DateRangeFactory::create(DateRangeDay::NAME, new \DateTime("2018-02-19T12:00:00+0200")),
+            DateRangeFactory::create(DateRangeWeek::NAME, new \DateTime("2018-02-19T12:00:00+0200")),
+        ]);
+    }
 }

@@ -30,8 +30,11 @@ final class DateRangeCollection implements \Countable, \IteratorAggregate
             $dateRanges = [$dateRanges];
         }
         $values = [];
+        $previous = null;
         foreach ($dateRanges as $dateRange) {
             $this->assertDateRange($dateRange);
+            $this->assertSameDateRangeClass($dateRange, $previous);
+            $previous = $dateRange;
             $values[] = $dateRange;
         }
 
@@ -51,6 +54,16 @@ final class DateRangeCollection implements \Countable, \IteratorAggregate
                 'Collection only accepts "DateRange" objects, "%s" received',
                 get_class($dateRange)
             ));
+        }
+    }
+
+    private function assertSameDateRangeClass(DateRange $actual, DateRange $previous = null)
+    {
+        if (is_null($previous)) {
+            return;
+        }
+        if (get_class($actual) != get_class($previous)) {
+            throw new \UnexpectedValueException('');
         }
     }
 
