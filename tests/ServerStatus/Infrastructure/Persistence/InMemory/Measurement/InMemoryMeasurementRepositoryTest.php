@@ -186,7 +186,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
         $check = CheckDataBuilder::aCheck()->build();
 
         // same hour measurements
-        foreach (range(0, 9, 1) as $minute) {
+        foreach (range(0, 14, 1) as $minute) {
             $repository->add(
                 MeasurementDataBuilder::aMeasurement()
                     ->withCheck($check)
@@ -198,12 +198,12 @@ class InMemoryMeasurementRepositoryTest extends TestCase
             $check,
             new DateRangeCustom(
                 new \DateTime("2018-02-03T00:00:00+0200"),
-                new \DateTime("2018-02-03T00:04:59+0200")
+                new \DateTime("2018-02-03T00:14:59+0200")
             )
         );
-        $this->assertEquals(5, sizeof($differentMinuteSummaries), "Summary for different minutes");
+        $this->assertEquals(2, sizeof($differentMinuteSummaries));
         $this->assertEquals("2018-02-03 00:00:00", $differentMinuteSummaries[0]['date']);
-        $this->assertEquals("2018-02-03 00:04:00", $differentMinuteSummaries[4]['date']);
+        $this->assertEquals("2018-02-03 00:10:00", $differentMinuteSummaries[1]['date']);
     }
 
     /**

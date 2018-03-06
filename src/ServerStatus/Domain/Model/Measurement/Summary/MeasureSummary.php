@@ -129,7 +129,8 @@ class MeasureSummary
         $date = $this->dateRange()->from();
         while ($date < $max) {
             $dates[] = $date;
-            $date = $date->modify(sprintf("+%d minutes", $this->groupedByMinutes()));
+            //$date = $date->modify(sprintf("+%d minutes", $this->groupedByMinutes()));
+            $date = $date->add($this->dateRange->interval());
         }
 
         return $dates;

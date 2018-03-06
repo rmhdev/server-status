@@ -14,6 +14,7 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementDoesNotExistException;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
@@ -108,7 +109,6 @@ class InMemoryMeasurementRepository implements MeasurementRepository
      */
     public function summaryValues(Check $check, DateRange $dateRange)
     {
-
         return $this->createSummaryBy($check, $dateRange, "Y-m-d H:i:00");
     }
 
@@ -118,12 +118,13 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         $groupByDateFormat = "Y-m-d H:00:00"
     ): array {
         $rawData = [];
+
         foreach ($this->filterByDateRange($check, $dateRange) as $measurement) {
-            //$groupBy = $measurement->dateCreated()->format($groupByDateFormat);
             $groupBy = $this->createBaseDateFromInterval(
-                $measurement->dateCreated(),
-                $dateRange->interval()
+                $dateRange,
+                $measurement->dateCreated()
             )->format("Y-m-d H:i:s");
+
             if (!array_key_exists($groupBy, $rawData)) {
                 $rawData[$groupBy] = [
                     "date" => $measurement->dateCreated()->format($groupByDateFormat),
@@ -146,23 +147,26 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         return $data;
     }
 
-    private function createBaseDateFromInterval(\DateTimeInterface $date, \DateInterval $interval): \DateTimeImmutable
+    /**
+     * TODO: This method should be optimized.
+     *
+     * @param DateRange $dateRange
+     * @param \DateTimeInterface $date
+     * @return \DateTimeImmutable
+     */
+    private function createBaseDateFromInterval(DateRange $dateRange, \DateTimeInterface $date): \DateTimeImmutable
     {
-        $dateTime = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $date->format(DATE_ISO8601));
-        if ($interval->d) {
-            return $dateTime->setTime(0, 0, 0);
-        }
-        if ($interval->h) {
-            $hour = (int) $dateTime->format("H") % $interval->h;
-            return $dateTime->setTime($hour, 0, 0);
-        }
-        if ($interval->s) {
-            $minute = ((int) $dateTime->format("m")) % round($interval->s / 60, 0);
-            return $dateTime->setTime((int) $dateTime->format("H"), $minute, 0);
+        $max = $dateRange->to();
+        $dateTime = $dateRange->from();
+        while ($dateTime < $max) {
+            $range = DateRangeFactory::createCustom($dateTime, $dateTime->add($dateRange->interval()));
+            if ($range->isInBounds($date)) {
+                return $dateTime;
+            }
+            $dateTime = $dateTime->add($dateRange->interval());
         }
 
         throw new \UnexpectedValueException("Cannot convert from date interval");
-
     }
 
     /**
