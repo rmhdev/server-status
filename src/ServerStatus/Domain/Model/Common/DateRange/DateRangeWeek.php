@@ -35,4 +35,12 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
     {
         return sprintf("%s, week %d", $this->from()->format("o"), $this->from()->format("W"));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function interval(): \DateInterval
+    {
+        return new \DateInterval("PT1H");
+    }
 }

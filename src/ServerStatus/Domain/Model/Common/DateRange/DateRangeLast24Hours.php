@@ -57,4 +57,12 @@ final class DateRangeLast24Hours extends DateRangeAbstract implements DateRange
     {
         return new self($this->from()->modify("-1 day"));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function interval(): \DateInterval
+    {
+        return new \DateInterval("PT600S");
+    }
 }

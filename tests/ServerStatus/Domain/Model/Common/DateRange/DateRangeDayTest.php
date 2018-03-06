@@ -71,4 +71,12 @@ class DateRangeDayTest extends DateRangeTestCase implements DateRangeInterfaceTe
 
         $this->assertEquals('2018-02-19', (string) $dateRange);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("PT600S"); // 10 minutes
+    }
 }

@@ -37,5 +37,11 @@ interface DateRange
      */
     public function compareTo(DateRange $range): int;
 
+    /**
+     * Size of the interval for the given date range.
+     * @return \DateInterval
+     */
+    public function interval(): \DateInterval;
+
     public function __toString(): string;
 }

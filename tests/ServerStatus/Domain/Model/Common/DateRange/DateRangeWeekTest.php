@@ -71,4 +71,12 @@ class DateRangeWeekTest extends DateRangeTestCase implements DateRangeInterfaceT
 
         $this->assertEquals('2016, week 52', (string) $dateRange);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("PT1H"); // 1 hour
+    }
 }

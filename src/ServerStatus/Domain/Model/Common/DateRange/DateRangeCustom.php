@@ -94,4 +94,12 @@ final class DateRangeCustom extends DateRangeAbstract implements DateRange
     {
         return new self($this->from()->sub($this->diff()), $this->from());
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function interval(): \DateInterval
+    {
+        return new \DateInterval("PT600S");
+    }
 }

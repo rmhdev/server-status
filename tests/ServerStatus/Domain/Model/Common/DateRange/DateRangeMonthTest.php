@@ -71,4 +71,12 @@ class DateRangeMonthTest extends DateRangeTestCase implements DateRangeInterface
 
         $this->assertEquals('2018-02', (string) $dateRange);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("PT4H"); // 4 hours
+    }
 }

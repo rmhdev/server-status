@@ -35,4 +35,12 @@ final class DateRangeMonth extends DateRangeAbstract implements DateRange
     {
         return $this->from()->format("Y-m");
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function interval(): \DateInterval
+    {
+        return new \DateInterval("PT4H");
+    }
 }

@@ -71,4 +71,12 @@ class DateRangeYearTest extends DateRangeTestCase implements DateRangeInterfaceT
 
         $this->assertEquals('2018', (string) $dateRange);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("P1D"); // 1 day
+    }
 }

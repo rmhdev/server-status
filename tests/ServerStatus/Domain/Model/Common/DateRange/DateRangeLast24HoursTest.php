@@ -111,4 +111,12 @@ class DateRangeLast24HoursTest extends DateRangeTestCase implements DateRangeInt
             $dateRange->name() . ", " . $dateRange
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("PT600S"); // 10 minutes
+    }
 }

@@ -35,4 +35,12 @@ final class DateRangeDay extends DateRangeAbstract implements DateRange
     {
         return $this->from()->format("Y-m-d");
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function interval(): \DateInterval
+    {
+        return new \DateInterval("PT600S");
+    }
 }

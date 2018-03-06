@@ -166,4 +166,13 @@ class DateRangeCustomTest extends DateRangeTestCase implements DateRangeInterfac
             new \DateTimeImmutable("2018-02-20T16:00:00+0100")
         );
     }
+
+    /**
+     * interval: 10 minutes
+     * @inheritdoc
+     */
+    protected function expectedDateInterval(): \DateInterval
+    {
+        return new \DateInterval("PT600S");
+    }
 }
