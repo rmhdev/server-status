@@ -165,7 +165,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
                     ->build()
             );
         }
-        $sameMinuteSummaries = $repository->summaryByMinute(
+        $sameMinuteSummaries = $repository->summaryValues(
             $check,
             new DateRangeCustom(
                 new \DateTimeImmutable("2018-02-03T00:00:10+0200"),
@@ -180,7 +180,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnMeasurementSummaryDataGroupedByMinute()
+    public function itShouldReturnMeasurementSummaryDataGroupedByDateRangeInterval()
     {
         $repository = $this->createEmptyRepository();
         $check = CheckDataBuilder::aCheck()->build();
@@ -194,7 +194,7 @@ class InMemoryMeasurementRepositoryTest extends TestCase
                     ->build()
             );
         }
-        $differentMinuteSummaries = $repository->summaryByMinute(
+        $differentMinuteSummaries = $repository->summaryValues(
             $check,
             new DateRangeCustom(
                 new \DateTime("2018-02-03T00:00:00+0200"),
@@ -209,73 +209,31 @@ class InMemoryMeasurementRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnSummaryByHourUsingStrictlyTheDateRange()
+    public function itShouldReturnSummaryStrictlyTheDateRange()
     {
         $repository = $this->createEmptyRepository();
         $check = CheckDataBuilder::aCheck()->build();
 
         // same hour measurements
-        foreach (range(0, 5, 1) as $minute) {
+        foreach (range(0, 59, 1) as $minute) {
             $repository->add(
                 MeasurementDataBuilder::aMeasurement()
                     ->withCheck($check)
                     ->withDate(new \DateTime("2018-02-03T00:{$minute}:50+0200"))
-                    ->build()
+                    ->withResult(
+                        MeasurementResultDataBuilder::aMeasurementResult()->withDuration(100)->build()
+                    )->build()
             );
         }
-        $summaries = $repository->summaryByHour(
+        $summaries = $repository->summaryValues(
             $check,
-            new DateRangeCustom(
-                new \DateTimeImmutable("2018-02-03T00:00:51+0200"),
-                new \DateTimeImmutable("2018-02-03T00:01:50+0200")
-            )
-        );
-        $this->assertEquals(0, sizeof($summaries));
-
-        $summaries = $repository->summaryByHour(
-            $check,
-            new DateRangeCustom(
+            DateRangeFactory::createCustom(
                 new \DateTimeImmutable("2018-02-03T00:00:50+0200"),
-                new \DateTimeImmutable("2018-02-03T00:01:51+0200")
+                new \DateTimeImmutable("2018-02-03T00:10:50+0200")
             )
         );
         $this->assertEquals(1, sizeof($summaries));
-        $this->assertEquals(2, $summaries[0]["count"]);
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldReturnMeasurementSummaryDataGroupedByHour()
-    {
-        $repository = $this->createEmptyRepository();
-        $check = CheckDataBuilder::aCheck()->build();
-
-        // same hour measurements
-        foreach (range(0, 2, 1) as $hour) {
-            $repository->add(
-                MeasurementDataBuilder::aMeasurement()
-                    ->withCheck($check)
-                    ->withDate(new \DateTime("2018-02-03T{$hour}:00:00+0200"))
-                    ->build()
-            );
-            $repository->add(
-                MeasurementDataBuilder::aMeasurement()
-                    ->withCheck($check)
-                    ->withDate(new \DateTime("2018-02-03T{$hour}:30:00+0200"))
-                    ->build()
-            );
-        }
-        $summaries = $repository->summaryByHour(
-            $check,
-            new DateRangeCustom(
-                new \DateTime("2018-02-03T00:00:00+0200"),
-                new \DateTime("2018-02-03T02:30:00+0200")
-            )
-        );
-        $this->assertEquals(3, sizeof($summaries), "Summary for different minutes");
-        $this->assertEquals("2018-02-03 00:00:00", $summaries[0]['date']);
-        $this->assertEquals("2018-02-03 02:00:00", $summaries[2]['date']);
+        $this->assertEquals(10, $summaries[0]["count"]);
     }
 
     /**

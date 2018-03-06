@@ -49,14 +49,7 @@ interface MeasurementRepository
      * @param DateRange $dateRange
      * @return array
      */
-    public function summaryByMinute(Check $check, DateRange $dateRange);
-
-    /**
-     * @param Check $check
-     * @param DateRange $dateRange
-     * @return array
-     */
-    public function summaryByHour(Check $check, DateRange $dateRange);
+    public function summaryValues(Check $check, DateRange $dateRange);
 
     /**
      * @return int

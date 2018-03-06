@@ -38,7 +38,7 @@ class ViewMeasurementSummaryService
         }
         $measureSummary = new MeasureSummary(
             $request->check(),
-            $this->repository->summaryByMinute(
+            $this->repository->summaryValues(
                 $request->check(),
                 $request->dateRange()
             ),

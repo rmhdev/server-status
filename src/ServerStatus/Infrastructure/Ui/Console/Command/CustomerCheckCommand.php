@@ -22,6 +22,9 @@ use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
+use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
+use ServerStatus\Domain\Model\Measurement\Summary\SummaryAverage;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -72,7 +75,6 @@ class CustomerCheckCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->startWatch();
-
         $customer = $this->findCustomer($input, $output);
         if (!$customer) {
             return;
@@ -82,8 +84,10 @@ class CustomerCheckCommand extends AbstractCommand
             return;
         }
         $dateRange = $this->createDateRange($input, $output);
-
-
+        $measureSummary = $this->createSummary($check, $dateRange);
+        foreach ($measureSummary->averages() as $average) {
+            $this->printAverage($average, $output);
+        }
         $this->writeCompletedMessage($output, $this->stopWatch());
     }
 
@@ -124,5 +128,19 @@ class CustomerCheckCommand extends AbstractCommand
         $output->writeln(sprintf('Date range: %s (%s)', $dateRange->name(), $dateRange->formatted()));
 
         return $dateRange;
+    }
+
+    private function createSummary(Check $check, DateRange $dateRange): MeasureSummary
+    {
+        return MeasureSummaryFactory::create($check, $this->measurementRepository, $dateRange);
+    }
+
+    private function printAverage(SummaryAverage $average, OutputInterface $output)
+    {
+        $output->writeln(sprintf(
+            "  %s: %s",
+            $average->dateRange(),
+            $average->responseTime()
+        ));
     }
 }

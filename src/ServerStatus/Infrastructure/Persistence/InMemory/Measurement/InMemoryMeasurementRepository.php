@@ -106,8 +106,9 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     /**
      * @inheritdoc
      */
-    public function summaryByMinute(Check $check, DateRange $dateRange)
+    public function summaryValues(Check $check, DateRange $dateRange)
     {
+
         return $this->createSummaryBy($check, $dateRange, "Y-m-d H:i:00");
     }
 
@@ -118,7 +119,11 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     ): array {
         $rawData = [];
         foreach ($this->filterByDateRange($check, $dateRange) as $measurement) {
-            $groupBy = $measurement->dateCreated()->format($groupByDateFormat);
+            //$groupBy = $measurement->dateCreated()->format($groupByDateFormat);
+            $groupBy = $this->createBaseDateFromInterval(
+                $measurement->dateCreated(),
+                $dateRange->interval()
+            )->format("Y-m-d H:i:s");
             if (!array_key_exists($groupBy, $rawData)) {
                 $rawData[$groupBy] = [
                     "date" => $measurement->dateCreated()->format($groupByDateFormat),
@@ -127,8 +132,9 @@ class InMemoryMeasurementRepository implements MeasurementRepository
                 ];
             }
             $rawData[$groupBy]["count"] += 1;
-            $rawData[$groupBy]["sum"] += 0;
+            $rawData[$groupBy]["sum"] += $measurement->result()->duration()->value();
         }
+
         $data = [];
         foreach ($rawData as $raw) {
             $data[] = [
@@ -138,6 +144,25 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             ];
         }
         return $data;
+    }
+
+    private function createBaseDateFromInterval(\DateTimeInterface $date, \DateInterval $interval): \DateTimeImmutable
+    {
+        $dateTime = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $date->format(DATE_ISO8601));
+        if ($interval->d) {
+            return $dateTime->setTime(0, 0, 0);
+        }
+        if ($interval->h) {
+            $hour = (int) $dateTime->format("H") % $interval->h;
+            return $dateTime->setTime($hour, 0, 0);
+        }
+        if ($interval->s) {
+            $minute = ((int) $dateTime->format("m")) % round($interval->s / 60, 0);
+            return $dateTime->setTime((int) $dateTime->format("H"), $minute, 0);
+        }
+
+        throw new \UnexpectedValueException("Cannot convert from date interval");
+
     }
 
     /**
@@ -163,11 +188,6 @@ class InMemoryMeasurementRepository implements MeasurementRepository
     private function measurements()
     {
         return $this->measurements;
-    }
-
-    public function summaryByHour(Check $check, DateRange $dateRange)
-    {
-        return $this->createSummaryBy($check, $dateRange, "Y-m-d H:00:00");
     }
 
     public function countAll(): int

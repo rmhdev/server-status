@@ -84,12 +84,7 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
         return new MeasurementId();
     }
 
-    public function summaryByMinute(Check $check, DateRange $dateRange)
-    {
-        return [];
-    }
-
-    public function summaryByHour(Check $check, DateRange $dateRange)
+    public function summaryValues(Check $check, DateRange $dateRange)
     {
         return [];
     }
