@@ -14,7 +14,7 @@ namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 
 class MeasureSummary
 {
@@ -35,6 +35,7 @@ class MeasureSummary
      * @var DateRange
      */
     private $dateRange;
+
 
     public function __construct(Check $check, $values = [], DateRange $dateRange = null)
     {
@@ -84,40 +85,37 @@ class MeasureSummary
      */
     public function average(\DateTimeInterface $fromDate): SummaryAverage
     {
-        list($start, $end) = $this->startEndDates($fromDate);
+        $dateRange = $this->createDateRange($fromDate);
 
-        return new SummaryAverage(
-            new DateRangeCustom($start, $end),
-            $this->filterValues($start, $end)
-        );
+        return new SummaryAverage($dateRange, $this->filterValues($dateRange));
     }
 
     /**
      * Calculate the group start and end dates.
      *
      * @param \DateTimeInterface $fromDate
-     * @return \DateTimeImmutable[]
+     * @return DateRange
      */
-    protected function startEndDates(\DateTimeInterface $fromDate): array
+    protected function createDateRange(\DateTimeInterface $fromDate): DateRange
     {
         $date = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $fromDate->format(DATE_ISO8601));
         $formattedMinute = (int) $date->format("i");
         $formattedMinute -= $formattedMinute % self::GROUPED_BY_MINUTES;
         $start = $date->setTime((int) $date->format("H"), $formattedMinute, 0);
-        $end = $start->modify(sprintf("+%d minutes - 1 second", self::GROUPED_BY_MINUTES));
+        $end = $start->modify(sprintf("+%d minutes", self::GROUPED_BY_MINUTES));
 
-        return [$start, $end];
+        return DateRangeFactory::createCustom($start, $end);
     }
 
-    protected function filterValues(\DateTimeImmutable $from, \DateTimeImmutable $to): array
+    protected function filterValues(DateRange $dateRange): array
     {
-        return array_filter($this->values(), function ($value) use ($from, $to) {
+        return array_filter($this->values(), function ($value) use ($dateRange) {
             if (!array_key_exists("date", $value)) {
                 return false;
             }
             $date = new \DateTimeImmutable($value["date"]);
 
-            return $date >= $from && $date <= $to;
+            return $dateRange->isInBounds($date);
         });
     }
 
