@@ -79,4 +79,14 @@ class DateRangeYearTest extends DateRangeTestCase implements DateRangeInterfaceT
     {
         return new \DateInterval("P1D"); // 1 day
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADateRageCollection()
+    {
+        $collection = $this->createDateRange(new \DateTime("2018-01-19T12:00:00+0200"));
+
+        $this->assertEquals(365, $collection->dateRanges()->count());
+    }
 }

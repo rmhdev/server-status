@@ -43,4 +43,9 @@ final class DateRangeYear extends DateRangeAbstract implements DateRange
     {
         return new \DateInterval("P1D");
     }
+
+    protected function createDateRange(\DateTimeImmutable $date): DateRange
+    {
+        return new DateRangeDay($date);
+    }
 }

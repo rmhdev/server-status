@@ -79,4 +79,14 @@ class DateRangeDayTest extends DateRangeTestCase implements DateRangeInterfaceTe
     {
         return new \DateInterval("PT600S"); // 10 minutes
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADateRageCollection()
+    {
+        $collection = $this->createDateRange(new \DateTime("2018-02-19T12:00:00+0200"));
+
+        $this->assertEquals(24 * (60 / 10), $collection->dateRanges()->count());
+    }
 }

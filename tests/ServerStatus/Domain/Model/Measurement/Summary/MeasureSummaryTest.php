@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
@@ -31,7 +32,11 @@ class MeasureSummaryTest extends TestCase
 
     private function createSummary(\DateTimeInterface $dateTime, $values = []): MeasureSummary
     {
-        return new MeasureSummary(CheckDataBuilder::aCheck()->build(), $values, new DateRangeDay($dateTime));
+        return new MeasureSummary(
+            CheckDataBuilder::aCheck()->build(),
+            $values,
+            new DateRangeDay($dateTime)
+        );
     }
 
     /**
@@ -86,7 +91,12 @@ class MeasureSummaryTest extends TestCase
             ],
         ];
         $summary = $this->createSummary(new \DateTime("2018-02-03T15:24:10+0200"), $rawValues);
-        $average = $summary->average(new \DateTime("2018-02-03T15:23:00+0200"));
+        $average = $summary->average(
+            new DateRangeCustom(
+                new \DateTime("2018-02-03T15:20:00+0200"),
+                new \DateTime("2018-02-03T15:29:00+0200")
+            )
+        );
 
         $this->assertEquals(1.000250, $average->responseTime());
     }

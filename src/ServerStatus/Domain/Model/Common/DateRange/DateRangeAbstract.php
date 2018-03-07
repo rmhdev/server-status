@@ -76,4 +76,22 @@ abstract class DateRangeAbstract implements DateRange
 
         return 0;
     }
+
+    public function dateRanges(): DateRangeCollection
+    {
+        $list = [];
+        $date = $this->from();
+        $max = $this->to();
+        while ($date < $max) {
+            $list[] = $this->createDateRange($date);
+            $date = $date->add($this->interval());
+        }
+
+        return new DateRangeCollection($list);
+    }
+
+    protected function createDateRange(\DateTimeImmutable $date): DateRange
+    {
+        return new DateRangeCustom($date, $date->add($this->interval()));
+    }
 }

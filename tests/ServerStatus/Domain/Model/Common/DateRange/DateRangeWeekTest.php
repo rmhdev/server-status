@@ -79,4 +79,14 @@ class DateRangeWeekTest extends DateRangeTestCase implements DateRangeInterfaceT
     {
         return new \DateInterval("PT1H"); // 1 hour
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADateRageCollection()
+    {
+        $collection = $this->createDateRange(new \DateTime("2018-01-19T12:00:00+0200"));
+
+        $this->assertEquals(7 * (24), $collection->dateRanges()->count());
+    }
 }

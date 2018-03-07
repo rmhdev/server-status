@@ -175,4 +175,17 @@ class DateRangeCustomTest extends DateRangeTestCase implements DateRangeInterfac
     {
         return new \DateInterval("PT600S");
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADateRageCollection()
+    {
+        $collection = new DateRangeCustom(
+            new \DateTimeImmutable("2018-02-18T12:00:00+0200"),
+            new \DateTimeImmutable("2018-02-18T16:00:00+0200")
+        );
+
+        $this->assertEquals(4 * (60 / 10), $collection->dateRanges()->count());
+    }
 }

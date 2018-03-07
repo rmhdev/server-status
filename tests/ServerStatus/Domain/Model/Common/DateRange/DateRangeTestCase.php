@@ -127,4 +127,9 @@ abstract class DateRangeTestCase extends TestCase
     }
 
     abstract protected function expectedDateInterval(): \DateInterval;
+
+    /**
+     * @test
+     */
+    abstract public function itShouldReturnADateRageCollection();
 }

@@ -43,5 +43,11 @@ interface DateRange
      */
     public function interval(): \DateInterval;
 
+    /**
+     * Given the interval value, it returns the list od date ranges inside this date range.
+     * @return DateRangeCollection
+     */
+    public function dateRanges(): DateRangeCollection;
+
     public function __toString(): string;
 }

@@ -79,4 +79,14 @@ class DateRangeMonthTest extends DateRangeTestCase implements DateRangeInterface
     {
         return new \DateInterval("PT4H"); // 4 hours
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADateRageCollection()
+    {
+        $collection = $this->createDateRange(new \DateTime("2018-01-19T12:00:00+0200"));
+
+        $this->assertEquals(31 * (24 / 4), $collection->dateRanges()->count());
+    }
 }

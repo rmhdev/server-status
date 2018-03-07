@@ -14,7 +14,6 @@ namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 
 class MeasureSummary
 {
@@ -73,8 +72,8 @@ class MeasureSummary
     public function averages(): array
     {
         $averages = [];
-        foreach ($this->dates() as $date) {
-            $averages[] = $this->average($date);
+        foreach ($this->dateRange()->dateRanges() as $dateRange) {
+            $averages[] = $this->average($dateRange);
         }
 
         return $averages;
@@ -83,28 +82,9 @@ class MeasureSummary
     /**
      * @inheritdoc
      */
-    public function average(\DateTimeInterface $fromDate): SummaryAverage
+    public function average(DateRange $dateRange): SummaryAverage
     {
-        $dateRange = $this->createDateRange($fromDate);
-
         return new SummaryAverage($dateRange, $this->filterValues($dateRange));
-    }
-
-    /**
-     * Calculate the group start and end dates.
-     *
-     * @param \DateTimeInterface $fromDate
-     * @return DateRange
-     */
-    protected function createDateRange(\DateTimeInterface $fromDate): DateRange
-    {
-        $date = \DateTimeImmutable::createFromFormat(DATE_ISO8601, $fromDate->format(DATE_ISO8601));
-        $formattedMinute = (int) $date->format("i");
-        $formattedMinute -= $formattedMinute % self::GROUPED_BY_MINUTES;
-        $start = $date->setTime((int) $date->format("H"), $formattedMinute, 0);
-        $end = $start->modify(sprintf("+%d minutes", self::GROUPED_BY_MINUTES));
-
-        return DateRangeFactory::createCustom($start, $end);
     }
 
     protected function filterValues(DateRange $dateRange): array
@@ -117,30 +97,5 @@ class MeasureSummary
 
             return $dateRange->isInBounds($date);
         });
-    }
-
-    /**
-     * @return \DateTimeImmutable[]
-     */
-    protected function dates(): array
-    {
-        $dates = [];
-        $max = $this->dateRange()->to();
-        $date = $this->dateRange()->from();
-        while ($date < $max) {
-            $dates[] = $date;
-            //$date = $date->modify(sprintf("+%d minutes", $this->groupedByMinutes()));
-            $date = $date->add($this->dateRange->interval());
-        }
-
-        return $dates;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function groupedByMinutes(): int
-    {
-        return self::GROUPED_BY_MINUTES;
     }
 }
