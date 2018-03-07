@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Common\DateRange;
 
-final class DateRangeWeek extends DateRangeAbstract implements DateRange
+final class DateRangeHour extends DateRangeAbstract implements DateRange
 {
-    const NAME = "week";
+    const NAME = "hour";
 
     public function from(): \DateTimeImmutable
     {
-        return $this->date()->modify("monday this week")->setTime(0, 0, 0);
+        return $this->date()->setTime((int) $this->date()->format("H"), 0, 0);
     }
 
     public function to(): \DateTimeImmutable
     {
-        return $this->from()->modify("+1 week");
+        return $this->from()->modify("+1 hour");
     }
 
     public function name(): string
@@ -33,7 +33,12 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
 
     public function formatted(): string
     {
-        return sprintf("%s, week %d", $this->from()->format("o"), $this->from()->format("W"));
+        return sprintf(
+            "%s, %s-%s",
+            $this->from()->format("Y-m-d"),
+            $this->from()->format("H:i"),
+            $this->to()->format("H:i")
+        );
     }
 
     /**
@@ -46,6 +51,6 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
 
     protected function createDateRange(\DateTimeImmutable $date): DateRange
     {
-        return new DateRangeHour($date);
+        return new DateRangeCustom($date, $date->add(new \DateInterval("PT600S")));
     }
 }

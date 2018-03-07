@@ -83,8 +83,9 @@ abstract class DateRangeAbstract implements DateRange
         $date = $this->from();
         $max = $this->to();
         while ($date < $max) {
-            $list[] = $this->createDateRange($date);
-            $date = $date->add($this->interval());
+            $dateRange = $this->createDateRange($date);
+            $list[] = $dateRange;
+            $date = $date->add($dateRange->from()->diff($dateRange->to()));
         }
 
         return new DateRangeCollection($list);
