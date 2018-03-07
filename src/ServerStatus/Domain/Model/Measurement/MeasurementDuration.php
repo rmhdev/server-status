@@ -49,7 +49,7 @@ class MeasurementDuration
         $ms = abs($this->value());
         // 1 second
         if (1000 > $ms) {
-            return sprintf("%d ms", $ms);
+            return sprintf("%01.2f ms", $ms);
         }
 
         // 1 minute

@@ -35,7 +35,8 @@ class MeasurementDurationTest extends TestCase
     public function correctDurations()
     {
         return [
-            [150, "150 ms"],
+            [150, "150.00 ms"],
+            [150.12, "150.12 ms"],
             [1000, "1 second"],
             [1500, "1.5 seconds"],
             [60000, "1 minute"],
