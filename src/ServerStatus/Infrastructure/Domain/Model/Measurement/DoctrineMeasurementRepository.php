@@ -28,6 +28,7 @@ use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percentile;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatus;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatusCollection;
+use ServerStatus\Domain\Model\Measurement\Summary\SummaryAverage;
 
 /**
  * @method Measurement|null findOneBy(array $criteria, array $orderBy = null)
@@ -98,11 +99,11 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
                 break;
             case DateRangeMonth::NAME:
             case DateRangeWeek::NAME:
-                $substring = 13; // until hour number
+                $substring = 14; // until hour number
                 $fillWith = ":00:00";
                 break;
             default:
-                $substring = 16; // until first number of minute
+                $substring = 17; // until first number of minute
                 $fillWith = ":00";
         }
 
@@ -125,7 +126,7 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
             $values[] = [
                 "date" => $item["date"] . $fillWith,
                 "count" => $item["total"],
-                "duration" => $item["duration"],
+                SummaryAverage::FIELD_RESPONSE_TIME => $item["duration"],
             ];
         }
 
