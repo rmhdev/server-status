@@ -191,7 +191,7 @@ class CustomerCheckCommandTest extends KernelTestCase
     }
 
     /**
-     * @testNO
+     * @test
      */
     public function itShouldShowBasicGraphForCheck()
     {

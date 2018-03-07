@@ -16,6 +16,9 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeMonth;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeWeek;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeYear;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
@@ -84,9 +87,49 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
         return new MeasurementId();
     }
 
-    public function summaryValues(Check $check, DateRange $dateRange)
+    public function summaryValues(Check $check, DateRange $dateRange): array
     {
-        return [];
+        $qb = $this->createQueryBuilder("a");
+        // example date: "2018-01-01 00:00:00"
+        switch ($dateRange->name()) {
+            case DateRangeYear::NAME:
+                $substring = 10; // until day number
+                $fillWith = " 00:00:00";
+                break;
+            case DateRangeMonth::NAME:
+            case DateRangeWeek::NAME:
+                $substring = 13; // until hour number
+                $fillWith = ":00:00";
+                break;
+            default:
+                $substring = 16; // until first number of minute
+                $fillWith = ":00";
+        }
+
+        $qb
+            ->select($qb->expr()->substring("a.dateCreated", 0, $substring) . " as date")
+            ->addSelect($qb->expr()->avg("a.result.duration.time") . " as duration")
+            ->addSelect($qb->expr()->count("a.id") . " as total")
+            ->where("a.check = :check")
+            ->andWhere("a.dateCreated >= :from")
+            ->andWhere("a.dateCreated < :to")
+            ->orderBy("a.result.duration.time", "ASC")
+            ->groupBy("date")
+            ->setParameters([
+                "check" => $check,
+                'from' => $dateRange->from(),
+                'to' => $dateRange->to(),
+            ]);
+        $values = [];
+        foreach ($qb->getQuery()->execute() as $item) {
+            $values[] = [
+                "date" => $item["date"] . $fillWith,
+                "count" => $item["total"],
+                "duration" => $item["duration"],
+            ];
+        }
+
+        return $values;
     }
 
     public function countAll(): int
