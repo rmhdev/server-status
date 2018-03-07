@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Measurement\Summary;
 
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 
 class SummaryAverage
 {
@@ -56,14 +57,16 @@ class SummaryAverage
         return $this->values;
     }
 
-    public function responseTime(): float
+    public function responseTime(): MeasurementDuration
     {
         $responseTimes = $this->responseTimes();
         if (!$responseTimes) {
-            return 0;
+            return new MeasurementDuration(0);
         }
 
-        return array_sum($responseTimes) / sizeof($responseTimes);
+        return new MeasurementDuration(
+            array_sum($responseTimes) / sizeof($responseTimes)
+        );
     }
 
     /**

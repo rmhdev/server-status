@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDurationDataBuilder;
 
 class MeasureSummaryTest extends TestCase
 {
@@ -98,6 +99,9 @@ class MeasureSummaryTest extends TestCase
             )
         );
 
-        $this->assertEquals(1.000250, $average->responseTime());
+        $this->assertEquals(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1.000250)->build(),
+            $average->responseTime()
+        );
     }
 }

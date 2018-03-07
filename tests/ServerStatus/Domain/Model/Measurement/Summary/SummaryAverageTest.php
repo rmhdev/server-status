@@ -14,6 +14,7 @@ namespace ServerStatus\tests\Domain\Model\Measurement\Summary;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeCustom;
 use ServerStatus\Domain\Model\Measurement\Summary\SummaryAverage;
+use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDurationDataBuilder;
 
 class SummaryAverageTest extends TestCase
 {
@@ -24,7 +25,10 @@ class SummaryAverageTest extends TestCase
     {
         $summaryAverage = $this->createSummaryAverageWithValues([]);
 
-        $this->assertSame(0.000000, $summaryAverage->responseTime());
+        $this->assertEquals(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(0)->build(),
+            $summaryAverage->responseTime()
+        );
     }
 
     private function createSummaryAverageWithValues($values = []): SummaryAverage
@@ -51,7 +55,10 @@ class SummaryAverageTest extends TestCase
         ];
         $summaryAverage = $this->createSummaryAverageWithValues($values);
 
-        $this->assertSame(1.000250, $summaryAverage->responseTime());
+        $this->assertEquals(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1.000250)->build(),
+            $summaryAverage->responseTime()
+        );
     }
 
     /**
@@ -61,6 +68,9 @@ class SummaryAverageTest extends TestCase
     {
         $summaryAverage = $this->createSummaryAverageWithValues(["response_time" => 1.000100]);
 
-        $this->assertSame(1.000100, $summaryAverage->responseTime());
+        $this->assertEquals(
+            MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1.000100)->build(),
+            $summaryAverage->responseTime()
+        );
     }
 }
