@@ -189,24 +189,4 @@ class CustomerCheckCommandTest extends KernelTestCase
 
         $this->assertContains("Check: not found", $output);
     }
-
-    /**
-     * @test
-     */
-    public function itShouldShowBasicGraphForCheck()
-    {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
-        $application->add($this->findCommand());
-        $command = $application->find('server-status:check');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command'  => $command->getName(),
-            'email'    => self::DEFAULT_CUSTOMER_EMAIL,
-            'check'    => "check-a",
-        ]);
-        $output = $commandTester->getDisplay();
-
-        $this->assertContains("hello", $output);
-    }
 }
