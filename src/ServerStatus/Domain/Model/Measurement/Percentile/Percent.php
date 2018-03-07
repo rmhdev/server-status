@@ -25,21 +25,11 @@ final class Percent
 
 
     /**
-     * @param float $value the percent value (decimal between -1 and 1)
+     * @param float $decimal the decimal value (usually between -1 and 1)
      */
-    public function __construct(float $value = 0)
+    public function __construct(float $decimal = 0)
     {
-        $this->assertValue($value);
-        $this->decimal = $value;
-    }
-
-    private function assertValue($value)
-    {
-        if (self::MIN_VALUE > $value || self::MAX_VALUE < $value) {
-            throw new \UnexpectedValueException(
-                sprintf('Value must be between %d and %s, "%s" received', self::MIN_VALUE, self::MAX_VALUE, $value)
-            );
-        }
+        $this->decimal = $decimal;
     }
 
     public function decimal(): float
@@ -54,7 +44,7 @@ final class Percent
 
     public function __toString(): string
     {
-        return sprintf("%s%%", round($this->percentage(), self::FORMAT_PRECISION));
+        return sprintf("%s%%", sprintf('%01.4f', round($this->percentage(), self::FORMAT_PRECISION)));
     }
 
     public static function createFromDecimalFraction(float $value): Percent

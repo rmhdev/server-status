@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Domain\Model\Measurement;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Tests\Domain\Model\Measurement\Percentile\PercentDataBuilder;
 
 class MeasurementDurationTest extends TestCase
 {
@@ -81,5 +82,33 @@ class MeasurementDurationTest extends TestCase
         $this->assertEquals(-1, $duration->compareTo(
             MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1001)->build()
         ));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbeToCalculateDiffWithOtherDuration()
+    {
+        $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1000)->build();
+        $faster = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(800)->build();
+        $slower = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1200)->build();
+
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(0)->build(),
+            $duration->diff($duration),
+            'Diff with equal duration'
+        );
+
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(0.2)->build(),
+            $duration->diff($faster),
+            'Diff with faster duration'
+        );
+
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(-0.2)->build(),
+            $duration->diff($slower),
+            'Diff with slower duration'
+        );
     }
 }

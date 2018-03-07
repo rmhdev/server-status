@@ -85,8 +85,10 @@ class CustomerCheckCommand extends AbstractCommand
         }
         $dateRange = $this->createDateRange($input, $output);
         $measureSummary = $this->createSummary($check, $dateRange);
+        $previous = null;
         foreach ($measureSummary->averages() as $average) {
-            $this->printAverage($average, $output);
+            $this->printAverage($average, $output, $previous);
+            $previous = $average;
         }
         $this->writeCompletedMessage($output, $this->stopWatch());
     }
@@ -135,12 +137,21 @@ class CustomerCheckCommand extends AbstractCommand
         return MeasureSummaryFactory::create($check, $this->measurementRepository, $dateRange);
     }
 
-    private function printAverage(SummaryAverage $average, OutputInterface $output)
+    private function printAverage(SummaryAverage $average, OutputInterface $output, SummaryAverage $previous = null)
     {
-        $output->writeln(sprintf(
-            "  %s: %s",
-            $average->dateRange(),
-            $average->responseTime()
-        ));
+        $diff = "";
+        if ($previous) {
+            $durationDiff = $average->responseTime()->diff($previous->responseTime());
+            $diffText = sprintf('%s%s', $durationDiff->decimal() > 0 ? '+' : '', $durationDiff);
+            $diff = sprintf(
+                ' <%s>%10s</>',
+                $durationDiff->decimal() < 0 ?
+                    'fg=white;bg=green' :
+                    ($durationDiff->decimal() == 0 ? '' : 'fg=white;bg=red'),
+                $diffText
+            );
+        }
+
+        $output->writeln(sprintf("  %s: %s%10s", $average->dateRange(), $average->responseTime(), $diff));
     }
 }

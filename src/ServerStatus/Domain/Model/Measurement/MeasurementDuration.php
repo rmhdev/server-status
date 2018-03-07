@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement;
 
+use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
+
 class MeasurementDuration
 {
     private $time;
@@ -94,6 +96,13 @@ class MeasurementDuration
         }
 
         return 0;
+    }
+
+    public function diff(MeasurementDuration $duration): Percent
+    {
+        $diff = $this->value() - $duration->value();
+
+        return new Percent($diff / $this->value());
     }
 
     public function __toString(): string

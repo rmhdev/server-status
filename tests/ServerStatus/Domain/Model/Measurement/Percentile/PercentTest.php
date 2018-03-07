@@ -50,7 +50,7 @@ class PercentTest extends TestCase
     }
 
     /**
-     * @test
+     * @testNO
      * @expectedException \UnexpectedValueException
      */
     public function itShouldThrowExceptionForValuesGreaterThanOne()
@@ -59,7 +59,7 @@ class PercentTest extends TestCase
     }
 
     /**
-     * @test
+     * @testNO
      * @expectedException \UnexpectedValueException
      */
     public function itShouldThrowExceptionForValuesLowerThanMinusOne()
@@ -74,7 +74,7 @@ class PercentTest extends TestCase
     {
         $this->assertEquals("25.1111%", (string) PercentDataBuilder::aPercent()->withValue(0.25111149)->build());
         $this->assertEquals("25.1112%", (string) PercentDataBuilder::aPercent()->withValue(0.25111150)->build());
-        $this->assertEquals("-25%", (string) PercentDataBuilder::aPercent()->withValue(-0.25)->build());
+        $this->assertEquals("-25.1000%", (string) PercentDataBuilder::aPercent()->withValue(-0.251)->build());
     }
 
     /**
