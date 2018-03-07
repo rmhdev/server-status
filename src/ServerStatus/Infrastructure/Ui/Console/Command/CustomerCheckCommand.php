@@ -152,6 +152,6 @@ class CustomerCheckCommand extends AbstractCommand
             );
         }
 
-        $output->writeln(sprintf("  %s: %s%10s", $average->dateRange(), $average->responseTime(), $diff));
+        $output->writeln(sprintf("  %s = %s%10s", $average->dateRange(), $average->responseTime(), $diff));
     }
 }
