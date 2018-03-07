@@ -14,7 +14,6 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\Measurement;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementDoesNotExistException;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
@@ -156,14 +155,10 @@ class InMemoryMeasurementRepository implements MeasurementRepository
      */
     private function createBaseDateFromInterval(DateRange $dateRange, \DateTimeInterface $date): \DateTimeImmutable
     {
-        $max = $dateRange->to();
-        $dateTime = $dateRange->from();
-        while ($dateTime < $max) {
-            $range = DateRangeFactory::createCustom($dateTime, $dateTime->add($dateRange->interval()));
+        foreach ($dateRange->dateRanges() as $range) {
             if ($range->isInBounds($date)) {
-                return $dateTime;
+                return $range->from();
             }
-            $dateTime = $dateTime->add($dateRange->interval());
         }
 
         throw new \UnexpectedValueException("Cannot convert from date interval");
@@ -215,14 +210,6 @@ class InMemoryMeasurementRepository implements MeasurementRepository
             }
             $byStatus[$statusCode]["duration"] += $measurement->result()->duration()->value();
             $byStatus[$statusCode]["count"] += 1;
-        }
-        $performanceStatuses = [];
-        foreach ($byStatus as $statusCode => $value) {
-            $performanceStatuses[] = new PerformanceStatus(
-                $value["status"],
-                new MeasurementDuration($byStatus[$statusCode]["duration"] / $byStatus[$statusCode]["count"]),
-                $byStatus[$statusCode]["count"]
-            );
         }
         $percentileCalculator = new PercentileCalculator($times);
 

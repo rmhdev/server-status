@@ -36,11 +36,8 @@ final class DateRangeDay extends DateRangeAbstract implements DateRange
         return $this->from()->format("Y-m-d");
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function interval(): \DateInterval
+    protected function createDateRange(\DateTimeImmutable $date): DateRange
     {
-        return new \DateInterval("PT600S");
+        return new DateRangeMinutes($date);
     }
 }

@@ -15,6 +15,7 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 final class DateRangeWeek extends DateRangeAbstract implements DateRange
 {
     const NAME = "week";
+    const INTERVAL_HOURS = 1;
 
     public function from(): \DateTimeImmutable
     {
@@ -36,16 +37,8 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
         return sprintf("%s, week %d", $this->from()->format("o"), $this->from()->format("W"));
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function interval(): \DateInterval
-    {
-        return new \DateInterval("PT1H");
-    }
-
     protected function createDateRange(\DateTimeImmutable $date): DateRange
     {
-        return new DateRangeHour($date);
+        return new DateRangeHours($date, self::INTERVAL_HOURS);
     }
 }

@@ -38,14 +38,8 @@ interface DateRange
     public function compareTo(DateRange $range): int;
 
     /**
-     * Size of the interval for the given date range.
-     * @return \DateInterval
-     */
-    public function interval(): \DateInterval;
-
-    /**
      * Given the interval value, it returns the list od date ranges inside this date range.
-     * @return DateRangeCollection
+     * @return DateRangeCollection|DateRange[]
      */
     public function dateRanges(): DateRangeCollection;
 

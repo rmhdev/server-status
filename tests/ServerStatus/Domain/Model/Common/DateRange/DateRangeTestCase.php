@@ -119,17 +119,5 @@ abstract class DateRangeTestCase extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnDateIntervalSizeForItsSteps()
-    {
-        $dateRange = $this->newDateRange();
-
-        $this->assertEquals($this->expectedDateInterval(), $dateRange->interval(), "Interval size in date range");
-    }
-
-    abstract protected function expectedDateInterval(): \DateInterval;
-
-    /**
-     * @test
-     */
     abstract public function itShouldReturnADateRageCollection();
 }

@@ -15,6 +15,7 @@ namespace ServerStatus\Domain\Model\Common\DateRange;
 final class DateRangeMonth extends DateRangeAbstract implements DateRange
 {
     const NAME = "month";
+    const INTERVAL_HOURS = 4;
 
     public function from(): \DateTimeImmutable
     {
@@ -36,11 +37,8 @@ final class DateRangeMonth extends DateRangeAbstract implements DateRange
         return $this->from()->format("Y-m");
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function interval(): \DateInterval
+    protected function createDateRange(\DateTimeImmutable $date): DateRange
     {
-        return new \DateInterval("PT4H");
+        return new DateRangeHours($date, self::INTERVAL_HOURS);
     }
 }

@@ -15,8 +15,9 @@ namespace ServerStatus\Tests\Domain\Model\Common\DateRange;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeHour;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeHours;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeMinutes;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeMonth;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeWeek;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeYear;
@@ -46,7 +47,8 @@ class DateRangeFactoryTest extends TestCase
             [DateRangeWeek::class, 'week'],
             [DateRangeDay::class, 'day'],
             [DateRangeLast24Hours::class, 'last_24_hours'],
-            [DateRangeHour::class, 'hour'],
+            [DateRangeHours::class, 'hours'],
+            [DateRangeMinutes::class, 'minutes'],
         ];
     }
 

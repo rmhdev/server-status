@@ -20,7 +20,8 @@ final class DateRangeFactory
         DateRangeWeek::class,
         DateRangeDay::class,
         DateRangeLast24Hours::class,
-        DateRangeHour::class,
+        DateRangeHours::class,
+        DateRangeMinutes::class,
     ];
 
     /**

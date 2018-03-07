@@ -36,14 +36,6 @@ final class DateRangeYear extends DateRangeAbstract implements DateRange
         return $this->from()->format("Y");
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function interval(): \DateInterval
-    {
-        return new \DateInterval("P1D");
-    }
-
     protected function createDateRange(\DateTimeImmutable $date): DateRange
     {
         return new DateRangeDay($date);

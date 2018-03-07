@@ -91,8 +91,5 @@ abstract class DateRangeAbstract implements DateRange
         return new DateRangeCollection($list);
     }
 
-    protected function createDateRange(\DateTimeImmutable $date): DateRange
-    {
-        return new DateRangeCustom($date, $date->add($this->interval()));
-    }
+    abstract protected function createDateRange(\DateTimeImmutable $date): DateRange;
 }
