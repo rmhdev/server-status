@@ -14,6 +14,10 @@ namespace ServerStatus\Domain\Model\Measurement\Percentile;
 
 final class Percent
 {
+    const MIN_VALUE = -1;
+    const MAX_VALUE = 1;
+    const FORMAT_PRECISION = 4;
+
     /**
      * @var float
      */
@@ -21,7 +25,7 @@ final class Percent
 
 
     /**
-     * @param float $value the percent value (decimal between 0 and 1)
+     * @param float $value the percent value (decimal between -1 and 1)
      */
     public function __construct(float $value = 0)
     {
@@ -31,9 +35,9 @@ final class Percent
 
     private function assertValue($value)
     {
-        if (0 > $value || 1 < $value) {
+        if (self::MIN_VALUE > $value || self::MAX_VALUE < $value) {
             throw new \UnexpectedValueException(
-                sprintf('Value must be between 0 and 1, "%s" received', $value)
+                sprintf('Value must be between %d and %s, "%s" received', self::MIN_VALUE, self::MAX_VALUE, $value)
             );
         }
     }
@@ -50,7 +54,7 @@ final class Percent
 
     public function __toString(): string
     {
-        return sprintf("%s%%", round($this->percentage(), 4));
+        return sprintf("%s%%", round($this->percentage(), self::FORMAT_PRECISION));
     }
 
     public static function createFromDecimalFraction(float $value): Percent

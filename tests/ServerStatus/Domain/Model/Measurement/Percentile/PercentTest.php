@@ -41,11 +41,12 @@ class PercentTest extends TestCase
 
     /**
      * @test
-     * @expectedException \UnexpectedValueException
      */
-    public function itShouldThrowExceptionForNegativeValues()
+    public function itShouldAcceptNegativeValues()
     {
-        PercentDataBuilder::aPercent()->withValue(-0.123456)->build();
+        $percent = PercentDataBuilder::aPercent()->withValue(-0.123456)->build();
+
+        $this->assertEquals(-0.123456, $percent->decimal());
     }
 
     /**
@@ -59,11 +60,21 @@ class PercentTest extends TestCase
 
     /**
      * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function itShouldThrowExceptionForValuesLowerThanMinusOne()
+    {
+        PercentDataBuilder::aPercent()->withValue(-1.001)->build();
+    }
+
+    /**
+     * @test
      */
     public function itShouldReturnFormattedValueWhenCastedToString()
     {
         $this->assertEquals("25.1111%", (string) PercentDataBuilder::aPercent()->withValue(0.25111149)->build());
         $this->assertEquals("25.1112%", (string) PercentDataBuilder::aPercent()->withValue(0.25111150)->build());
+        $this->assertEquals("-25%", (string) PercentDataBuilder::aPercent()->withValue(-0.25)->build());
     }
 
     /**
