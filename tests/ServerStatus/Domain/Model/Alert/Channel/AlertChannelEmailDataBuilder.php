@@ -21,7 +21,7 @@ class AlertChannelEmailDataBuilder
 
     public function __construct()
     {
-        $this->destination = "";
+        $this->destination = "username@example.com";
     }
 
     public function withDestination($destination): AlertChannelEmailDataBuilder

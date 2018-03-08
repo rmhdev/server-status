@@ -50,4 +50,24 @@ class AlertChannelEmail implements AlertChannel
     {
         return explode(",", preg_replace('/\s+/', '', $this->destinationRaw));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString(): string
+    {
+        $destinations = $this->destinations();
+        if (2 >= sizeof($destinations)) {
+            return sprintf('email to %s', implode(" and ", $this->destinations()));
+        }
+        $show = array_slice($destinations, 0, 2);
+        $countExtra =sizeof(array_slice($destinations, 2));
+
+        return sprintf(
+            'email to %s and %s more address%s',
+            implode(", ", $show),
+            $countExtra,
+            $countExtra > 1 ? 'es' : ''
+        );
+    }
 }

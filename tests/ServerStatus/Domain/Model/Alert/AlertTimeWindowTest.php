@@ -91,4 +91,14 @@ class AlertTimeWindowTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToBeConvertedToString()
+    {
+        $window = AlertTimeWindowDataBuilder::anAlertTimeWindow()->withValue(30)->build();
+
+        $this->assertSame("last 30 minutes", (string) $window);
+    }
 }

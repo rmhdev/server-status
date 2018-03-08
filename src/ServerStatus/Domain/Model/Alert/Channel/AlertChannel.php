@@ -23,4 +23,6 @@ interface AlertChannel
      * @return array
      */
     public function destinations(): array;
+
+    public function __toString(): string;
 }

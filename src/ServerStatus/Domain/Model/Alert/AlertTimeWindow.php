@@ -61,7 +61,7 @@ class AlertTimeWindow
 
     public function __toString(): string
     {
-        return (string) $this->minutes;
+        return sprintf('last %d minutes', $this->minutes);
     }
 
     /**

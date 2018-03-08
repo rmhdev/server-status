@@ -37,4 +37,31 @@ class AlertChannelEmailTest extends TestCase
 
         $this->assertEquals(["user-one@example.com", "user-two@example.com"], $channel->destinations());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToBeConvertedToString()
+    {
+        $builder = AlertChannelEmailDataBuilder::anAlertChannel();
+        $this->assertSame(
+            "email to user-one@example.com",
+            (string) $builder->withDestination("user-one@example.com")->build()
+        );
+
+        $this->assertSame(
+            "email to user-one@example.com and user-two@example.com",
+            (string) $builder->withDestination("user-one@example.com,user-two@example.com")->build()
+        );
+
+        $this->assertSame(
+            "email to a@example.com, b@example.com and 1 more address",
+            (string) $builder->withDestination("a@example.com,b@example.com,c@example.com")->build()
+        );
+
+        $this->assertSame(
+            "email to a@example.com, b@example.com and 2 more addresses",
+            (string) $builder->withDestination("a@example.com,b@example.com,c@example.com,d@example.com")->build()
+        );
+    }
 }

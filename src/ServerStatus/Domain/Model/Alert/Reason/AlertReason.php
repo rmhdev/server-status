@@ -19,4 +19,6 @@ interface AlertReason
     public function name(): string;
 
     public function isAvailable(MeasurementResult $result): bool;
+
+    public function __toString(): string ;
 }

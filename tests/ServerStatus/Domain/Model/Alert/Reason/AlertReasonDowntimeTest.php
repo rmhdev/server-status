@@ -22,9 +22,9 @@ class AlertReasonDowntimeTest extends TestCase
      */
     public function itShouldHaveAName()
     {
-        $channel = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+        $reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
 
-        $this->assertEquals("downtime", $channel->name());
+        $this->assertEquals("downtime", $reason->name());
     }
 
     /**
@@ -32,15 +32,15 @@ class AlertReasonDowntimeTest extends TestCase
      */
     public function itShouldReturnNotAvailableToCorrectMeasurementResults()
     {
-        $channel = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+        $reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
 
-        $this->assertFalse($channel->isAvailable(
+        $this->assertFalse($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(100)->build()
         ), "check availability for informational status");
-        $this->assertFalse($channel->isAvailable(
+        $this->assertFalse($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(200)->build()
         ), "check availability for successful status");
-        $this->assertFalse($channel->isAvailable(
+        $this->assertFalse($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(301)->build()
         ), "check availability for redirection status");
     }
@@ -50,9 +50,9 @@ class AlertReasonDowntimeTest extends TestCase
      */
     public function itShouldReturnNotAvailableToInternalErrorMeasurementResults()
     {
-        $channel = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+        $reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
 
-        $this->assertFalse($channel->isAvailable(
+        $this->assertFalse($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(0)->build()
         ), "check availability for our app's internal error");
     }
@@ -62,13 +62,23 @@ class AlertReasonDowntimeTest extends TestCase
      */
     public function itShouldReturnAvailableToIncorrectMeasurementResults()
     {
-        $channel = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+        $reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
 
-        $this->assertTrue($channel->isAvailable(
+        $this->assertTrue($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(404)->build()
         ), "check availability for client error status");
-        $this->assertTrue($channel->isAvailable(
+        $this->assertTrue($reason->isAvailable(
             MeasurementResultDataBuilder::aMeasurementResult()->withStatus(500)->build()
         ), "check availability for server error status");
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToBeConvertedToString()
+    {
+        $reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+
+        $this->assertSame("a downtime", (string) $reason);
     }
 }

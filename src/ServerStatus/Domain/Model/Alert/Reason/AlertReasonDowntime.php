@@ -29,4 +29,9 @@ final class AlertReasonDowntime implements AlertReason
             $result->status()->isServerError() ||
             $result->status()->isClientError();
     }
+
+    public function __toString(): string
+    {
+        return sprintf('a %s', $this->name());
+    }
 }
