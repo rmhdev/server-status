@@ -73,7 +73,7 @@ class Check
         return $this->customer;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf(
             '%s (%s)',

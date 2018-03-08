@@ -40,4 +40,18 @@ class CustomerTest extends TestCase
 
         $this->assertEquals("name@company.com", $customer->screenName());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToBeConvertedToString()
+    {
+        $customer = CustomerDataBuilder::aCustomer()
+            ->withId(CustomerIdDataBuilder::aCustomerId()->withValue("my-id")->build())
+            ->withEmail(CustomerEmailDataBuilder::aCustomerEmail()->withValue("username@example.com")->build())
+            ->withAlias(CustomerAliasDataBuilder::aCustomerAlias()->withValue("my-username")->build())
+            ->build();
+
+        $this->assertEquals("username@example.com (my-id)", (string) $customer);
+    }
 }

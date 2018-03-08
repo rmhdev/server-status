@@ -65,4 +65,9 @@ class Customer
     {
         return $this->alias()->isEmpty() ? $this->email()->value() : $this->alias()->value();
     }
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', $this->email(), $this->id());
+    }
 }

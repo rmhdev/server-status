@@ -16,6 +16,9 @@ use ServerStatus\Domain\Model\Alert\Channel\AlertChannel;
 use ServerStatus\Domain\Model\Alert\Channel\AlertChannelFactory;
 use ServerStatus\Domain\Model\Alert\Reason\AlertReason;
 use ServerStatus\Domain\Model\Alert\Reason\AlertReasonFactory;
+use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Check\InvalidCheckException;
+use ServerStatus\Domain\Model\Customer\Customer;
 
 class Alert
 {
@@ -41,14 +44,48 @@ class Alert
      */
     private $channelDestinationRaw;
 
+    /**
+     * @var Customer
+     */
+    private $customer;
 
-    public function __construct(AlertId $id, AlertTimeWindow $window, AlertReason $reason, AlertChannel $channel)
-    {
+    /**
+     * @var Check|null
+     */
+    private $check;
+
+
+    public function __construct(
+        AlertId $id,
+        AlertTimeWindow $window,
+        AlertReason $reason,
+        AlertChannel $channel,
+        Customer $customer,
+        Check $check = null
+    ) {
+        $this->assertCheckIsRelatedToCustomer($customer, $check);
         $this->id = $id;
         $this->window = $window;
         $this->reasonName = $reason->name();
         $this->channelName = $channel->name();
         $this->channelDestinationRaw = $channel->destinationRaw();
+        $this->customer = $customer;
+        $this->check = $check;
+    }
+
+    private function assertCheckIsRelatedToCustomer(Customer $customer, Check $check = null)
+    {
+        if (is_null($check)) {
+            return;
+        }
+        if (!$check->customer()->id()->equals($customer->id())) {
+            throw new InvalidCheckException(sprintf(
+                'Check "%s" by customer "%s" is not related to customer "%s"',
+                $check,
+                $check->customer(),
+                $customer
+            ));
+        }
     }
 
     public function id(): AlertId
@@ -71,12 +108,28 @@ class Alert
         return AlertChannelFactory::create($this->channelName, $this->channelDestinationRaw);
     }
 
+    public function customer(): Customer
+    {
+        return $this->customer;
+    }
+
+    public function check(): ?Check
+    {
+        return null;
+    }
+
     public function __toString(): string
     {
+        $checksText = sprintf('any check by customer %s', $this->customer());
+        if ($this->check()) {
+            $checksText = sprintf('check %s by customer %s', $this->check(), $this->customer());
+        }
+
         return sprintf(
-            'If %s has happened in the %s, then send an alert via %s',
+            'If %s has happened in the %s to %s, then send an alert via %s',
             $this->reason(),
             $this->timeWindow(),
+            $checksText,
             $this->channel()
         );
     }

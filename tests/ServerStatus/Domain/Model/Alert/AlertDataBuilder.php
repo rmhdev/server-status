@@ -17,8 +17,11 @@ use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertTimeWindow;
 use ServerStatus\Domain\Model\Alert\Channel\AlertChannel;
 use ServerStatus\Domain\Model\Alert\Reason\AlertReason;
+use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Tests\Domain\Model\Alert\Channel\AlertChannelEmailDataBuilder;
 use ServerStatus\Tests\Domain\Model\Alert\Reason\AlertReasonDowntimeDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class AlertDataBuilder
 {
@@ -26,6 +29,8 @@ class AlertDataBuilder
     private $window;
     private $channel;
     private $reason;
+    private $customer;
+    private $check;
 
     public function __construct()
     {
@@ -33,6 +38,8 @@ class AlertDataBuilder
         $this->window = AlertTimeWindowDataBuilder::anAlertTimeWindow()->build();
         $this->channel = AlertChannelEmailDataBuilder::anAlertChannel()->build();
         $this->reason = AlertReasonDowntimeDataBuilder::anAlertReason()->build();
+        $this->customer = CustomerDataBuilder::aCustomer()->build();
+        $this->check = null;
     }
 
     public function withId(AlertId $id): AlertDataBuilder
@@ -63,9 +70,23 @@ class AlertDataBuilder
         return $this;
     }
 
+    public function withCustomer(Customer $customer): AlertDataBuilder
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function withCheck(Check $check = null): AlertDataBuilder
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
     public function build(): Alert
     {
-        return new Alert($this->id, $this->window, $this->reason, $this->channel);
+        return new Alert($this->id, $this->window, $this->reason, $this->channel, $this->customer, $this->check);
     }
 
     public static function anAlert(): AlertDataBuilder
