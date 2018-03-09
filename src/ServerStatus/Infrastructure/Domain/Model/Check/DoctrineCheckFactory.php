@@ -16,13 +16,14 @@ use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckFactory;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
+use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Check\CheckUrl;
 use ServerStatus\Domain\Model\Customer\Customer;
 
 class DoctrineCheckFactory implements CheckFactory
 {
-    public function build(CheckId $id, CheckName $name, CheckUrl $url, Customer $customer): Check
+    public function build(CheckId $id, CheckName $name, CheckUrl $url, CheckStatus $status, Customer $customer): Check
     {
-        return new Check($id, $name, $url, $customer);
+        return new Check($id, $name, $url, $status, $customer);
     }
 }

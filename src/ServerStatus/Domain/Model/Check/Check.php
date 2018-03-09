@@ -34,6 +34,11 @@ class Check
     private $url;
 
     /**
+     * @var CheckStatus
+     */
+    private $status;
+
+    /**
      * @var Customer
      */
     private $customer;
@@ -44,11 +49,12 @@ class Check
     private $measurements;
 
 
-    public function __construct(CheckId $id, CheckName $name, CheckUrl $url, Customer $customer)
+    public function __construct(CheckId $id, CheckName $name, CheckUrl $url, CheckStatus $status, Customer $customer)
     {
         $this->id = $id;
         $this->name = $name;
         $this->url = $url;
+        $this->status = $status;
         $this->customer = $customer;
         $this->measurements = new ArrayCollection();
     }
@@ -66,6 +72,11 @@ class Check
     public function url(): CheckUrl
     {
         return $this->url;
+    }
+
+    public function status(): CheckStatus
+    {
+        return $this->status;
     }
 
     public function customer(): Customer

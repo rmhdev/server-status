@@ -14,6 +14,7 @@ namespace ServerStatus\Tests\Domain\Model\Check;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
+use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Check\CheckUrl;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
@@ -23,6 +24,7 @@ class CheckDataBuilder
     private $id;
     private $name;
     private $url;
+    private $status;
     private $customer;
 
     public function __construct()
@@ -30,6 +32,7 @@ class CheckDataBuilder
         $this->id = CheckIdDataBuilder::aCheckId()->build();
         $this->name = CheckNameDataBuilder::aCheckName()->build();
         $this->url = CheckUrlDataBuilder::aCheckUrl()->build();
+        $this->status = CheckStatusDataBuilder::aCheckStatus()->build();
         $this->customer = CustomerDataBuilder::aCustomer()->build();
     }
 
@@ -57,6 +60,13 @@ class CheckDataBuilder
         return $this;
     }
 
+    public function withStatus(CheckStatus $status): CheckDataBuilder
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function withCustomer(Customer $customer): CheckDataBuilder
     {
         $this->customer = $customer;
@@ -66,7 +76,7 @@ class CheckDataBuilder
 
     public function build(): Check
     {
-        return new Check($this->id, $this->name, $this->url, $this->customer);
+        return new Check($this->id, $this->name, $this->url, $this->status, $this->customer);
     }
 
     public static function aCheck(): CheckDataBuilder

@@ -16,5 +16,5 @@ use ServerStatus\Domain\Model\Customer\Customer;
 
 interface CheckFactory
 {
-    public function build(CheckId $id, CheckName $name, CheckUrl $url, Customer $customer): Check;
+    public function build(CheckId $id, CheckName $name, CheckUrl $url, CheckStatus $status, Customer $customer): Check;
 }

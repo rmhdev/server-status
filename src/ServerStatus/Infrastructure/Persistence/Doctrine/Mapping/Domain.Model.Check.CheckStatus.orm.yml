@@ -1,0 +1,4 @@
+ServerStatus\Domain\Model\Check\CheckStatus:
+  type: embeddable
+  fields:
+    code: { type: string, length: 20, nullable: false }
