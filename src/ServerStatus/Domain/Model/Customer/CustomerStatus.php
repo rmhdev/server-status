@@ -49,6 +49,11 @@ class CustomerStatus
         }
     }
 
+    public function name(): string
+    {
+        return $this->code;
+    }
+
     public function isEnabled(): bool
     {
         return $this->isCode(self::CODE_ENABLED);
