@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Check;
 
-use ServerStatus\Application\DataTransformer\Customer\CheckDataTransformer;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;

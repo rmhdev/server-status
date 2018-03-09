@@ -55,9 +55,11 @@ services:
         class: ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer
     ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer:
         class: ServerStatus\Application\DataTransformer\Customer\CustomerChecksDtoDataTransformer
+    ServerStatus\Application\DataTransformer\Check\CheckDataTransformer:
+        class: ServerStatus\Application\DataTransformer\Check\CheckDtoDataTransformer
 
     # application services
-    ServerStatus\Application\Service\Check\ViewChecksByCustomerService:
+    ServerStatus\Application\Service\Check\ViewCheckByCustomerService:
         public: false
 
     # console commands:

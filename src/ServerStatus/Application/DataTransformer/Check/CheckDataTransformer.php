@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Application\DataTransformer\Customer;
+namespace ServerStatus\Application\DataTransformer\Check;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;

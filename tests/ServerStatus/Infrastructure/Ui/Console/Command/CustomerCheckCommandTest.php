@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Infrastructure\Ui\Console\Command;
 
+use ServerStatus\Application\DataTransformer\Check\CheckDtoDataTransformer;
+use ServerStatus\Application\Service\Check\ViewCheckByCustomerService;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -22,7 +24,6 @@ use ServerStatus\Infrastructure\Ui\Console\Command\CustomerCheckCommand;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckUrlDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
-use ServerStatus\Tests\Domain\Model\Customer\CustomerEmailDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
@@ -32,7 +33,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CustomerCheckCommandTest extends KernelTestCase
 {
-    const DEFAULT_CUSTOMER_EMAIL = "test@example.com";
+    const DEFAULT_CUSTOMER_ID = "test-user-id";
 
     /**
      * @var CustomerRepository
@@ -72,9 +73,7 @@ class CustomerCheckCommandTest extends KernelTestCase
         $repo
             ->add(
                 CustomerDataBuilder::aCustomer()->withId(
-                    CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
-                )->withEmail(
-                    CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+                    CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
                 )->build()
             )
             ->add(
@@ -87,8 +86,8 @@ class CustomerCheckCommandTest extends KernelTestCase
 
     private function createCheckRepository(): CheckRepository
     {
-        $defaultCustomer = $this->customerRepository->ofEmail(
-            CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+        $defaultCustomer = $this->customerRepository->ofId(
+            CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
         );
 
         $repo = new InMemoryCheckRepository();
@@ -116,8 +115,8 @@ class CustomerCheckCommandTest extends KernelTestCase
     private function createMeasurementRepository(): MeasurementRepository
     {
         $repository = new InMemoryMeasurementRepository();
-        $customer = $this->customerRepository->ofEmail(
-            CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+        $customer = $this->customerRepository->ofId(
+            CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
         );
         $date = new \DateTimeImmutable("2018-03-01T00:00:00+0200");
         $codes = [
@@ -153,8 +152,8 @@ class CustomerCheckCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'email'    => "unknown@example.com",
-            'check'    => "",
+            'id'       => "unknown",
+            'check'    => "other",
         ]);
         $output = $commandTester->getDisplay();
 
@@ -163,11 +162,14 @@ class CustomerCheckCommandTest extends KernelTestCase
 
     private function findCommand(): CustomerCheckCommand
     {
-        return new CustomerCheckCommand(
+        $service = new ViewCheckByCustomerService(
             $this->customerRepository,
             $this->checkRepository,
-            $this->measurementRepository
+            $this->measurementRepository,
+            new CheckDtoDataTransformer()
         );
+
+        return new CustomerCheckCommand($service);
     }
 
     /**
@@ -182,7 +184,7 @@ class CustomerCheckCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'email'    => self::DEFAULT_CUSTOMER_EMAIL,
+            'id'       => self::DEFAULT_CUSTOMER_ID,
             'check'    => "check-c",
         ]);
         $output = $commandTester->getDisplay();

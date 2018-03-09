@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\Service\Check;
 
-use ServerStatus\Application\DataTransformer\Customer\CheckDataTransformer;
+use ServerStatus\Application\DataTransformer\Check\CheckDataTransformer;
 use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
