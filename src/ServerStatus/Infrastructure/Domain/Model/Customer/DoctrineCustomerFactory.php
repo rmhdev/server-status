@@ -17,11 +17,16 @@ use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerFactory;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 class DoctrineCustomerFactory implements CustomerFactory
 {
-    public function build(CustomerId $id, CustomerEmail $email, CustomerAlias $alias): Customer
-    {
-        return new Customer($id, $email, $alias);
+    public function build(
+        CustomerId $id,
+        CustomerEmail $email,
+        CustomerAlias $alias,
+        CustomerStatus $status
+    ): Customer {
+        return new Customer($id, $email, $alias, $status);
     }
 }

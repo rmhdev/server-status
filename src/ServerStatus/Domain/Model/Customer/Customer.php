@@ -33,16 +33,22 @@ class Customer
     private $alias;
 
     /**
+     * @var CustomerStatus
+     */
+    private $status;
+
+    /**
      * @var Check[]|ArrayCollection
      */
     private $checks;
 
 
-    public function __construct(CustomerId $id, CustomerEmail $email, CustomerAlias $alias)
+    public function __construct(CustomerId $id, CustomerEmail $email, CustomerAlias $alias, CustomerStatus $status)
     {
         $this->id = $id;
         $this->email = $email;
         $this->alias = $alias;
+        $this->status = $status;
         $this->checks = new ArrayCollection();
     }
 
@@ -59,6 +65,11 @@ class Customer
     public function alias(): CustomerAlias
     {
         return $this->alias;
+    }
+
+    public function status(): CustomerStatus
+    {
+        return $this->status;
     }
 
     public function screenName(): string

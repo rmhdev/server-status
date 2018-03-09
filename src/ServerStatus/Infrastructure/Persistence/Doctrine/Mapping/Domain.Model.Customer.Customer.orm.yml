@@ -13,6 +13,9 @@ ServerStatus\Domain\Model\Customer\Customer:
     alias:
       class: ServerStatus\Domain\Model\Customer\CustomerAlias
       columnPrefix: "alias_"
+    status:
+      class: ServerStatus\Domain\Model\Customer\CustomerStatus
+      columnPrefix: "status_"
   constraints:
     - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
         fields: [id]

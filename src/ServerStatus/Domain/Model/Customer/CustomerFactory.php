@@ -14,5 +14,5 @@ namespace ServerStatus\Domain\Model\Customer;
 
 interface CustomerFactory
 {
-    public function build(CustomerId $id, CustomerEmail $email, CustomerAlias $alias): Customer;
+    public function build(CustomerId $id, CustomerEmail $email, CustomerAlias $alias, CustomerStatus $status): Customer;
 }

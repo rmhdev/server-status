@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerFactory;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 final class FixturesCustomerData
 {
@@ -54,7 +55,8 @@ final class FixturesCustomerData
                 $this->factory->build(
                     new CustomerId($value["id"]),
                     new CustomerEmail($value["email"]),
-                    new CustomerAlias($value["alias"])
+                    new CustomerAlias($value["alias"]),
+                    new CustomerStatus($value["status"])
                 )
             );
         }
@@ -67,16 +69,25 @@ final class FixturesCustomerData
                 "id" => "rober",
                 "email" => "rober@example.com",
                 "alias" => "Roberto",
+                "status" => CustomerStatus::CODE_ENABLED
             ],
             [
                 "id" => "laura",
                 "email" => "laura@example.com",
                 "alias" => "Laura Test",
+                "status" => CustomerStatus::CODE_ENABLED
             ],
             [
                 "id" => "alex",
                 "email" => "alex@example.com",
                 "alias" => "Alex Test",
+                "status" => CustomerStatus::CODE_ENABLED
+            ],
+            [
+                "id" => "carol",
+                "email" => "carol@example.com",
+                "alias" => "Carol Disabled",
+                "status" => CustomerStatus::CODE_DISABLED
             ],
         ];
     }

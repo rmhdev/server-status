@@ -16,18 +16,21 @@ use ServerStatus\Domain\Model\Customer\CustomerAlias;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\Customer;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 class CustomerDataBuilder
 {
     private $id;
     private $email;
     private $alias;
+    private $status;
 
     public function __construct()
     {
         $this->id = CustomerIdDataBuilder::aCustomerId()->build();
         $this->email = CustomerEmailDataBuilder::aCustomerEmail()->build();
         $this->alias = CustomerAliasDataBuilder::aCustomerAlias()->build();
+        $this->status = CustomerStatusDataBuilder::aCustomerStatus()->build();
     }
 
     public function withId(CustomerId $id): CustomerDataBuilder
@@ -51,9 +54,16 @@ class CustomerDataBuilder
         return $this;
     }
 
+    public function withStatus(CustomerStatus $status): CustomerDataBuilder
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function build(): Customer
     {
-        return new Customer($this->id, $this->email, $this->alias);
+        return new Customer($this->id, $this->email, $this->alias, $this->status);
     }
 
     public static function aCustomer(): CustomerDataBuilder
