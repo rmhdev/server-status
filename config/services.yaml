@@ -50,7 +50,17 @@ services:
     ServerStatus\Infrastructure\Service\PingService:
         class: ServerStatus\Infrastructure\Service\HttpPingService
 
-    # custom commands:
+    # data transformers
+    ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDataTransformer:
+        class: ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDtoDataTransformer
+    ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer:
+        class: ServerStatus\Application\DataTransformer\Customer\CustomerChecksDtoDataTransformer
+
+    # application services
+    ServerStatus\Application\Service\Check\ViewChecksByCustomerService:
+        public: false
+
+    # console commands:
     ServerStatus\Infrastructure\Ui\Console\Command\PingCommand:
         public: false
     ServerStatus\Infrastructure\Ui\Console\Command\CustomerChecksCommand:

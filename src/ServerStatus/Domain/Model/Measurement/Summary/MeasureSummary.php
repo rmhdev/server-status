@@ -59,7 +59,7 @@ class MeasureSummary
     }
 
     /**
-     * @inheritdoc
+     * @deprecated
      */
     public function name(): string
     {
