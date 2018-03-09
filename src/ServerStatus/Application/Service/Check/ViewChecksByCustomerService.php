@@ -14,6 +14,7 @@ namespace ServerStatus\Application\Service\Check;
 
 use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryCollection;
 use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
@@ -54,14 +55,19 @@ class ViewChecksByCustomerService
         $this->transformer = $transformer;
     }
 
-    public function execute(ViewChecksByCustomerRequest $request = null)
+    /**
+     * @param ViewChecksByCustomerRequest $request
+     * @return mixed
+     * @throws CustomerDoesNotExistException
+     */
+    public function execute(ViewChecksByCustomerRequest $request)
     {
-        if (is_null($request)) {
-            return [];
-        }
         $customer = $this->customerRepository->ofId($request->customerId());
         if (!$customer) {
-            return [];
+            throw new CustomerDoesNotExistException(sprintf(
+                'Customer with id "%s" not found',
+                $request->customerId()
+            ));
         }
         $checkCollection = $this->checkRepository->byCustomer($request->customerId());
 

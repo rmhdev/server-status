@@ -119,16 +119,6 @@ class ViewChecksByCustomerServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function isShouldReturnEmptyListWhenNoRequestIsGiven()
-    {
-        $data = $this->createService()->execute();
-
-        $this->assertEquals([], $data);
-    }
-
     private function createService(): ViewChecksByCustomerService
     {
         return new ViewChecksByCustomerService(
@@ -136,6 +126,19 @@ class ViewChecksByCustomerServiceTest extends TestCase
             $this->checkRepository,
             $this->measurementRepository,
             $this->customerChecksTransformer
+        );
+    }
+
+    /**
+     * @test
+     * @expectedException \ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException
+     */
+    public function itShouldThrowExceptionWhenCustomerIsNotFound()
+    {
+        $this->createService()->execute(
+            new ViewChecksByCustomerRequest(
+                CustomerIdDataBuilder::aCustomerId()->withValue("should-not-exist")->build()
+            )
         );
     }
 

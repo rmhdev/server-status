@@ -23,7 +23,6 @@ final class MeasureSummaryFactory
         MeasurementRepository $repository,
         DateRange $dateRange
     ): MeasureSummary {
-        //TODO: depending on date range, choose summaries by minute, hour or day.
         return new MeasureSummary(
             $check,
             $repository->summaryValues(
