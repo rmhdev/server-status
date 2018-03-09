@@ -31,16 +31,27 @@ final class MeasurementSummaryDtoDataTransformer implements MeasurementSummaryDa
     public function read()
     {
         $data = [
-            "from" => $this->measureSummary()->dateRange()->from()->format(DATE_ISO8601),
-            "to" => $this->measureSummary()->dateRange()->to()->format(DATE_ISO8601),
             "name" => $this->measureSummary()->name(),
+            "date_range" => [
+                "from" => $this->measureSummary()->dateRange()->from()->format(DATE_ISO8601),
+                "to" => $this->measureSummary()->dateRange()->to()->format(DATE_ISO8601),
+                "name" => $this->measureSummary()->dateRange()->name(),
+                "formatted" => $this->measureSummary()->dateRange()->formatted(),
+            ],
             "averages" => []
         ];
         foreach ($this->measureSummary()->averages() as $average) {
             $data["averages"][] = [
-                "from" => $average->dateRange()->from()->format(DATE_ISO8601),
-                "to" => $average->dateRange()->to()->format(DATE_ISO8601),
-                "response_time" => $average->responseTime()
+                "date_range" => [
+                    "from" => $average->dateRange()->from()->format(DATE_ISO8601),
+                    "to" => $average->dateRange()->to()->format(DATE_ISO8601),
+                    "name" => $average->dateRange()->name(),
+                    "formatted" => $average->dateRange()->formatted(),
+                ],
+                "response_time" => [
+                    "value" => $average->responseTime()->value(),
+                    "formatted" => $average->responseTime()->formatted(),
+                ]
             ];
         }
 
