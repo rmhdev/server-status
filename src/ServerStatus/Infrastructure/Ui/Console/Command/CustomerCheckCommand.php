@@ -14,19 +14,11 @@ namespace ServerStatus\Infrastructure\Ui\Console\Command;
 
 use ServerStatus\Application\Service\Check\ViewCheckByCustomerRequest;
 use ServerStatus\Application\Service\Check\ViewCheckByCustomerService;
-use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckName;
-use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
-use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
-use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerId;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummary;
-use ServerStatus\Domain\Model\Measurement\Summary\MeasureSummaryFactory;
-use ServerStatus\Domain\Model\Measurement\Summary\SummaryAverage;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,6 +26,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomerCheckCommand extends AbstractCommand
 {
+    /**
+     * @var ViewCheckByCustomerService
+     */
     private $service;
 
 
@@ -59,7 +54,13 @@ class CustomerCheckCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->startWatch();
+        $check = $this->findValues($input, $output);
+        $this->printValues($output, $check);
+        $this->writeCompletedMessage($output, $this->stopWatch());
+    }
 
+    private function findValues(InputInterface $input, OutputInterface $output): array
+    {
         $slug = $input->getArgument('check');
         $request = new ViewCheckByCustomerRequest(
             new CustomerId($input->getArgument('id')),
@@ -67,80 +68,66 @@ class CustomerCheckCommand extends AbstractCommand
             new \DateTimeImmutable($input->getOption('date')),
             $input->getOption('type')
         );
+        $check = [];
         try {
-            $this->service->execute($request);
+            $check = $this->service->execute($request);
         } catch (CustomerDoesNotExistException $exceptionA) {
             $output->writeln('Customer: <error>not found</error>');
-            return;
         } catch (CheckDoesNotExistException $exceptionB) {
             $output->writeln('Check: <error>not found</error>');
-            return;
         }
-
-
-
-        $this->writeCompletedMessage($output, $this->stopWatch());
-    }
-
-    private function findCustomer(InputInterface $input, OutputInterface $output): ?Customer
-    {
-        $email = $input->getArgument('email');
-        $customer = $this->customerRepository->ofEmail(new CustomerEmail($email));
-        $output->writeln(sprintf(
-            'Customer: %s',
-            $customer ?
-                sprintf('<info>found</info> (%s)', $customer->email()) :
-                '<error>not found</error>'
-        ));
-
-        return $customer;
-    }
-
-    private function findCheck(Customer $customer, InputInterface $input, OutputInterface $output): ?Check
-    {
-        $checkSlug = $input->getArgument('check');
-        $check = $this->checkRepository->byCustomerAndSlug($customer->id(), new CheckName($checkSlug, $checkSlug));
-        $output->writeln(sprintf(
-            'Check: %s',
-            $check ?
-                sprintf('<info>found</info> (%s): "%s"', $check->name(), $check->url()) :
-                '<error>not found</error>'
-        ));
 
         return $check;
     }
 
-    private function createDateRange(InputInterface $input, OutputInterface $output): DateRange
+    private function printValues(OutputInterface $output, array $values = [])
     {
-        $date = $input->getOption('date');
-        $type = $input->getOption('type');
-        $dateRange = DateRangeFactory::create($type, new \DateTimeImmutable($date));
+        if (!$values) {
+            return;
+        }
+        $output->writeln(sprintf(
+            'Customer: <info>found</info> (%s): "%s"',
+            $values["customer"]["id"],
+            $values["customer"]["name"]
+        ));
+        $output->writeln(sprintf(
+            'Check: <info>found</info> (%s): "%s"',
+            $values["check"]["name"],
+            $values["check"]["url"]["formatted"]
+        ));
+        $output->writeln(sprintf(
+            'Date range: %s (%s)',
+            $values["measure_summary"]["date_range"]["name"],
+            $values["measure_summary"]["date_range"]["formatted"]
+        ));
 
-        $output->writeln(sprintf('Date range: %s (%s)', $dateRange->name(), $dateRange->formatted()));
-
-        return $dateRange;
+        foreach ($values["measure_summary"]["averages"] as $average) {
+            $this->printAverage($average, $output);
+        }
     }
 
-    private function createSummary(Check $check, DateRange $dateRange): MeasureSummary
-    {
-        return MeasureSummaryFactory::create($check, $this->measurementRepository, $dateRange);
-    }
-
-    private function printAverage(SummaryAverage $average, OutputInterface $output, SummaryAverage $previous = null)
+    private function printAverage(array $average, OutputInterface $output)
     {
         $diff = "";
-        if ($previous) {
-            $durationDiff = $average->responseTime()->diff($previous->responseTime());
-            $diffText = sprintf('%s%s', $durationDiff->decimal() > 0 ? '+' : '', $durationDiff);
+        if ($average["response_time"]["diff"]["value"]) {
+            $diffText = sprintf(
+                '%s%s',
+                $average["response_time"]["diff"]["value"] > 0 ? '+' : '',
+                $average["response_time"]["diff"]["formatted"]
+            );
             $diff = sprintf(
                 ' <%s>%10s</>',
-                $durationDiff->decimal() < 0 ?
+                $average["response_time"]["diff"]["value"] < 0 ?
                     'fg=white;bg=green' :
-                    ($durationDiff->decimal() == 0 ? '' : 'fg=white;bg=red'),
+                    ($average["response_time"]["diff"]["value"] == 0 ? 'info' : 'fg=white;bg=red'),
                 $diffText
             );
         }
-
-        $output->writeln(sprintf("  %s = %s%10s", $average->dateRange(), $average->responseTime(), $diff));
+        $output->writeln(sprintf(
+            "  %s = %s%10s",
+            $average["response_time"]["date_range"]["formatted"],
+            $average["response_time"]["formatted"],
+            $diff
+        ));
     }
 }

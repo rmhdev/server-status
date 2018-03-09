@@ -41,7 +41,7 @@ final class CheckDtoDataTransformer implements CheckDataTransformer
         return [
             "customer" => $this->processCustomer(),
             "check" => $this->processCheck(),
-            "measureSummary" => $this->processMeasureSummary()
+            "measure_summary" => $this->processMeasureSummary()
         ];
     }
 
@@ -59,6 +59,9 @@ final class CheckDtoDataTransformer implements CheckDataTransformer
             "id" => $this->check->id()->id(),
             "name" => $this->check->name()->value(),
             "slug" => $this->check->name()->slug(),
+            "url" => [
+                "formatted" => (string) $this->check->url()
+            ]
         ];
     }
 
@@ -87,6 +90,11 @@ final class CheckDtoDataTransformer implements CheckDataTransformer
             }
             $values[] = [
                 "response_time" => [
+                    "date_range" => [
+                        "from" => $average->dateRange()->from()->format(DATE_ISO8601),
+                        "to" => $average->dateRange()->to()->format(DATE_ISO8601),
+                        "formatted" => $average->dateRange()->formatted(),
+                    ],
                     "value" => $average->responseTime()->value(),
                     "formatted" => $average->responseTime()->formatted(),
                     "diff" => [
