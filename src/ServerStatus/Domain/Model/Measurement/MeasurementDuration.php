@@ -100,6 +100,9 @@ class MeasurementDuration
 
     public function diff(MeasurementDuration $duration): Percent
     {
+        if (0 >= $this->value()) {
+            return new Percent(0);
+        }
         $diff = $this->value() - $duration->value();
 
         return new Percent($diff / $this->value());

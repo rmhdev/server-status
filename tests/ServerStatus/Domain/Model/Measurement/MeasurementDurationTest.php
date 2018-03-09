@@ -112,4 +112,25 @@ class MeasurementDurationTest extends TestCase
             'Diff with slower duration'
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbeToCalculateDiffWhenDurationIsZero()
+    {
+        $durationZero = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(0)->build();
+        $duration = MeasurementDurationDataBuilder::aMeasurementDuration()->withDuration(1000)->build();
+
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(0)->build(),
+            $durationZero->diff($duration),
+            'Diff duration zero with other duration'
+        );
+
+        $this->assertEquals(
+            PercentDataBuilder::aPercent()->withValue(1)->build(),
+            $duration->diff($durationZero),
+            'Diff with a duration zero'
+        );
+    }
 }
