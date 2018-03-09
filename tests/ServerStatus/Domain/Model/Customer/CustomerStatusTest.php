@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This file is part of the server-status package.
@@ -12,6 +13,7 @@
 namespace ServerStatus\Tests\Domain\Model\Customer;
 
 use PHPUnit\Framework\TestCase;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 class CustomerStatusTest extends TestCase
 {
@@ -30,7 +32,7 @@ class CustomerStatusTest extends TestCase
      */
     public function itShouldBeDisabledWhenDefined()
     {
-        $status = CustomerStatusDataBuilder::aCustomerStatus()->withValue("disabled")->build();
+        $status = CustomerStatusDataBuilder::aCustomerStatus()->withValue(CustomerStatus::CODE_DISABLED)->build();
 
         $this->assertFalse($status->isEnabled());
     }
