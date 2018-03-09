@@ -18,7 +18,9 @@ use ServerStatus\Domain\Model\Check\CheckCollection;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Customer\CustomerId;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 /**
  * @method Check|null findOneBy(array $criteria, array $orderBy = null)
@@ -97,6 +99,12 @@ class DoctrineCheckRepository extends EntityRepository implements CheckRepositor
     {
         return new CheckCollection(
             $this->createQueryBuilder("a")
+                ->where("a.status.code = :statusEnabled")
+                ->andWhere("a.customer.status.code = :customerEnabled")
+                ->setParameters([
+                    'statusEnabled' => CheckStatus::CODE_ENABLED,
+                    'customerEnabled' => CustomerStatus::CODE_ENABLED,
+                ])
                 ->getQuery()
                 ->execute()
         );

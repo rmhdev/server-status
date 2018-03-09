@@ -15,11 +15,15 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\Check;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Check\CheckStatus;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckNameDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckStatusDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerStatusDataBuilder;
 
 class InMemoryCheckRepositoryTest extends TestCase
 {
@@ -140,14 +144,22 @@ class InMemoryCheckRepositoryTest extends TestCase
      */
     public function itShouldReturnEnabledChecks()
     {
+        $customerEnabled = CustomerDataBuilder::aCustomer()->withStatus(
+            CustomerStatusDataBuilder::aCustomerStatus()->withValue(CustomerStatus::CODE_ENABLED)->build()
+        )->build();
+        $customerDisabled = CustomerDataBuilder::aCustomer()->withStatus(
+            CustomerStatusDataBuilder::aCustomerStatus()->withValue(CustomerStatus::CODE_DISABLED)->build()
+        )->build();
+        $statusDisabled = CheckStatusDataBuilder::aCheckStatus()->withCode(CheckStatus::CODE_DISABLED)->build();
+
         $repository = $this->createEmptyRepository();
         $repository
-            ->add(CheckDataBuilder::aCheck()->build())
-            ->add(CheckDataBuilder::aCheck()->build())
-            ->add(CheckDataBuilder::aCheck()->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withStatus($statusDisabled)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerDisabled)->build())
         ;
 
-        $this->assertEquals(3, $repository->enabled()->count());
+        $this->assertEquals(1, $repository->enabled()->count(), 'Return only enabled checks from enabled customers');
     }
 
     /**

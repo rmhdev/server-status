@@ -118,6 +118,15 @@ class InMemoryCheckRepository implements CheckRepository
      */
     public function enabled(): CheckCollection
     {
-        return new CheckCollection($this->checks());
+        $checks = $this->checks();
+
+        return new CheckCollection(
+            array_filter($checks, function (Check $check) {
+                if (!$check->status()->isEnabled()) {
+                    return false;
+                }
+                return $check->customer()->status()->isEnabled();
+            })
+        );
     }
 }
