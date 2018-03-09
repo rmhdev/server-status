@@ -14,7 +14,7 @@ namespace ServerStatus\Tests\Application\Service\Check;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Application\DataTransformer\Check\CheckDtoDataTransformer;
-use ServerStatus\Application\DataTransformer\Customer\CheckDataTransformer;
+use ServerStatus\Application\DataTransformer\Check\CheckDataTransformer;
 use ServerStatus\Application\Service\Check\ViewCheckByCustomerRequest;
 use ServerStatus\Application\Service\Check\ViewCheckByCustomerService;
 use ServerStatus\Domain\Model\Check\Check;
@@ -198,6 +198,6 @@ class ViewCheckByCustomerServiceTest extends TestCase
             new ViewCheckByCustomerRequest($this->customerId, $this->checkName)
         );
 
-        $this->assertGreaterThan(0, sizeof($data["measureSummary"]["averages"]));
+        $this->assertGreaterThan(0, sizeof($data["measure_summary"]["averages"]));
     }
 }
