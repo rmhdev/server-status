@@ -31,7 +31,7 @@ help:
 
 .PHONY:
 test:
-	$(PHP) $(PHPUNIT) --configuration="$(PHPUNIT_CONFIG)" tests
+	$(PHP) $(PHPUNIT) --configuration="$(PHPUNIT_CONFIG)"
 
 .PHONY:
 phpcs:
