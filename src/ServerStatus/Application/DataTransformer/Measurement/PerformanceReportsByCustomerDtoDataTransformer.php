@@ -48,6 +48,7 @@ final class PerformanceReportsByCustomerDtoDataTransformer implements Performanc
     private function readCustomer()
     {
         return [
+            "id" => $this->customer->id()->id(),
             "name" => $this->customer->screenName(),
             "alias" => $this->customer->alias(),
             "email" => $this->customer->email(),

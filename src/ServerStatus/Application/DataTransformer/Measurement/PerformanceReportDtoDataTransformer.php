@@ -64,13 +64,13 @@ final class PerformanceReportDtoDataTransformer implements PerformanceReportData
     private function readPerformance()
     {
         $status = [];
-        foreach ($this->report->performance()->performanceStatusCollection() as $status) {
+        foreach ($this->report->performance()->performanceStatusCollection() as $performanceStatus) {
             $status[] = [
-                "code" => $status->status()->code(),
-                "count" => $status->count(),
+                "code" => $performanceStatus->status()->code(),
+                "count" => $performanceStatus->count(),
                 "average" => [
-                    "value" => $status->durationAverage()->value(),
-                    "formatted" => $status->durationAverage()->formatted(),
+                    "value" => $performanceStatus->durationAverage()->value(),
+                    "formatted" => $performanceStatus->durationAverage()->formatted(),
                 ]
             ];
         }

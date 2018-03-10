@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace ServerStatus\Tests\Application\Service\Check;
 
 use PHPUnit\Framework\TestCase;
-use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDataTransformer;
-use ServerStatus\Application\DataTransformer\Customer\CustomerChecksDtoDataTransformer;
+use ServerStatus\Application\DataTransformer\Measurement\PerformanceReportsByCustomerDataTransformer;
+use ServerStatus\Application\DataTransformer\Measurement\PerformanceReportsByCustomerDtoDataTransformer;
 use ServerStatus\Application\Service\Check\ViewChecksByCustomerRequest;
-use ServerStatus\Application\Service\Check\ViewChecksByCustomerService;
+use ServerStatus\Application\Service\Check\ViewPerformanceReportsService;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckRepository;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
@@ -48,9 +49,9 @@ class ViewPerformanceReportsServiceTest extends TestCase
     private $measurementRepository;
 
     /**
-     * @var CustomerChecksDataTransformer
+     * @var PerformanceReportsByCustomerDataTransformer
      */
-    private $customerChecksTransformer;
+    private $transformer;
 
     /**
      * @var CustomerId
@@ -85,7 +86,7 @@ class ViewPerformanceReportsServiceTest extends TestCase
         $this->customerRepository = $customerRepository;
         $this->checkRepository = $checkRepo;
         $this->measurementRepository = $measurementRepo;
-        $this->customerChecksTransformer = new CustomerChecksDtoDataTransformer();
+        $this->transformer = new PerformanceReportsByCustomerDtoDataTransformer();
     }
 
     private function createMeasurements(Check $check)
@@ -110,7 +111,7 @@ class ViewPerformanceReportsServiceTest extends TestCase
 
     protected function tearDown()
     {
-        unset($this->customerChecksTransformer);
+        unset($this->transformer);
         unset($this->measurementRepository);
         unset($this->checkRepository);
         unset($this->customerRepository);
@@ -119,13 +120,13 @@ class ViewPerformanceReportsServiceTest extends TestCase
         parent::tearDown();
     }
 
-    private function createService(): ViewChecksByCustomerService
+    private function createService(): ViewPerformanceReportsService
     {
         return new ViewPerformanceReportsService(
             $this->customerRepository,
             $this->checkRepository,
             $this->measurementRepository,
-            $this->customerChecksTransformer
+            $this->transformer
         );
     }
 
@@ -152,5 +153,21 @@ class ViewPerformanceReportsServiceTest extends TestCase
         );
 
         $this->assertEquals($this->customerId->id(), $data["customer"]["id"]);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnOnePerformanceReportForEveryCheck()
+    {
+        $data = $this->createService()->execute(
+            new ViewChecksByCustomerRequest(
+                $this->customerId,
+                new \DateTime("2018-02-03T00:00:00+0200"),
+                DateRangeDay::NAME
+            )
+        );
+
+        $this->assertEquals(2, sizeof($data["performance_reports"]));
     }
 }
