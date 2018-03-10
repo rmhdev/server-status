@@ -50,24 +50,6 @@ class PercentTest extends TestCase
     }
 
     /**
-     * @testNO
-     * @expectedException \UnexpectedValueException
-     */
-    public function itShouldThrowExceptionForValuesGreaterThanOne()
-    {
-        PercentDataBuilder::aPercent()->withValue(1.001)->build();
-    }
-
-    /**
-     * @testNO
-     * @expectedException \UnexpectedValueException
-     */
-    public function itShouldThrowExceptionForValuesLowerThanMinusOne()
-    {
-        PercentDataBuilder::aPercent()->withValue(-1.001)->build();
-    }
-
-    /**
      * @test
      */
     public function itShouldReturnFormattedValueWhenCastedToString()
