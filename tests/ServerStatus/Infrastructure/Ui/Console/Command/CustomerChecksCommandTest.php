@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Infrastructure\Ui\Console\Command;
 
+use ServerStatus\Application\DataTransformer\Measurement\PerformanceReportsByCustomerDataTransformer;
+use ServerStatus\Application\DataTransformer\Measurement\PerformanceReportsByCustomerDtoDataTransformer;
+use ServerStatus\Application\Service\Check\ViewPerformanceReportsService;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -22,7 +25,6 @@ use ServerStatus\Infrastructure\Ui\Console\Command\CustomerChecksCommand;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckUrlDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
-use ServerStatus\Tests\Domain\Model\Customer\CustomerEmailDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
@@ -32,7 +34,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class CustomerChecksCommandTest extends KernelTestCase
 {
-    const DEFAULT_CUSTOMER_EMAIL = "test@example.com";
+    const DEFAULT_CUSTOMER_ID = "my-username";
 
     /**
      * @var CustomerRepository
@@ -49,6 +51,11 @@ class CustomerChecksCommandTest extends KernelTestCase
      */
     private $measurementRepository;
 
+    /**
+     * @var PerformanceReportsByCustomerDataTransformer
+     */
+    private $transformer;
+
 
     protected function setUp()
     {
@@ -56,6 +63,7 @@ class CustomerChecksCommandTest extends KernelTestCase
         $this->customerRepository = $this->createCustomerRepository();
         $this->checkRepository = $this->createCheckRepository();
         $this->measurementRepository = $this->createMeasurementRepository();
+        $this->transformer = new PerformanceReportsByCustomerDtoDataTransformer();
     }
 
     protected function tearDown()
@@ -72,14 +80,10 @@ class CustomerChecksCommandTest extends KernelTestCase
         $repo
             ->add(
                 CustomerDataBuilder::aCustomer()->withId(
-                    CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
-                )->withEmail(
-                    CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+                    CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
                 )->build()
             )
-            ->add(
-                CustomerDataBuilder::aCustomer()->build()
-            )
+            ->add(CustomerDataBuilder::aCustomer()->build())
         ;
 
         return $repo;
@@ -87,8 +91,8 @@ class CustomerChecksCommandTest extends KernelTestCase
 
     private function createCheckRepository(): CheckRepository
     {
-        $defaultCustomer = $this->customerRepository->ofEmail(
-            CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+        $defaultCustomer = $this->customerRepository->ofId(
+            CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
         );
 
         $repo = new InMemoryCheckRepository();
@@ -116,8 +120,8 @@ class CustomerChecksCommandTest extends KernelTestCase
     private function createMeasurementRepository(): MeasurementRepository
     {
         $repository = new InMemoryMeasurementRepository();
-        $customer = $this->customerRepository->ofEmail(
-            CustomerEmailDataBuilder::aCustomerEmail()->withValue(self::DEFAULT_CUSTOMER_EMAIL)->build()
+        $customer = $this->customerRepository->ofId(
+            CustomerIdDataBuilder::aCustomerId()->withValue(self::DEFAULT_CUSTOMER_ID)->build()
         );
         $date = new \DateTimeImmutable("2018-03-01T00:00:00+0200");
         $codes = [
@@ -141,32 +145,16 @@ class CustomerChecksCommandTest extends KernelTestCase
         return $repository;
     }
 
-    /**
-     * @test
-     */
-    public function itShouldReturnReportForLast24HoursByDefault()
-    {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
-        $application->add($this->findCommand());
-        $command = $application->find('server-status:checks');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command'  => $command->getName(),
-            'email'    => self::DEFAULT_CUSTOMER_EMAIL
-        ]);
-        $output = $commandTester->getDisplay();
-
-        $this->assertContains("Date range: last_24_hours", $output);
-    }
-
     private function findCommand(): CustomerChecksCommand
     {
-        return new CustomerChecksCommand(
+        $service = new ViewPerformanceReportsService(
             $this->customerRepository,
             $this->checkRepository,
-            $this->measurementRepository
+            $this->measurementRepository,
+            $this->transformer
         );
+
+        return new CustomerChecksCommand($service);
     }
 
     /**
@@ -181,10 +169,29 @@ class CustomerChecksCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'email'    => "unknown@example.com"
+            'id'       => "unknown"
         ]);
         $output = $commandTester->getDisplay();
 
         $this->assertContains("Customer: not found", $output);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAPerformanceReportForEveryCheck()
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $application->add($this->findCommand());
+        $command = $application->find('server-status:checks');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command'  => $command->getName(),
+            'id'       => self::DEFAULT_CUSTOMER_ID
+        ]);
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains("Checks: 2", $output);
     }
 }

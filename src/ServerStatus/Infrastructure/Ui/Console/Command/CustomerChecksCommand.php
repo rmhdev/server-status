@@ -12,17 +12,12 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Ui\Console\Command;
 
-use ServerStatus\Domain\Model\Check\Check;
-use ServerStatus\Domain\Model\Check\CheckRepository;
-use ServerStatus\Domain\Model\Common\DateRange\DateRange;
-use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Application\Service\Check\ViewChecksByCustomerRequest;
+use ServerStatus\Application\Service\Check\ViewPerformanceReportsService;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
-use ServerStatus\Domain\Model\Customer\CustomerEmail;
-use ServerStatus\Domain\Model\Customer\CustomerRepository;
-use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
-use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
+use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
+use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Measurement\MeasurementStatus;
-use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReportFactory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,30 +26,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CustomerChecksCommand extends AbstractCommand
 {
     /**
-     * @var CustomerRepository
+     * @var ViewPerformanceReportsService
      */
-    private $customerRepository;
-
-    /**
-     * @var CheckRepository
-     */
-    private $checkRepository;
-
-    /**
-     * @var MeasurementRepository
-     */
-    private $measurementRepository;
+    private $service;
 
 
-    public function __construct(
-        CustomerRepository $customerRepository,
-        CheckRepository $checkRepository,
-        MeasurementRepository $measurementRepository
-    ) {
+    public function __construct(ViewPerformanceReportsService $service)
+    {
         parent::__construct();
-        $this->customerRepository = $customerRepository;
-        $this->checkRepository = $checkRepository;
-        $this->measurementRepository = $measurementRepository;
+        $this->service = $service;
     }
 
     protected function configure()
@@ -63,7 +43,7 @@ class CustomerChecksCommand extends AbstractCommand
             ->setName('server-status:checks')
             ->setDescription('List checks for a given customer.')
             ->setHelp('This command allows you to show checks for a given customer.')
-            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user.')
+            ->addArgument('id', InputArgument::REQUIRED, 'The id of the user.')
             ->addOption('date', null, InputOption::VALUE_OPTIONAL, 'The date of the report.', 'now')
             ->addOption('type', null, InputOption::VALUE_OPTIONAL, 'The type of report.', DateRangeLast24Hours::NAME)
         ;
@@ -72,60 +52,66 @@ class CustomerChecksCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->startWatch();
-
-        $email = $input->getArgument('email');
-        $date = $input->getOption('date');
-        $type = $input->getOption('type');
-        $dateRange = DateRangeFactory::create($type, new \DateTimeImmutable($date));
-        $customer = $this->customerRepository->ofEmail(new CustomerEmail($email));
-
-        $output->writeln(sprintf(
-            'Customer: %s',
-            $customer ?
-            sprintf('<info>found</info> (%s)', $customer->email()) :
-            '<error>not found</error>'
-        ));
-        if (!$customer) {
-            return;
-        }
-
-        $checks = $this->checkRepository->byCustomer($customer->id());
-        $output->writeln(sprintf('Date range: %s (%s)', $dateRange->name(), $dateRange->formatted()));
-        $output->writeln(sprintf('Checks: %d', $checks->count()));
-
-        foreach ($checks as $check) {
-            $this->showCheck($check, $dateRange, $output);
-        }
-
+        $this->executeService($input, $output);
         $this->writeCompletedMessage($output, $this->stopWatch());
     }
 
-    private function showCheck(Check $check, DateRange $dateRange, OutputInterface $output)
+    private function executeService(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln(sprintf('%s (%s): "%s"', $check->name(), $check->name()->slug(), $check->url()));
+        $request = new ViewChecksByCustomerRequest(
+            new CustomerId($input->getArgument('id')),
+            new \DateTimeImmutable($input->getOption('date')),
+            $input->getOption('type')
+        );
+        try {
+            $result = $this->service->execute($request);
+        } catch (CustomerDoesNotExistException $exception) {
+            $output->writeln('Customer: <error>not found</error>');
+            return;
+        }
+        $output->writeln(
+            sprintf('Customer: %s', sprintf('<info>found</info> (%s)', $result["customer"]["email"]))
+        );
+        $output->writeln(
+            sprintf('Date range: %s (%s)', $result["date_range"]["name"], $result["date_range"]["formatted"])
+        );
+        $output->writeln(
+            sprintf('Checks: %d', sizeof($result["performance_reports"]))
+        );
+        foreach ($result["performance_reports"] as $i => $performanceReport) {
+            $this->showPerformanceReport($output, $performanceReport, $i);
+        }
+    }
 
-        $factory = new PerformanceReportFactory($this->measurementRepository);
-        $performanceReport = $factory->create($check, $dateRange);
-
-        $percentile = $performanceReport->performance()->percentile();
+    private function showPerformanceReport(OutputInterface $output, array $performanceReport, int $pos = 0)
+    {
         $output->writeln(sprintf(
-            '  uptime: %s, measurements: %s',
-            $performanceReport->performance()->uptimePercent(),
-            $performanceReport->performance()->totalMeasurements()
+            '%d. %s (%s): "%s"',
+            $pos + 1,
+            $performanceReport["check"]["name"],
+            $performanceReport["check"]["slug"],
+            $performanceReport["check"]["url"]["formatted"]
+        ));
+
+        $output->writeln(sprintf(
+            '  uptime: %s, correct measurements: %s/%s',
+            $performanceReport["performance"]["uptime"]["formatted"],
+            $performanceReport["performance"]["measurements"]["correct"],
+            $performanceReport["performance"]["measurements"]["total"]
         ));
         $output->writeln(sprintf(
-            '  Response times (mean; %s percentile): %s; %s',
-            $percentile->percent(),
-            $performanceReport->performance()->responseTimeMean()->formatted(),
-            (new MeasurementDuration($percentile->value()))->formatted()
+            '  Response times (average; %s percentile): %s; %s',
+            $performanceReport["performance"]["percentile"]["percent"]["formatted"],
+            $performanceReport["performance"]["average"]["formatted"],
+            $performanceReport["performance"]["percentile"]["average"]["formatted"]
         ));
 
-        foreach ($performanceReport->performance()->performanceStatusCollection() as $performanceStatus) {
+        foreach ($performanceReport["performance"]["status"] as $status) {
             $output->writeln(sprintf(
                 '  status %s x [%4s]: %s',
-                $this->formatStatusCode($performanceStatus->status()),
-                $performanceStatus->count(),
-                $performanceStatus->durationAverage()->formatted()
+                $this->formatStatusCode($status["code"]),
+                $status["count"],
+                $status["average"]["formatted"]
             ));
         }
     }

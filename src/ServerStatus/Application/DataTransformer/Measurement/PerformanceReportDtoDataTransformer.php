@@ -40,7 +40,8 @@ final class PerformanceReportDtoDataTransformer implements PerformanceReportData
     {
         return [
             "id" => $this->report->check()->id()->id(),
-            "name" => $this->report->check()->name(),
+            "name" => $this->report->check()->name()->value(),
+            "slug" => $this->report->check()->name()->slug(),
             "url" => [
                 "formatted" => (string) $this->report->check()->url(),
             ],

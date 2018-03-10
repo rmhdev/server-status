@@ -69,6 +69,7 @@ class ViewPerformanceReportsService
         $dateRange = $request->dateRange();
         $this->transformer->write(
             $customer,
+            $request->dateRange(),
             $this->createPerformanceReports($customer, $dateRange)
         );
 

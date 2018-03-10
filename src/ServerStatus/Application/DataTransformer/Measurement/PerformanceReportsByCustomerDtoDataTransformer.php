@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Measurement;
 
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReport;
 
@@ -23,6 +24,11 @@ final class PerformanceReportsByCustomerDtoDataTransformer implements Performanc
     private $customer;
 
     /**
+     * @var DateRange
+     */
+    private $dateRange;
+
+    /**
      * @var PerformanceReport[]
      */
     private $performanceReports;
@@ -31,31 +37,33 @@ final class PerformanceReportsByCustomerDtoDataTransformer implements Performanc
     /**
      * @inheritdoc
      */
-    public function write(Customer $customer, $performanceReports)
+    public function write(Customer $customer, DateRange $dateRange, $performanceReports)
     {
         $this->customer = $customer;
+        $this->dateRange = $dateRange;
         $this->performanceReports = $performanceReports;
     }
 
     public function read()
     {
         return [
-            "customer" => $this->readCustomer(),
+            "customer" => [
+                "id" => $this->customer->id()->id(),
+                "name" => $this->customer->screenName(),
+                "alias" => $this->customer->alias(),
+                "email" => $this->customer->email(),
+                "status" => [
+                    "name" => $this->customer->status()->name(),
+                    "is_enabled" => $this->customer->status()->isEnabled(),
+                ]
+            ],
+            "date_range" => [
+                "from" => $this->dateRange->from()->format(DATE_ISO8601),
+                "to" => $this->dateRange->to()->format(DATE_ISO8601),
+                "name" => $this->dateRange->name(),
+                "formatted" => $this->dateRange->formatted(),
+            ],
             "performance_reports" => $this->readPerformanceReports(),
-        ];
-    }
-
-    private function readCustomer()
-    {
-        return [
-            "id" => $this->customer->id()->id(),
-            "name" => $this->customer->screenName(),
-            "alias" => $this->customer->alias(),
-            "email" => $this->customer->email(),
-            "status" => [
-                "name" => $this->customer->status()->name(),
-                "is_enabled" => $this->customer->status()->isEnabled(),
-            ]
         ];
     }
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Measurement;
 
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceReport;
 
@@ -22,7 +23,7 @@ interface PerformanceReportsByCustomerDataTransformer
      * @param PerformanceReport[] $performanceReports
      * @return void
      */
-    public function write(Customer $customer, $performanceReports);
+    public function write(Customer $customer, DateRange $dateRange, $performanceReports);
 
     public function read();
 }
