@@ -59,7 +59,17 @@ class DateRangeWeekTest extends DateRangeTestCase implements DateRangeInterfaceT
     {
         $dateRange = $this->createDateRange(new \DateTime("2017-01-01T12:00:00+0200"));
 
-        $this->assertEquals('2016, week 52', $dateRange->formatted());
+        $this->assertEquals('2016 W52: Dec 26, Jan 02', $dateRange->formatted());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldSimplifyFormattedDateWhenInTheSameMonth()
+    {
+        $dateRange = $this->createDateRange(new \DateTime("2017-01-15T12:00:00+0200"));
+
+        $this->assertEquals('2017 W2: Jan 09..16', $dateRange->formatted());
     }
 
     /**
@@ -69,7 +79,7 @@ class DateRangeWeekTest extends DateRangeTestCase implements DateRangeInterfaceT
     {
         $dateRange = $this->createDateRange(new \DateTime("2017-01-01T12:00:00+0200"));
 
-        $this->assertEquals('2016, week 52', (string) $dateRange);
+        $this->assertEquals('2016 W52: Dec 26, Jan 02', (string) $dateRange);
     }
 
     /**

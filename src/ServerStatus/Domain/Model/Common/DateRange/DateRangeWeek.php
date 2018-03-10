@@ -34,7 +34,23 @@ final class DateRangeWeek extends DateRangeAbstract implements DateRange
 
     public function formatted(): string
     {
-        return sprintf("%s, week %d", $this->from()->format("o"), $this->from()->format("W"));
+        if ($this->from()->format("M") === $this->to()->format("M")) {
+            return sprintf(
+                "%s W%d: %s %s..%s",
+                $this->from()->format("o"),
+                $this->from()->format("W"),
+                $this->from()->format("M"),
+                $this->from()->format("d"),
+                $this->to()->format("d")
+            );
+        }
+        return sprintf(
+            "%s W%d: %s, %s",
+            $this->from()->format("o"),
+            $this->from()->format("W"),
+            $this->from()->format("M d"),
+            $this->to()->format("M d")
+        );
     }
 
     protected function createDateRange(\DateTimeImmutable $date): DateRange
