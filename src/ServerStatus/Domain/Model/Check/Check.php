@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Check;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 
@@ -48,6 +49,11 @@ class Check
      */
     private $measurements;
 
+    /**
+     * @var Alert[]|ArrayCollection
+     */
+    private $alerts;
+
 
     public function __construct(CheckId $id, CheckName $name, CheckUrl $url, CheckStatus $status, Customer $customer)
     {
@@ -57,6 +63,7 @@ class Check
         $this->status = $status;
         $this->customer = $customer;
         $this->measurements = new ArrayCollection();
+        $this->alerts = new ArrayCollection();
     }
 
     public function id(): CheckId

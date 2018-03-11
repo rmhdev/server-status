@@ -1,0 +1,4 @@
+ServerStatus\Domain\Model\Alert\AlertTimeWindow:
+    type: embeddable
+    fields:
+        minutes: { type: integer, length: 11, nullable: false }

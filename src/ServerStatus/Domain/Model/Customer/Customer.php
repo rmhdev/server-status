@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\Customer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Check\Check;
 
 class Customer
@@ -42,6 +43,11 @@ class Customer
      */
     private $checks;
 
+    /**
+     * @var Alert[]|ArrayCollection
+     */
+    private $alerts;
+
 
     public function __construct(CustomerId $id, CustomerEmail $email, CustomerAlias $alias, CustomerStatus $status)
     {
@@ -50,6 +56,7 @@ class Customer
         $this->alias = $alias;
         $this->status = $status;
         $this->checks = new ArrayCollection();
+        $this->alerts = new ArrayCollection();
     }
 
     public function id(): CustomerId

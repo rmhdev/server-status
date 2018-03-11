@@ -21,6 +21,7 @@ doctrine:
             CustomerId:     ServerStatus\Infrastructure\Domain\Model\Customer\DoctrineCustomerId
             CheckId:        ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckId
             MeasurementId:  ServerStatus\Infrastructure\Domain\Model\Measurement\DoctrineMeasurementId
+            AlertId:        ServerStatus\Infrastructure\Domain\Model\Alert\DoctrineAlertId
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore

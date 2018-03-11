@@ -31,3 +31,14 @@ ServerStatus\Domain\Model\Customer\Customer:
               referencedColumnName: id
               nullable: false
               type: CheckId
+      alerts: # one customer has many alerts
+          #orderBy: { 'dates.start': 'DESC' }
+          orphanRemoval: true
+          mappedBy: customer
+          cascade: ["all"]
+          targetEntity: ServerStatus\Domain\Model\Alert\Alert
+          joinColumn:
+              name: alert_id
+              referencedColumnName: id
+              nullable: false
+              type: AlertId

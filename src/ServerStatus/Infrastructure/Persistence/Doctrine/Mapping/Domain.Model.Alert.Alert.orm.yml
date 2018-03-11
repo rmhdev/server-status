@@ -1,0 +1,46 @@
+ServerStatus\Domain\Model\Alert\Alert:
+    type: entity
+    id:
+        id:
+          column: id
+          type:   AlertId
+    table: alert
+    repositoryClass: ServerStatus\Infrastructure\Domain\Model\Alert\DoctrineAlertRepository
+    fields:
+        reasonName:
+            type: string
+            length: 255
+            nullable: false
+        channelName:
+            type: string
+            length: 50
+            nullable: false
+        channelDestinationRaw:
+            type: string
+            length: 255
+            nullable: false
+    embedded:
+        window:
+            class: ServerStatus\Domain\Model\Alert\AlertTimeWindow
+            columnPrefix: "window_"
+
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [id]
+    manyToOne:
+        customer: # many alerts have one customer
+            targetEntity: ServerStatus\Domain\Model\Customer\Customer
+            inversedBy: alerts
+            joinColumn:
+                name: customer_id
+                referencedColumnName: id
+                nullable: false
+                type: CustomerId
+        check: # many alerts have one check
+            targetEntity: ServerStatus\Domain\Model\Check\Check
+            inversedBy: alerts
+            joinColumn:
+                name: check_id
+                referencedColumnName: id
+                nullable: true
+                type: CheckId

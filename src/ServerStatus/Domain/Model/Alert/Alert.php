@@ -136,7 +136,7 @@ class Alert
         }
 
         return sprintf(
-            'If %s has happened in the %s to %s, then send an alert via %s',
+            'If %s has happened in the %s to %s, then send an notification via %s',
             $this->reason(),
             $this->timeWindow(),
             $checksText,
