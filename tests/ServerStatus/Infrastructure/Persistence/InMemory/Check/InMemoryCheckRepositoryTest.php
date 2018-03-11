@@ -58,7 +58,7 @@ class InMemoryCheckRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function itShouldReturnNoResultWhenMeasurementIsNotInRepository()
+    public function itShouldReturnNoResultWhenCheckIsNotInRepository()
     {
         $id = CheckIdDataBuilder::aCheckId()->withValue("qwerty")->build();
         $check = CheckDataBuilder::aCheck()->withId($id)->build();
@@ -89,7 +89,7 @@ class InMemoryCheckRepositoryTest extends TestCase
      * @test
      * @expectedException \ServerStatus\Domain\Model\Check\CheckDoesNotExistException
      */
-    public function itShouldReturnExceptionWhenRemovingANonExistingMeasurement()
+    public function itShouldThrowExceptionWhenRemovingANonExistingCheck()
     {
         $id = CheckIdDataBuilder::aCheckId()->withValue("qwerty")->build();
         $check = CheckDataBuilder::aCheck()->withId($id)->build();
