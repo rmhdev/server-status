@@ -115,7 +115,17 @@ class Alert
 
     public function check(): ?Check
     {
-        return null;
+        return $this->check;
+    }
+
+    public function isEnabled(): bool
+    {
+        if (is_null($this->check())) {
+            return $this->customer()->status()->isEnabled();
+        }
+
+        return $this->customer()->status()->isEnabled() &&
+            $this->check()->status()->isEnabled();
     }
 
     public function __toString(): string

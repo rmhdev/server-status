@@ -41,7 +41,14 @@ interface AlertRepository
     public function nextId(): AlertId;
 
     /**
+     * @param CustomerId $id
      * @return AlertCollection
      */
     public function byCustomer(CustomerId $id): AlertCollection;
+
+    /**
+     * @param AlertTimeWindow|null $window
+     * @return AlertCollection
+     */
+    public function enabled(AlertTimeWindow $window = null): AlertCollection;
 }

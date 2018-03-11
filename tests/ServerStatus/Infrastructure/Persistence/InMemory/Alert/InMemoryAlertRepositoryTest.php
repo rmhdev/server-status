@@ -15,10 +15,15 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\Alert;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
+use ServerStatus\Domain\Model\Check\CheckStatus;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
 use ServerStatus\Tests\Domain\Model\Alert\AlertIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Check\CheckStatusDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerStatusDataBuilder;
 
 class InMemoryAlertRepositoryTest extends TestCase
 {
@@ -132,5 +137,40 @@ class InMemoryAlertRepositoryTest extends TestCase
             $repository->byCustomer($otherCustomerId)->count(),
             'Customer "other" should have two Alerts'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAlertsOnlyFromEnabledCustomersAndChecks()
+    {
+        $customerDisabled = CustomerDataBuilder::aCustomer()->withStatus(
+            CustomerStatusDataBuilder::aCustomerStatus()->withValue(CustomerStatus::CODE_DISABLED)->build()
+        )->build();
+        $customerEnabled = CustomerDataBuilder::aCustomer()->withStatus(
+            CustomerStatusDataBuilder::aCustomerStatus()->withValue(CustomerStatus::CODE_ENABLED)->build()
+        )->build();
+
+        $checkEnabledA = CheckDataBuilder::aCheck()->withCustomer($customerDisabled)->withStatus(
+            CheckStatusDataBuilder::aCheckStatus()->withCode(CheckStatus::CODE_ENABLED)->build()
+        )->build();
+        $checkDisabledB = CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withStatus(
+            CheckStatusDataBuilder::aCheckStatus()->withCode(CheckStatus::CODE_DISABLED)->build()
+        )->build();
+        $checkEnabledB = CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withStatus(
+            CheckStatusDataBuilder::aCheckStatus()->withCode(CheckStatus::CODE_ENABLED)->build()
+        )->build();
+
+        $repository = $this->createEmptyRepository();
+        $repository
+            ->add(AlertDataBuilder::anAlert()->withCustomer($customerDisabled)->build())
+            ->add(AlertDataBuilder::anAlert()->withCustomer($customerDisabled)->withCheck($checkEnabledA)->build())
+            ->add(AlertDataBuilder::anAlert()->withCustomer($customerEnabled)->build())
+            ->add(AlertDataBuilder::anAlert()->withCustomer($customerEnabled)->withCheck($checkEnabledB)->build())
+            ->add(AlertDataBuilder::anAlert()->withCustomer($customerEnabled)->withCheck($checkDisabledB)->build())
+        ;
+        $collection = $repository->enabled();
+
+        $this->assertEquals(2, $collection->count());
     }
 }

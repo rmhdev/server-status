@@ -17,6 +17,7 @@ use ServerStatus\Domain\Model\Alert\AlertCollection;
 use ServerStatus\Domain\Model\Alert\AlertDoesNotExistException;
 use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
+use ServerStatus\Domain\Model\Alert\AlertTimeWindow;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 
 class InMemoryAlertRepository implements AlertRepository
@@ -89,6 +90,18 @@ class InMemoryAlertRepository implements AlertRepository
 
         return new AlertCollection(array_filter($alerts, function (Alert $alert) use ($id) {
             return $alert->customer()->id()->equals($id);
+        }));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function enabled(AlertTimeWindow $window = null): AlertCollection
+    {
+        $alerts = $this->alerts;
+
+        return new AlertCollection(array_filter($alerts, function (Alert $alert) use ($window) {
+            return $alert->isEnabled();
         }));
     }
 }
