@@ -15,7 +15,6 @@ namespace ServerStatus\Infrastructure\Domain\Model\Alert;
 use Doctrine\ORM\EntityRepository;
 use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Alert\AlertCollection;
-use ServerStatus\Domain\Model\Alert\AlertDoesNotExistException;
 use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
 use ServerStatus\Domain\Model\Alert\AlertTimeWindow;
@@ -28,22 +27,28 @@ class DoctrineAlertRepository extends EntityRepository implements AlertRepositor
 {
     public function ofId(AlertId $id): ?Alert
     {
-        // TODO: Implement ofId() method.
+        return $this->findOneBy(["id" => $id]);
     }
 
     public function add(Alert $alert): AlertRepository
     {
-        // TODO: Implement add() method.
+        $this->getEntityManager()->persist($alert);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function remove(Alert $alert): AlertRepository
     {
-        // TODO: Implement remove() method.
+        $this->getEntityManager()->remove($alert);
+        $this->getEntityManager()->flush();
+
+        return $this;
     }
 
     public function nextId(): AlertId
     {
-        // TODO: Implement nextId() method.
+        return new AlertId();
     }
 
     public function byCustomer(CustomerId $id): AlertCollection

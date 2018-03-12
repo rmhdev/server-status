@@ -42,6 +42,11 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             $entityName: 'ServerStatus\Domain\Model\Customer\Customer'
+    ServerStatus\Domain\Model\Alert\AlertRepository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            $entityName: 'ServerStatus\Domain\Model\Alert\Alert'
 
     Http\Client\HttpClient:
         factory: ['Http\Discovery\HttpClientDiscovery', find]

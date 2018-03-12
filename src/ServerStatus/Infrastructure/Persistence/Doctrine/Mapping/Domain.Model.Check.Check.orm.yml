@@ -43,12 +43,12 @@ ServerStatus\Domain\Model\Check\Check:
                 type: MeasurementId
         alerts: # one check has many alerts
             #orderBy: { 'dates.start': 'DESC' }
-            orphanRemoval: true
             mappedBy: check
+            orphanRemoval: true
             cascade: ["all"]
             targetEntity: ServerStatus\Domain\Model\Alert\Alert
             joinColumn:
                 name: alert_id
                 referencedColumnName: id
-                nullable: false
+                nullable: true
                 type: AlertId
