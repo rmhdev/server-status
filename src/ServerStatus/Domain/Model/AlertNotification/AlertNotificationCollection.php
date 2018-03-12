@@ -33,6 +33,9 @@ final class AlertNotificationCollection implements \Countable, \IteratorAggregat
             $this->assertNotification($notification);
             $processed[] = $notification;
         }
+        usort($processed, function (AlertNotification $a, AlertNotification $b) {
+            return $a->compareTo($b);
+        });
 
         return $processed;
     }

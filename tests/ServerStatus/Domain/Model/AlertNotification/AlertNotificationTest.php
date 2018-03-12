@@ -28,4 +28,23 @@ class AlertNotificationTest extends TestCase
 
         $this->assertSame("my-notification", (string) $notification);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeComparableUsingTheDate()
+    {
+        $date = new \DateTimeImmutable("2018-01-28 23:00:00", new \DateTimeZone("Europe/Madrid"));
+        $notification = AlertNotificationDataBuilder::anAlertNotification()->withDate($date)->build();
+
+        $this->assertEquals(1, $notification->compareTo(
+            AlertNotificationDataBuilder::anAlertNotification()->withDate($date->modify("-1 second"))->build()
+        ));
+        $this->assertEquals(0, $notification->compareTo(
+            AlertNotificationDataBuilder::anAlertNotification()->withDate($date)->build()
+        ));
+        $this->assertEquals(-1, $notification->compareTo(
+            AlertNotificationDataBuilder::anAlertNotification()->withDate($date->modify("+1 second"))->build()
+        ));
+    }
 }

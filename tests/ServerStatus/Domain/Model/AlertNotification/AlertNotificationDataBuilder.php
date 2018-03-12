@@ -49,8 +49,11 @@ class AlertNotificationDataBuilder
         $this->status = AlertNotificationStatusDataBuilder::anAlertNotificationStatus()->build();
     }
 
-    public function withId(AlertNotificationId $id): AlertNotificationDataBuilder
+    public function withId($id): AlertNotificationDataBuilder
     {
+        if (is_string($id)) {
+            $id = AlertNotificationIdDataBuilder::anAlertNotificationId()->withValue($id)->build();
+        }
         $this->id = $id;
 
         return $this;

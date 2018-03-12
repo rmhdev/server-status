@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\AlertNotification;
 
+use ServerStatus\Domain\Model\Alert\AlertId;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
+
 interface AlertNotificationRepository
 {
     /**
@@ -37,4 +40,11 @@ interface AlertNotificationRepository
      * @return AlertNotificationId
      */
     public function nextId(): AlertNotificationId;
+
+    /**
+     * @param AlertId $id
+     * @param DateRange $dateRange
+     * @return AlertNotificationCollection
+     */
+    public function byAlert(AlertId $id, DateRange $dateRange): AlertNotificationCollection;
 }

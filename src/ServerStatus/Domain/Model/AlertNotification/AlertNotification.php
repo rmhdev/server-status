@@ -78,6 +78,24 @@ class AlertNotification
         return $this->status;
     }
 
+    /**
+     * @return int &lt; 0 if $this is less than
+     * $notification; &gt; 0 if $this
+     * is greater than $notification, and 0 if they are
+     * equal.
+     */
+    public function compareTo(AlertNotification $notification): int
+    {
+        if ($notification->dateTime() > $this->dateTime()) {
+            return -1;
+        }
+        if ($notification->dateTime() < $this->dateTime()) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     public function __toString(): string
     {
         return sprintf('%s', $this->id());
