@@ -67,7 +67,7 @@ class InMemoryCheckRepository implements CheckRepository
         $id = $check->id()->id();
         if (!array_key_exists($id, $this->checks)) {
             throw new CheckDoesNotExistException(sprintf(
-                'Check with id "%s" does not exist',
+                'Check "%s" cannot be removed from "in memory" repository',
                 $id
             ));
         }

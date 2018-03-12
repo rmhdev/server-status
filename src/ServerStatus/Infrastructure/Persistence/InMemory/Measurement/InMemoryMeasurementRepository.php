@@ -87,7 +87,7 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         $id = $measurement->id()->id();
         if (!array_key_exists($id, $this->measurements)) {
             throw new MeasurementDoesNotExistException(
-                sprintf('Measurement "%s" is not in the repository', $id)
+                sprintf('Measurement "%s" cannto be removed from "in memory" repository', $id)
             );
         }
         unset($this->measurements[$id]);

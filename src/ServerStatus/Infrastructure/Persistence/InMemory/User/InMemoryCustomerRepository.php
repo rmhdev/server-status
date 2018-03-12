@@ -60,7 +60,7 @@ class InMemoryCustomerRepository implements CustomerRepository
         $id = $customer->id()->id();
         if (!array_key_exists($id, $this->customers)) {
             throw new CustomerDoesNotExistException(sprintf(
-                'Customer with id "%s" does not exist',
+                'Customer "%s" cannot be removed from "in memory" repository',
                 $id
             ));
         }

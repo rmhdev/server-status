@@ -65,7 +65,7 @@ class InMemoryAlertRepository implements AlertRepository
         $id = $alert->id()->id();
         if (!array_key_exists($id, $this->alerts)) {
             throw new AlertDoesNotExistException(
-                sprintf('Alert with id "%s" does not exist', $id)
+                sprintf('Alert "%s" cannot be removed from "in memory" repository', $id)
             );
         }
         unset($this->alerts[$id]);
