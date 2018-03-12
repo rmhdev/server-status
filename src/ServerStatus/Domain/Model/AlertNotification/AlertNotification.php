@@ -12,25 +12,41 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\AlertNotification;
 
-use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Alert\Alert;
 
 class AlertNotification
 {
     /**
-     * @var Check
+     * @var AlertNotificationId
      */
-    private $check;
+    private $id;
+
+    /**
+     * @var Alert
+     */
+    private $alert;
 
     /**
      * @var \DateTime
      */
     private $dateTime;
 
+    /**
+     * @var AlertNotificationStatus
+     */
+    private $status;
 
-    public function __construct(Check $check, \DateTimeInterface $dateTime)
-    {
-        $this->check = $check;
+
+    public function __construct(
+        AlertNotificationId $id,
+        Alert $alert,
+        \DateTimeInterface $dateTime,
+        AlertNotificationStatus $status
+    ) {
+        $this->id = $id;
+        $this->alert = $alert;
         $this->dateTime = $this->createDateTime($dateTime);
+        $this->status = $status;
     }
 
     private function createDateTime(\DateTimeInterface $dateTime)
@@ -42,13 +58,28 @@ class AlertNotification
         );
     }
 
-    public function check(): Check
+    public function id(): AlertNotificationId
     {
-        return $this->check;
+        return $this->id;
+    }
+
+    public function alert(): Alert
+    {
+        return $this->alert;
     }
 
     public function dateTime(): \DateTime
     {
         return $this->dateTime;
+    }
+
+    public function status(): AlertNotificationStatus
+    {
+        return $this->status;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%s', $this->id());
     }
 }
