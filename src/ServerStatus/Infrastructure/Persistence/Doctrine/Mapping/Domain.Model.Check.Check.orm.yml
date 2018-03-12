@@ -36,6 +36,7 @@ ServerStatus\Domain\Model\Check\Check:
             mappedBy: check
             cascade: ["all"]
             targetEntity: ServerStatus\Domain\Model\Measurement\Measurement
+            fetch: 'EXTRA_LAZY'
             joinColumn:
                 name: measurement_id
                 referencedColumnName: id
@@ -47,6 +48,7 @@ ServerStatus\Domain\Model\Check\Check:
             orphanRemoval: true
             cascade: ["all"]
             targetEntity: ServerStatus\Domain\Model\Alert\Alert
+            fetch: 'EXTRA_LAZY'
             joinColumn:
                 name: alert_id
                 referencedColumnName: id
