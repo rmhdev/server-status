@@ -15,6 +15,9 @@ namespace ServerStatus\Infrastructure\Persistence\InMemory\AlertNotification;
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationId;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeFactory;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
+use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
 use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationDataBuilder;
 use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationIdDataBuilder;
 
@@ -101,5 +104,38 @@ class InMemoryAlertNotificationRepositoryTest extends TestCase
         $repository = $this->createEmptyRepository();
 
         $this->assertInstanceOf(AlertNotificationId::class, $repository->nextId());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldFilterByAlertUsingStrictlyTheDateRange()
+    {
+        $alert = AlertDataBuilder::anAlert()->build();
+        $notificationA = AlertNotificationDataBuilder::anAlertNotification()
+            ->withAlert($alert)
+            ->withDate(new \DateTimeImmutable("2018-03-03T11:59:59+0200"))
+            ->build();
+        $notificationB = AlertNotificationDataBuilder::anAlertNotification()
+            ->withAlert($alert)
+            ->withDate(new \DateTimeImmutable("2018-03-04T11:59:59+0200"))
+            ->build();
+        $notificationC = AlertNotificationDataBuilder::anAlertNotification()
+            ->withAlert($alert)
+            ->withDate(new \DateTimeImmutable("2018-03-03T12:00:00+0200"))
+            ->build();
+        $notificationD = AlertNotificationDataBuilder::anAlertNotification()
+            ->withAlert($alert)
+            ->withDate(new \DateTimeImmutable("2018-03-04T12:00:00+0200"))
+            ->build();
+        $repository = $this->createEmptyRepository()
+            ->add($notificationA)->add($notificationB)->add($notificationC)->add($notificationD);
+        $dateRange = DateRangeFactory::create(
+            DateRangeLast24Hours::NAME,
+            new \DateTimeImmutable("2018-03-04T12:00:00+0200")
+        );
+        $collection = $repository->byAlert($alert->id(), $dateRange);
+
+        $this->assertEquals(2, $collection->count());
     }
 }

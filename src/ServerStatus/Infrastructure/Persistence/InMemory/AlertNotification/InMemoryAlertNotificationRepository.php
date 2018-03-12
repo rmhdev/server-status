@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Persistence\InMemory\AlertNotification;
 
+use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotification;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationDoesNotExistException;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationId;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
 class InMemoryAlertNotificationRepository implements AlertNotificationRepository
 {
@@ -76,5 +79,15 @@ class InMemoryAlertNotificationRepository implements AlertNotificationRepository
     public function nextId(): AlertNotificationId
     {
         return new AlertNotificationId();
+    }
+
+    public function byAlert(AlertId $id, DateRange $dateRange): AlertNotificationCollection
+    {
+        $notifications = $this->alertNotifications;
+        $filtered = array_filter($notifications, function (AlertNotification $notification) use ($id, $dateRange) {
+            return $notification->alert()->id()->equals($id) && $dateRange->isInBounds($notification->dateTime());
+        });
+
+        return new AlertNotificationCollection($filtered);
     }
 }
