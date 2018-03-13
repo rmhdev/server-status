@@ -47,6 +47,11 @@ services:
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             $entityName: 'ServerStatus\Domain\Model\Alert\Alert'
+    ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            $entityName: 'ServerStatus\Domain\Model\AlertNotification\AlertNotification'
 
     Http\Client\HttpClient:
         factory: ['Http\Discovery\HttpClientDiscovery', find]
@@ -64,11 +69,15 @@ services:
         class: ServerStatus\Application\DataTransformer\Customer\CustomerChecksDtoDataTransformer
     ServerStatus\Application\DataTransformer\Check\CheckDataTransformer:
         class: ServerStatus\Application\DataTransformer\Check\CheckDtoDataTransformer
+    ServerStatus\Application\DataTransformer\Alert\CustomerAlertsDataTransformer:
+        class: ServerStatus\Application\DataTransformer\Alert\CustomerAlertsDtoDataTransformer
 
     # application services
     ServerStatus\Application\Service\Check\ViewCheckByCustomerService:
         public: false
     ServerStatus\Application\Service\Check\ViewPerformanceReportsService:
+        public: false
+    ServerStatus\Application\Service\Alert\ViewAlertsByCustomerService:
         public: false
 
     # console commands:
@@ -77,4 +86,6 @@ services:
     ServerStatus\Infrastructure\Ui\Console\Command\CustomerChecksCommand:
         public: false
     ServerStatus\Infrastructure\Ui\Console\Command\CustomerCheckCommand:
+        public: false
+    ServerStatus\Infrastructure\Ui\Console\Command\CustomerAlertsCommand:
         public: false

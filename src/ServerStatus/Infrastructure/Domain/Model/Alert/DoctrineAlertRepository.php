@@ -53,7 +53,16 @@ class DoctrineAlertRepository extends EntityRepository implements AlertRepositor
 
     public function byCustomer(CustomerId $id): AlertCollection
     {
-        // TODO: Implement byCustomer() method.
+        $qb = $this->createQueryBuilder("a");
+        $qb
+            ->leftJoin("a.customer", "c")
+            ->where("c.id = :id")
+            ->setParameters([
+                "id" => $id
+            ])
+        ;
+
+        return new AlertCollection($qb->getQuery()->execute());
     }
 
     public function enabled(AlertTimeWindow $window = null): AlertCollection

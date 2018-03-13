@@ -44,3 +44,15 @@ ServerStatus\Domain\Model\Alert\Alert:
                 referencedColumnName: id
                 nullable: true
                 type: CheckId
+    oneToMany:
+        alertNotifications: # one alert has many alertNotifications
+            #orderBy: { 'dates.start': 'DESC' }
+            orphanRemoval: true
+            mappedBy: alert
+            cascade: ["all"]
+            targetEntity: ServerStatus\Domain\Model\AlertNotification\AlertNotification
+            joinColumn:
+                name: alert_id
+                referencedColumnName: id
+                nullable: false
+                type: AlertId

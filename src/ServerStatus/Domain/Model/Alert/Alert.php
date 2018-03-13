@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Alert;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use ServerStatus\Domain\Model\Alert\Channel\AlertChannel;
 use ServerStatus\Domain\Model\Alert\Channel\AlertChannelFactory;
 use ServerStatus\Domain\Model\Alert\Reason\AlertReason;
 use ServerStatus\Domain\Model\Alert\Reason\AlertReasonFactory;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotification;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\InvalidCheckException;
 use ServerStatus\Domain\Model\Customer\Customer;
@@ -54,6 +56,11 @@ class Alert
      */
     private $check;
 
+    /**
+     * @var ArrayCollection|AlertNotification[]
+     */
+    private $alertNotifications;
+
 
     public function __construct(
         AlertId $id,
@@ -71,6 +78,7 @@ class Alert
         $this->channelDestinationRaw = $channel->destinationRaw();
         $this->customer = $customer;
         $this->check = $check;
+        $this->alertNotifications = new ArrayCollection();
     }
 
     private function assertCheckIsRelatedToCustomer(Customer $customer, Check $check = null)

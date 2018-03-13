@@ -29,7 +29,7 @@ class AlertNotification
     /**
      * @var \DateTime
      */
-    private $dateTime;
+    private $createdAt;
 
     /**
      * @var AlertNotificationStatus
@@ -45,7 +45,7 @@ class AlertNotification
     ) {
         $this->id = $id;
         $this->alert = $alert;
-        $this->dateTime = $this->createDateTime($dateTime);
+        $this->createdAt = $this->createDateTime($dateTime);
         $this->status = $status;
     }
 
@@ -70,7 +70,7 @@ class AlertNotification
 
     public function dateTime(): \DateTime
     {
-        return $this->dateTime;
+        return $this->createdAt;
     }
 
     public function status(): AlertNotificationStatus

@@ -1,0 +1,29 @@
+ServerStatus\Domain\Model\AlertNotification\AlertNotification:
+    type: entity
+    id:
+        id:
+          column: id
+          type:   AlertNotificationId
+    table: alert_notification
+    repositoryClass: ServerStatus\Infrastructure\Domain\Model\AlertNotification\DoctrineAlertNotificationRepository
+    fields:
+        createdAt:
+            type: datetime
+            nullable: false
+    embedded:
+        status:
+            class: ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus
+            columnPrefix: "status_"
+
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [id]
+    manyToOne:
+        alert: # many alertNotifications have one alert
+            targetEntity: ServerStatus\Domain\Model\Alert\Alert
+            inversedBy: alertNotifications
+            joinColumn:
+                name: alert_id
+                referencedColumnName: id
+                nullable: false
+                type: AlertId
