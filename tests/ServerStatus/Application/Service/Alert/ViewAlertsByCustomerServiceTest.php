@@ -18,11 +18,15 @@ use ServerStatus\Application\DataTransformer\Alert\CustomerAlertsDtoDataTransfor
 use ServerStatus\Application\Service\Alert\ViewAlertsByCustomerRequest;
 use ServerStatus\Application\Service\Alert\ViewAlertsByCustomerService;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeDay;
 use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\CustomerRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\Alert\InMemoryAlertRepository;
+use ServerStatus\Infrastructure\Persistence\InMemory\AlertNotification\InMemoryAlertNotificationRepository;
 use ServerStatus\Infrastructure\Persistence\InMemory\User\InMemoryCustomerRepository;
 use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
+use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerIdDataBuilder;
 
@@ -37,6 +41,11 @@ class ViewAlertsByCustomerServiceTest extends TestCase
      * @var AlertRepository
      */
     private $alertRepository;
+
+    /**
+     * @var AlertNotificationRepository
+     */
+    private $alertNotificationRepository;
 
     /**
      * @var CustomerAlertsDataTransformer
@@ -59,22 +68,40 @@ class ViewAlertsByCustomerServiceTest extends TestCase
         $customerRepository = new InMemoryCustomerRepository();
         $customerRepository->add($customer);
 
+        $alert = AlertDataBuilder::anAlert()->withCustomer($customer)->build();
         $alertRepository = new InMemoryAlertRepository();
         $alertRepository
+            ->add($alert)
             ->add(AlertDataBuilder::anAlert()->withCustomer($customer)->build())
-            ->add(AlertDataBuilder::anAlert()->withCustomer($customer)->build())
-            ->add(AlertDataBuilder::anAlert()->withCustomer($customer)->build())
+            ->add(AlertDataBuilder::anAlert()->build())
+        ;
+
+        $alertNotificationRepository = new InMemoryAlertNotificationRepository();
+        $alertNotificationRepository
+            ->add(
+                AlertNotificationDataBuilder::anAlertNotification()
+                    ->withAlert($alert)
+                    ->withDate(new \DateTimeImmutable("2018-03-03T12:00:00+0200"))
+                    ->build()
+            )->add(
+                AlertNotificationDataBuilder::anAlertNotification()
+                    ->withAlert($alert)
+                    ->withDate(new \DateTimeImmutable("2018-03-03T18:30:00+0200"))
+                    ->build()
+            )
         ;
 
         $this->customerId = $id;
         $this->customerRepository = $customerRepository;
         $this->alertRepository = $alertRepository;
+        $this->alertNotificationRepository = $alertNotificationRepository;
         $this->transformer = new CustomerAlertsDtoDataTransformer();
     }
 
     protected function tearDown()
     {
         unset($this->transformer);
+        unset($this->alertNotificationRepository);
         unset($this->alertRepository);
         unset($this->customerRepository);
         unset($this->customerId);
@@ -87,6 +114,7 @@ class ViewAlertsByCustomerServiceTest extends TestCase
         return new ViewAlertsByCustomerService(
             $this->customerRepository,
             $this->alertRepository,
+            $this->alertNotificationRepository,
             $this->transformer
         );
     }
@@ -126,5 +154,21 @@ class ViewAlertsByCustomerServiceTest extends TestCase
         );
 
         $this->assertEquals(2, sizeof($data["alerts"]));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnAListOfNotificationsForEveryAlert()
+    {
+        $data = $this->createService()->execute(
+            new ViewAlertsByCustomerRequest(
+                $this->customerId,
+                new \DateTimeImmutable("2018-03-03T18:30:00+0200"),
+                DateRangeDay::NAME
+            )
+        );
+
+        $this->assertEquals(2, sizeof($data["alerts"][0]["notifications"]));
     }
 }

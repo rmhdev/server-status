@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Alert;
 
+use ServerStatus\Domain\Model\AlertNotification\Log\AlertNotificationsLogCollection;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Customer\Customer;
 
 interface CustomerAlertsDataTransformer
 {
-    public function write(Customer $customer);
+    public function write(Customer $customer, DateRange $dateRange, AlertNotificationsLogCollection $logCollection);
 
     public function read();
 }

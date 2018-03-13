@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Domain\Model\AlertNotification\Log;
 
 use ServerStatus\Domain\Model\Alert\Alert;
+use ServerStatus\Domain\Model\Alert\AlertCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
@@ -29,5 +30,18 @@ final class AlertNotificationsLogFactory
             $dateRange,
             $repository->byAlert($alert->id(), $dateRange)
         );
+    }
+
+    public static function createCollection(
+        AlertCollection $alerts,
+        DateRange $dateRange,
+        AlertNotificationRepository $repository
+    ): AlertNotificationsLogCollection {
+        $logs = [];
+        foreach ($alerts as $alert) {
+            $logs[] = self::create($alert, $dateRange, $repository);
+        }
+
+        return new AlertNotificationsLogCollection($logs);
     }
 }

@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\DataTransformer\Alert;
 
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
+use ServerStatus\Domain\Model\AlertNotification\Log\AlertNotificationsLogCollection;
+use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Customer\Customer;
 
 final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransformer
@@ -21,15 +25,33 @@ final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransf
      */
     private $customer;
 
-    public function write(Customer $customer)
-    {
+    /**
+     * @var DateRange
+     */
+    private $dateRange;
+
+    /**
+     * @var AlertNotificationsLogCollection
+     */
+    private $alertNotificationsLogCollection;
+
+
+    public function write(
+        Customer $customer,
+        DateRange $dateRange,
+        AlertNotificationsLogCollection $logCollection
+    ) {
         $this->customer = $customer;
+        $this->dateRange = $dateRange;
+        $this->alertNotificationsLogCollection = $logCollection;
     }
 
     public function read()
     {
         return [
             "customer" => $this->readCustomer(),
+            "date_range" => $this->readDateRange(),
+            "alerts" => $this->readAlertNotificationsLogCollection(),
         ];
     }
 
@@ -41,5 +63,71 @@ final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransf
             "screen_name" => $this->customer->screenName(),
             "alias" => $this->customer->alias()->value(),
         ];
+    }
+
+    private function readDateRange()
+    {
+        return [
+            "from" => $this->dateRange->from()->format(DATE_ISO8601),
+            "to" => $this->dateRange->to()->format(DATE_ISO8601),
+            "name" => $this->dateRange->name(),
+            "formatted" => $this->dateRange->formatted(),
+        ];
+    }
+
+    private function readAlertNotificationsLogCollection()
+    {
+        $alerts = [];
+        foreach ($this->alertNotificationsLogCollection as $alertNotificationsLog) {
+            $alerts[] = [
+                "id" => $alertNotificationsLog->alert()->id()->id(),
+                "is_enabled" => $alertNotificationsLog->alert()->isEnabled() ? "1" : "0",
+                "check" => $this->readCheck($alertNotificationsLog->alert()->check()),
+                "channel" => [
+                    "name" => $alertNotificationsLog->alert()->channel()->name(),
+                    "destination_raw" => $alertNotificationsLog->alert()->channel()->destinationRaw(),
+                ],
+                "reason" => [
+                    "name" => $alertNotificationsLog->alert()->reason()->name(),
+                ],
+                "time_window" => [
+                    "minutes" => $alertNotificationsLog->alert()->timeWindow()->minutes(),
+                ],
+                "notifications" => $this->readAlertNotificationCollection(
+                    $alertNotificationsLog->alertNotificationCollection()
+                )
+            ];
+        }
+
+        return $alerts;
+    }
+
+    private function readCheck(?Check $check)
+    {
+        if (!$check) {
+            return [];
+        }
+
+        return [
+            "id" => $check->id()->id(),
+            "name" => $check->name()->value(),
+            "slug" => $check->name()->slug(),
+            "url" => [
+                "formatted" => $check->url()
+            ]
+        ];
+    }
+
+    private function readAlertNotificationCollection(AlertNotificationCollection $collection)
+    {
+        $notifications = [];
+        foreach ($collection->getIterator() as $alertNotification) {
+            $notifications[] = [
+                "date" => $alertNotification->dateTime()->format(DATE_ISO8601),
+                "status" => $alertNotification->status()->code(),
+            ];
+        }
+
+        return $notifications;
     }
 }

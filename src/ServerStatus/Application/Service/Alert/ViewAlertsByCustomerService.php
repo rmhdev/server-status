@@ -13,8 +13,11 @@ declare(strict_types=1);
 namespace ServerStatus\Application\Service\Alert;
 
 use ServerStatus\Application\DataTransformer\Alert\CustomerAlertsDataTransformer;
-use ServerStatus\Domain\Model\Alert\AlertCollection;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\AlertNotification\Log\AlertNotificationsLogCollection;
+use ServerStatus\Domain\Model\AlertNotification\Log\AlertNotificationsLogFactory;
+use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
 use ServerStatus\Domain\Model\Customer\CustomerId;
@@ -33,6 +36,11 @@ class ViewAlertsByCustomerService
     private $alertRepository;
 
     /**
+     * @var AlertNotificationRepository
+     */
+    private $alertNotificationRepository;
+
+    /**
      * @var CustomerAlertsDataTransformer
      */
     private $transformer;
@@ -41,10 +49,12 @@ class ViewAlertsByCustomerService
     public function __construct(
         CustomerRepository $customerRepository,
         AlertRepository $alertRepository,
+        AlertNotificationRepository $alertNotificationRepository,
         CustomerAlertsDataTransformer $transformer
     ) {
         $this->customerRepository = $customerRepository;
         $this->alertRepository = $alertRepository;
+        $this->alertNotificationRepository = $alertNotificationRepository;
         $this->transformer = $transformer;
     }
 
@@ -56,7 +66,11 @@ class ViewAlertsByCustomerService
     public function execute(ViewAlertsByCustomerRequest $request)
     {
         $customer = $this->findCustomer($request->customerId());
-        $this->transformer->write($customer);
+        $this->transformer->write(
+            $customer,
+            $request->dateRange(),
+            $this->findAlertNotificationsLogCollection($customer->id(), $request->dateRange())
+        );
 
         return $this->transformer->read();
     }
@@ -79,8 +93,14 @@ class ViewAlertsByCustomerService
         return $customer;
     }
 
-    private function findAlerts(CustomerId $id): AlertCollection
-    {
-        return $this->alertRepository->byCustomer($id);
+    private function findAlertNotificationsLogCollection(
+        CustomerId $id,
+        DateRange $dateRange
+    ): AlertNotificationsLogCollection {
+        return AlertNotificationsLogFactory::createCollection(
+            $this->alertRepository->byCustomer($id),
+            $dateRange,
+            $this->alertNotificationRepository
+        );
     }
 }
