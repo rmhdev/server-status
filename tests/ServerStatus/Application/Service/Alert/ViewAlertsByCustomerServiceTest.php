@@ -86,6 +86,7 @@ class ViewAlertsByCustomerServiceTest extends TestCase
     {
         return new ViewAlertsByCustomerService(
             $this->customerRepository,
+            $this->alertRepository,
             $this->transformer
         );
     }

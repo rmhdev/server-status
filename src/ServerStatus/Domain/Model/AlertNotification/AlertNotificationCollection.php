@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\AlertNotification;
 
+use ServerStatus\Domain\Model\Alert\AlertCollection;
+
 final class AlertNotificationCollection implements \Countable, \IteratorAggregate
 {
     /**
@@ -66,5 +68,24 @@ final class AlertNotificationCollection implements \Countable, \IteratorAggregat
     public function getIterator(): \Iterator
     {
         return new \ArrayIterator($this->notifications());
+    }
+
+    /**
+     * Collection of unique alerts inside actual collection.
+     *
+     * @return AlertCollection
+     */
+    public function alerts(): AlertCollection
+    {
+        $alerts = [];
+        foreach ($this->notifications as $notification) {
+            $alert = $notification->alert();
+            $key = $alert->id()->id();
+            if (!array_key_exists($key, $alerts)) {
+                $alerts[$key] = $alert;
+            }
+        }
+
+        return new AlertCollection(array_values($alerts));
     }
 }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace ServerStatus\Application\Service\Alert;
 
 use ServerStatus\Application\DataTransformer\Alert\CustomerAlertsDataTransformer;
+use ServerStatus\Domain\Model\Alert\AlertCollection;
+use ServerStatus\Domain\Model\Alert\AlertRepository;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
 use ServerStatus\Domain\Model\Customer\CustomerId;
@@ -26,14 +28,23 @@ class ViewAlertsByCustomerService
     private $customerRepository;
 
     /**
+     * @var AlertRepository
+     */
+    private $alertRepository;
+
+    /**
      * @var CustomerAlertsDataTransformer
      */
     private $transformer;
 
 
-    public function __construct(CustomerRepository $customerRepository, CustomerAlertsDataTransformer $transformer)
-    {
+    public function __construct(
+        CustomerRepository $customerRepository,
+        AlertRepository $alertRepository,
+        CustomerAlertsDataTransformer $transformer
+    ) {
         $this->customerRepository = $customerRepository;
+        $this->alertRepository = $alertRepository;
         $this->transformer = $transformer;
     }
 
@@ -66,5 +77,10 @@ class ViewAlertsByCustomerService
         }
 
         return $customer;
+    }
+
+    private function findAlerts(CustomerId $id): AlertCollection
+    {
+        return $this->alertRepository->byCustomer($id);
     }
 }

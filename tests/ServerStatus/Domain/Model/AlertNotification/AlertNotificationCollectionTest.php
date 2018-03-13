@@ -14,6 +14,7 @@ namespace ServerStatus\Tests\Domain\Model\AlertNotification;
 
 use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
+use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 
 class AlertNotificationCollectionTest extends TestCase
@@ -130,5 +131,33 @@ class AlertNotificationCollectionTest extends TestCase
         $this->assertSame("second", $iterator->current()->id()->id());
         $iterator->next();
         $this->assertSame("third", $iterator->current()->id()->id());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnACollectionOfDifferentAlerts()
+    {
+        $alert = AlertDataBuilder::anAlert()->build();
+        $notifications = [
+            AlertNotificationDataBuilder::anAlertNotification()
+                ->withAlert($alert)
+                ->withDate(new \DateTimeImmutable("2018-03-03T12:00:00+0200"))
+                ->withId("second")
+                ->build(),
+            AlertNotificationDataBuilder::anAlertNotification()
+                ->withAlert($alert)
+                ->withDate(new \DateTimeImmutable("2018-03-04T11:59:59+0200"))
+                ->withId("third")
+                ->build(),
+            AlertNotificationDataBuilder::anAlertNotification()
+                ->withAlert(AlertDataBuilder::anAlert()->build())
+                ->withDate(new \DateTimeImmutable("2018-03-03T11:59:59+0200"))
+                ->withId("first")
+                ->build(),
+        ];
+        $collection = $this->createCollection($notifications);
+
+        $this->assertEquals(2, $collection->alerts()->count());
     }
 }
