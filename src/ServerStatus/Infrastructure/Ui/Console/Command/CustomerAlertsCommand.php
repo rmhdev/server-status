@@ -68,6 +68,7 @@ class CustomerAlertsCommand extends AbstractCommand
             $output->writeln('Customer: <error>not found</error>');
             return;
         }
-        $output->writeln(sprintf('alerts: %d', sizeof($result["alerts"])));
+        $output->writeln(sprintf('Customer: <info>found</info> (%s)', $result["customer"]["email"]));
+        $output->writeln(sprintf('Alerts: %d', sizeof($result["alerts"])));
     }
 }

@@ -168,4 +168,23 @@ class CustomerAlertsCommandTest extends KernelTestCase
 
         $this->assertContains("Customer: not found", $output);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheTotalNumberOfAlertsByCustomer()
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $application->add($this->findCommand());
+        $command = $application->find('server-status:alerts');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command'  => $command->getName(),
+            'id'       => self::DEFAULT_CUSTOMER_ID
+        ]);
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains("Alerts: 2", $output);
+    }
 }
