@@ -57,8 +57,8 @@ services:
         factory: ['Http\Discovery\HttpClientDiscovery', find]
     Http\Message\MessageFactory:
         factory: ['Http\Discovery\MessageFactoryDiscovery', find]
-    ServerStatus\Infrastructure\Service\PingService:
-        class: ServerStatus\Infrastructure\Service\HttpPingService
+    ServerStatus\Infrastructure\Service\Ping\PingService:
+        class: ServerStatus\Infrastructure\Service\Ping\HttpPingService
 
     # data transformers
     ServerStatus\Application\DataTransformer\Measurement\MeasurementSummaryDataTransformer:

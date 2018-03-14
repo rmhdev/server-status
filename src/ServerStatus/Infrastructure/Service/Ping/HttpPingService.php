@@ -10,7 +10,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace ServerStatus\Infrastructure\Service;
+namespace ServerStatus\Infrastructure\Service\Ping;
 
 use Http\Client\HttpClient;
 use Http\Client\Exception as HttpClientException;

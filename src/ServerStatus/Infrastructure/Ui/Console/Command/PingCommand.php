@@ -17,11 +17,10 @@ use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Domain\Model\Measurement\Measurement;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\MeasurementResult;
-use ServerStatus\Infrastructure\Service\PingService;
+use ServerStatus\Infrastructure\Service\Ping\PingService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class PingCommand extends AbstractCommand
 {

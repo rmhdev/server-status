@@ -10,13 +10,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Infrastructure\Service;
+namespace ServerStatus\Tests\Infrastructure\Service\Ping;
 
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Mock\Client as MockClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use ServerStatus\Infrastructure\Service\HttpPingService;
+use ServerStatus\Infrastructure\Service\Ping\HttpPingService;
 use ServerStatus\Tests\Domain\Model\Check\CheckUrlDataBuilder;
 
 class HttpPingServiceTest extends TestCase
