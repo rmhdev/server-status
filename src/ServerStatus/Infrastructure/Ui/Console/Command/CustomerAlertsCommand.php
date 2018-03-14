@@ -68,7 +68,48 @@ class CustomerAlertsCommand extends AbstractCommand
             $output->writeln('Customer: <error>not found</error>');
             return;
         }
-        $output->writeln(sprintf('Customer: <info>found</info> (%s)', $result["customer"]["email"]));
-        $output->writeln(sprintf('Alerts: %d', sizeof($result["alerts"])));
+        $output->writeln(
+            sprintf('Customer: <info>found</info> (%s)', $result["customer"]["email"])
+        );
+        $output->writeln(
+            sprintf('Date range: %s (%s)', $result["date_range"]["name"], $result["date_range"]["formatted"])
+        );
+        $output->writeln(
+            sprintf('Alerts: %d', sizeof($result["alerts"]))
+        );
+        foreach ($result["alerts"] as $i => $alert) {
+            $this->writeAlert($output, $alert, $i);
+        }
+    }
+
+
+    private function writeAlert(OutputInterface $output, array $alert, int $pos = 0)
+    {
+        $output->writeln(sprintf(
+            '%d. <fg=white;bg=%s> %s </> Alert if "%s" happens during the last %d minutes',
+            $pos + 1,
+            $alert["is_enabled"] ? 'green' : 'red',
+            $alert["is_enabled"] ? 'enabled' : 'disabled',
+            $alert["reason"]["name"],
+            $alert["time_window"]["minutes"]
+        ));
+        $this->writeCheck($output, $alert["check"]);
+        $output->writeln(
+            sprintf('  Channel: %s (%s)', $alert["channel"]["name"], $alert["channel"]["destination_raw"])
+        );
+        $output->writeln(
+            sprintf('  Notifications: %d', $alert["notifications"]["total"])
+        );
+    }
+
+    private function writeCheck(OutputInterface $output, array $check = [])
+    {
+        if (!$check) {
+            $output->writeln('  Check: ALL by customer');
+            return;
+        }
+        $output->writeln(
+            sprintf('  Check: %s (%s)', $check["name"], $check["url"]["formatted"])
+        );
     }
 }

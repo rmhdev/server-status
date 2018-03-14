@@ -81,6 +81,7 @@ final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransf
         foreach ($this->alertNotificationsLogCollection as $alertNotificationsLog) {
             $alerts[] = [
                 "id" => $alertNotificationsLog->alert()->id()->id(),
+                "formatted" => (string) $alertNotificationsLog->alert(),
                 "is_enabled" => $alertNotificationsLog->alert()->isEnabled() ? "1" : "0",
                 "check" => $this->readCheck($alertNotificationsLog->alert()->check()),
                 "channel" => [
@@ -120,9 +121,12 @@ final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransf
 
     private function readAlertNotificationCollection(AlertNotificationCollection $collection)
     {
-        $notifications = [];
+        $notifications = [
+            "total" => $collection->count(),
+            "list" => []
+        ];
         foreach ($collection->getIterator() as $alertNotification) {
-            $notifications[] = [
+            $notifications["list"] = [
                 "date" => $alertNotification->dateTime()->format(DATE_ISO8601),
                 "status" => $alertNotification->status()->code(),
             ];
