@@ -104,33 +104,4 @@ class AlertNotificationsLogCollectionTest extends TestCase
             $this->assertTrue(true, 'Iterator has not an append method');
         }
     }
-
-    /**
-     * @testNO
-     */
-    public function itShouldReturnTheItemsOrderedByDate()
-    {
-        //$notifications = [
-        //    AlertNotificationDataBuilder::anAlertNotification()
-        //        ->withDate(new \DateTimeImmutable("2018-03-03T12:00:00+0200"))
-        //        ->withId("second")
-        //        ->build(),
-        //    AlertNotificationDataBuilder::anAlertNotification()
-        //        ->withDate(new \DateTimeImmutable("2018-03-04T11:59:59+0200"))
-        //        ->withId("third")
-        //        ->build(),
-        //    AlertNotificationDataBuilder::anAlertNotification()
-        //        ->withDate(new \DateTimeImmutable("2018-03-03T11:59:59+0200"))
-        //        ->withId("first")
-        //        ->build(),
-        //];
-        //$collection = $this->createCollection($notifications);
-        //$iterator = $collection->getIterator();
-        //
-        //$this->assertSame("first", $iterator->current()->id()->id());
-        //$iterator->next();
-        //$this->assertSame("second", $iterator->current()->id()->id());
-        //$iterator->next();
-        //$this->assertSame("third", $iterator->current()->id()->id());
-    }
 }
