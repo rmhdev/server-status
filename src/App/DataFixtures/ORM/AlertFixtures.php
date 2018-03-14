@@ -35,7 +35,7 @@ class AlertFixtures extends Fixture implements DependentFixtureInterface
         /* @var CheckRepository $customerRepo */
         $checkRepo = $manager->getRepository(Check::class);
         $data = new FixturesAlertData($alertRepo, new DoctrineAlertFactory(), $customerRepo, $checkRepo);
-        //$data->load();
+        $data->load();
     }
 
     public function getDependencies()

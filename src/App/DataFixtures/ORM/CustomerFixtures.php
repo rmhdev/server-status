@@ -27,5 +27,6 @@ class CustomerFixtures extends Fixture
         $repository = $manager->getRepository(Customer::class);
         $data = new FixturesCustomerData($repository, new DoctrineCustomerFactory());
         $data->load();
+        $manager->flush();
     }
 }

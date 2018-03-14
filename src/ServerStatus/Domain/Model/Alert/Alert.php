@@ -68,7 +68,7 @@ class Alert
         AlertReason $reason,
         AlertChannel $channel,
         Customer $customer,
-        Check $check = null
+        ?Check $check
     ) {
         $this->assertCheckIsRelatedToCustomer($customer, $check);
         $this->id = $id;
@@ -81,7 +81,7 @@ class Alert
         $this->alertNotifications = new ArrayCollection();
     }
 
-    private function assertCheckIsRelatedToCustomer(Customer $customer, Check $check = null)
+    private function assertCheckIsRelatedToCustomer(Customer $customer, ?Check $check)
     {
         if (is_null($check)) {
             return;

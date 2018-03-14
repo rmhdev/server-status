@@ -33,12 +33,12 @@ class MeasurementFixtures extends Fixture implements DependentFixtureInterface
 
         $data = new FixturesMeasurementData($measurementRepo, new DoctrineMeasurementFactory(), $checkRepo);
         $data->load();
+        $manager->flush();
     }
 
     public function getDependencies()
     {
         return [
-            CustomerFixtures::class,
             CheckFixtures::class
         ];
     }

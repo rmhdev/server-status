@@ -18,7 +18,9 @@ use ServerStatus\Domain\Model\Alert\AlertCollection;
 use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
 use ServerStatus\Domain\Model\Alert\AlertTimeWindow;
+use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Customer\CustomerId;
+use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 /**
  * @method Alert|null findOneBy(array $criteria, array $orderBy = null)
@@ -67,6 +69,23 @@ class DoctrineAlertRepository extends EntityRepository implements AlertRepositor
 
     public function enabled(AlertTimeWindow $window = null): AlertCollection
     {
-        // TODO: Implement enabled() method.
+        $qb = $this->createQueryBuilder("a");
+        $qb
+            ->select("a")
+            ->leftJoin("a.customer", "customer")
+            ->leftJoin("a.check", "check")
+            ->where("customer.status.code = :customerStatus")
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull("a.check"),
+                    "check.status.code = :checkStatus"
+                )
+            )->setParameters([
+                "customerStatus" => CustomerStatus::CODE_ENABLED,
+                "checkStatus" => CheckStatus::CODE_ENABLED
+            ])
+        ;
+
+        return new AlertCollection($qb->getQuery()->execute());
     }
 }

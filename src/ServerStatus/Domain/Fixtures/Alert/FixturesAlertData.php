@@ -83,7 +83,6 @@ final class FixturesAlertData
             $customer = $this->findCustomer($value["customer_id"]);
             $check = $this->findCheck($value["check_id"]);
 
-            //print_r($customer ? $customer->id()->id() : "NO CUSTOMER");
             yield(
                 $this->factory->build(
                     new AlertId($value["id"]),
@@ -107,7 +106,7 @@ final class FixturesAlertData
                 "channel_name" => AlertChannelEmail::NAME,
                 "channel_destination" => "rober@example.com",
                 "customer_id" => "rober",
-                "check_id" => null,
+                "check_id" => "rober-check-1",
             ],
             [
                 "id" => "alert-rober-2",
@@ -128,25 +127,25 @@ final class FixturesAlertData
                 "check_id" => "rober-check-disabled",
             ],
 
-            [
-                "id" => "alert-laura-3",
-                "window_minutes" => 10,
-                "reason_name" => AlertReasonDowntime::NAME,
-                "channel_name" => AlertChannelEmail::NAME,
-                "channel_destination" => "rober@example.com",
-                "customer_id" => "laura",
-                "check_id" => null,
-            ],
-
-            [
-                "id" => "alert-carol-1",
-                "window_minutes" => 10,
-                "reason_name" => AlertReasonDowntime::NAME,
-                "channel_name" => AlertChannelEmail::NAME,
-                "channel_destination" => "carol@example.com",
-                "customer_id" => "carol",
-                "check_id" => null,
-            ],
+            //[
+            //    "id" => "alert-laura-3",
+            //    "window_minutes" => 10,
+            //    "reason_name" => AlertReasonDowntime::NAME,
+            //    "channel_name" => AlertChannelEmail::NAME,
+            //    "channel_destination" => "rober@example.com",
+            //    "customer_id" => "laura",
+            //    "check_id" => null,
+            //],
+            //
+            //[
+            //    "id" => "alert-carol-1",
+            //    "window_minutes" => 10,
+            //    "reason_name" => AlertReasonDowntime::NAME,
+            //    "channel_name" => AlertChannelEmail::NAME,
+            //    "channel_destination" => "carol@example.com",
+            //    "customer_id" => "carol",
+            //    "check_id" => null,
+            //],
 
         ];
     }

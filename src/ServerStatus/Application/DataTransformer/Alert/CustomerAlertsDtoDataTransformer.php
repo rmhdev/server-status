@@ -113,7 +113,7 @@ final class CustomerAlertsDtoDataTransformer implements CustomerAlertsDataTransf
             "name" => $check->name()->value(),
             "slug" => $check->name()->slug(),
             "url" => [
-                "formatted" => $check->url()
+                "formatted" => (string) $check->url()
             ]
         ];
     }

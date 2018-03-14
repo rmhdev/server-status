@@ -32,6 +32,7 @@ class CheckFixtures extends Fixture implements DependentFixtureInterface
         $checkRepo = $manager->getRepository(Check::class);
         $data = new FixturesCheckData($checkRepo, new DoctrineCheckFactory(), $customerRepo);
         $data->load();
+        $manager->flush();
     }
 
     public function getDependencies()

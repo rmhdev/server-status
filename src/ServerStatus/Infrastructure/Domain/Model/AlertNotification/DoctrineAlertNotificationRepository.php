@@ -55,7 +55,9 @@ class DoctrineAlertNotificationRepository extends EntityRepository implements Al
     {
         $qb = $this->createQueryBuilder("a");
         $qb
-            ->where("a.alert.id = :alertId")
+            ->select("a")
+            ->leftJoin("a.alert", "alert")
+            ->where("alert.id = :alertId")
             ->andWhere("a.createdAt >= :from")
             ->andWhere("a.createdAt < :to")
             ->orderBy("a.createdAt", "ASC")
