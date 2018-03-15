@@ -22,7 +22,11 @@ use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 use ServerStatus\Domain\Model\Measurement\Performance\PerformanceStatus;
 use ServerStatus\Infrastructure\Persistence\InMemory\Measurement\InMemoryMeasurementRepository;
+use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
+use ServerStatus\Tests\Domain\Model\Alert\AlertTimeWindowDataBuilder;
+use ServerStatus\Tests\Domain\Model\Alert\Reason\AlertReasonDowntimeDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
+use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementResultDataBuilder;
@@ -328,5 +332,101 @@ class InMemoryMeasurementRepositoryTest extends TestCase
                         ->withStatus($code)->withDuration(100 + $i)->build()
                 )->build();
         }
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnIncorrectMeasurementsByAlertWithCheckDefined()
+    {
+        $customer = CustomerDataBuilder::aCustomer()->build();
+        $check = CheckDataBuilder::aCheck()->withCustomer($customer)->build();
+        $alert = AlertDataBuilder::anAlert()
+            ->withCustomer($customer)
+            ->withWindow(AlertTimeWindowDataBuilder::anAlertTimeWindow()->withValue(15)->build())
+            ->withReason(AlertReasonDowntimeDataBuilder::anAlertReason()->build())
+            ->withCheck($check)
+            ->build();
+        $repository = $this->createRepositoryForFindingErrors($check);
+        $result = $repository->findErrors($alert, new \DateTimeImmutable("2018-03-03T12:11:33+0200"));
+
+        $this->assertEquals(1, $result->count(), 'It should have a single incorrect measurement by check');
+    }
+
+    private function createRepositoryForFindingErrors(Check $check): MeasurementRepository
+    {
+        $measurementForCheck = MeasurementDataBuilder::aMeasurement()
+            ->withCheck($check)
+            ->withResult(
+                MeasurementResultDataBuilder::aMeasurementResult()
+                    ->withStatus(404)
+                    ->build()
+            )->withDate(new \DateTimeImmutable("2018-03-03T12:00:00+0200"))
+            ->build();
+
+        $otherCheckByCustomer = CheckDataBuilder::aCheck()
+            ->withCustomer($check->customer())
+            ->build();
+        $measurementForOtherCheck = MeasurementDataBuilder::aMeasurement()
+            ->withCheck($otherCheckByCustomer)
+            ->withResult(
+                MeasurementResultDataBuilder::aMeasurementResult()
+                    ->withStatus(500)
+                    ->build()
+            )->withDate(new \DateTimeImmutable("2018-03-03T12:05:00+0200"))
+            ->build();
+
+        $repository = $this->createEmptyRepository();
+        $repository
+            ->add($measurementForCheck)
+            ->add($measurementForOtherCheck);
+
+        return $repository;
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnIncorrectMeasurementsByAlertWithoutCheckDefined()
+    {
+        $customer = CustomerDataBuilder::aCustomer()->build();
+        $check = CheckDataBuilder::aCheck()->withCustomer($customer)->build();
+        $alert = AlertDataBuilder::anAlert()
+            ->withCustomer($customer)
+            ->withWindow(AlertTimeWindowDataBuilder::anAlertTimeWindow()->withValue(15)->build())
+            ->withReason(AlertReasonDowntimeDataBuilder::anAlertReason()->build())
+            ->withCheck(null)
+            ->build();
+        $repository = $this->createRepositoryForFindingErrors($check);
+        $result = $repository->findErrors($alert, new \DateTimeImmutable("2018-03-03T12:11:33+0200"));
+
+        $this->assertEquals(2, $result->count(), 'It should have all incorrect measurements by customer');
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnEmptyListWhenMeasurementsAreNotInDateRange()
+    {
+        $customer = CustomerDataBuilder::aCustomer()->build();
+        $check = CheckDataBuilder::aCheck()->withCustomer($customer)->build();
+        $alert = AlertDataBuilder::anAlert()
+            ->withCustomer($customer)
+            ->withWindow(AlertTimeWindowDataBuilder::anAlertTimeWindow()->withValue(15)->build())
+            ->withReason(AlertReasonDowntimeDataBuilder::anAlertReason()->build())
+            ->withCheck($check)
+            ->build();
+        $repository = $this->createRepositoryForFindingErrors($check);
+
+        $this->assertEquals(
+            0,
+            $repository->findErrors($alert, new \DateTimeImmutable("2018-03-03T12:15:00+0200"))->count(),
+            'There should not be measurements in date range'
+        );
+        $this->assertEquals(
+            1,
+            $repository->findErrors($alert, new \DateTimeImmutable("2018-03-03T12:14:59+0200"))->count(),
+            'There should be measurements in date range'
+        );
     }
 }

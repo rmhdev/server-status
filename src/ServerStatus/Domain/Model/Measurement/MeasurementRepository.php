@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\Measurement;
 
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Percentile\Percent;
@@ -70,4 +71,11 @@ interface MeasurementRepository
      * @return PerformanceStatusCollection
      */
     public function calculatePerformanceStatus(Check $check, DateRange $dateRange): PerformanceStatusCollection;
+
+    /**
+     * @param Alert $alert
+     * @param \DateTimeInterface $dateTime
+     * @return MeasurementCollection
+     */
+    public function findErrors(Alert $alert, \DateTimeInterface $dateTime): MeasurementCollection;
 }

@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Persistence\InMemory\Measurement;
 
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Measurement\Measurement;
+use ServerStatus\Domain\Model\Measurement\MeasurementCollection;
 use ServerStatus\Domain\Model\Measurement\MeasurementDoesNotExistException;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
@@ -242,5 +244,30 @@ class InMemoryMeasurementRepository implements MeasurementRepository
         }
 
         return new PerformanceStatusCollection($performanceStatuses);
+    }
+
+    public function findErrors(Alert $alert, \DateTimeInterface $dateTime): MeasurementCollection
+    {
+        $dateRange = $alert->timeWindow()->dateRange($dateTime);
+        $errors = array_filter($this->measurements(), function (Measurement $measurement) use ($alert, $dateRange) {
+            if (!$measurement->check()->customer()->id()->equals($alert->customer()->id())) {
+                return false;
+            }
+            if ($alert->check() && !$alert->check()->id()->equals($measurement->check()->id())) {
+                return false;
+            }
+            if (!$dateRange->isInBounds($measurement->dateCreated())) {
+                return false;
+            }
+            if ($measurement->result()->status()->isClientError() ||
+                $measurement->result()->status()->isServerError()
+            ) {
+                return true;
+            }
+
+            return false;
+        });
+
+        return new MeasurementCollection($errors);
     }
 }

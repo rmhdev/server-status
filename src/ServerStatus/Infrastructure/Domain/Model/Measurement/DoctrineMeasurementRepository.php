@@ -14,12 +14,14 @@ namespace ServerStatus\Infrastructure\Domain\Model\Measurement;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeMonth;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeWeek;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeYear;
 use ServerStatus\Domain\Model\Measurement\Measurement;
+use ServerStatus\Domain\Model\Measurement\MeasurementCollection;
 use ServerStatus\Domain\Model\Measurement\MeasurementDuration;
 use ServerStatus\Domain\Model\Measurement\MeasurementId;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
@@ -224,5 +226,10 @@ class DoctrineMeasurementRepository extends EntityRepository implements Measurem
         }
 
         return new PerformanceStatusCollection($performanceStatuses);
+    }
+
+    public function findErrors(Alert $alert, \DateTimeInterface $dateTime): MeasurementCollection
+    {
+        return new MeasurementCollection();
     }
 }

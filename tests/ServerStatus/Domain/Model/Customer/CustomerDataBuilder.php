@@ -14,9 +14,7 @@ namespace ServerStatus\Tests\Domain\Model\Customer;
 
 use ServerStatus\Domain\Model\Customer\CustomerAlias;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
-use ServerStatus\Domain\Model\Customer\CustomerId;
 use ServerStatus\Domain\Model\Customer\Customer;
-use ServerStatus\Domain\Model\Customer\CustomerStatus;
 
 class CustomerDataBuilder
 {
@@ -33,8 +31,11 @@ class CustomerDataBuilder
         $this->status = CustomerStatusDataBuilder::aCustomerStatus()->build();
     }
 
-    public function withId(CustomerId $id): CustomerDataBuilder
+    public function withId($id): CustomerDataBuilder
     {
+        if (is_string($id)) {
+            $id = CustomerIdDataBuilder::aCustomerId()->withValue($id)->build();
+        }
         $this->id = $id;
 
         return $this;
@@ -54,8 +55,11 @@ class CustomerDataBuilder
         return $this;
     }
 
-    public function withStatus(CustomerStatus $status): CustomerDataBuilder
+    public function withStatus($status): CustomerDataBuilder
     {
+        if (is_string($status)) {
+            $status = CustomerStatusDataBuilder::aCustomerStatus()->withValue($status)->build();
+        }
         $this->status = $status;
 
         return $this;

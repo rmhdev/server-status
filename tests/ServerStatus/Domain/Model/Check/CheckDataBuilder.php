@@ -14,7 +14,6 @@ namespace ServerStatus\Tests\Domain\Model\Check;
 
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckId;
-use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Check\CheckUrl;
 use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
@@ -60,8 +59,11 @@ class CheckDataBuilder
         return $this;
     }
 
-    public function withStatus(CheckStatus $status): CheckDataBuilder
+    public function withStatus($status): CheckDataBuilder
     {
+        if (is_string($status)) {
+            $status = CheckStatusDataBuilder::aCheckStatus()->withCode($status)->build();
+        }
         $this->status = $status;
 
         return $this;
