@@ -52,7 +52,7 @@ final class CreateAlertNotificationsService
         $alertNotifications = [];
         foreach ($this->alertRepository->enabled() as $alert) {
             $measurements = $this->measurementRepository->findErrors($alert, $dateTime);
-            if ($measurements->count()) {
+            if ($measurements->count() > 0) {
                 $alertNotifications[] = $this->factory->build(
                     new AlertNotificationId(),
                     $alert,
@@ -61,6 +61,7 @@ final class CreateAlertNotificationsService
                 );
             }
         }
+
 
         return new AlertNotificationCollection($alertNotifications);
     }

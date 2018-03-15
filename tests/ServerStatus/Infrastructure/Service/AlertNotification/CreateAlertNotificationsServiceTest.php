@@ -41,6 +41,7 @@ class CreateAlertNotificationsServiceTest extends TestCase
     private const ENABLED_WITHOUT_CHECK_ALERT_ID = "without-check-enabled-alert";
     private const DISABLED_ALERT_ID = "my-disabled-alert";
     private const DISABLED_CUSTOMER_ALERT_ID = "my-disabled-customer-alert";
+    private const TIME_WINDOW_MINUTES = 15;
 
     /**
      * @var AlertRepository
@@ -78,6 +79,7 @@ class CreateAlertNotificationsServiceTest extends TestCase
 
     protected function tearDown()
     {
+        unset($this->service);
         unset($this->measurementRepository);
         unset($this->alertNotificationRepository);
         unset($this->alertRepository);
@@ -86,16 +88,15 @@ class CreateAlertNotificationsServiceTest extends TestCase
 
     private function createAlertRepository(): AlertRepository
     {
-        $checkStatusEnabled = CheckStatus::CODE_ENABLED;
         $repository = new InMemoryAlertRepository();
         $repository
-            ->add($this->createAlert(self::ENABLED_ALERT_ID, $checkStatusEnabled, 15))
-            ->add($this->createAlert(self::ENABLED_WITHOUT_CHECK_ALERT_ID, false, 15))
-            ->add($this->createAlert(self::DISABLED_ALERT_ID, $checkStatusEnabled, 15))
+            ->add($this->createAlert(self::ENABLED_ALERT_ID, CheckStatus::CODE_ENABLED, self::TIME_WINDOW_MINUTES))
+            ->add($this->createAlert(self::ENABLED_WITHOUT_CHECK_ALERT_ID, false, self::TIME_WINDOW_MINUTES))
+            ->add($this->createAlert(self::DISABLED_ALERT_ID, CheckStatus::CODE_DISABLED, self::TIME_WINDOW_MINUTES))
             ->add($this->createAlert(
                 self::DISABLED_CUSTOMER_ALERT_ID,
-                $checkStatusEnabled,
-                15,
+                CheckStatus::CODE_ENABLED,
+                self::TIME_WINDOW_MINUTES,
                 CustomerStatus::CODE_DISABLED
             ))
         ;
@@ -138,17 +139,28 @@ class CreateAlertNotificationsServiceTest extends TestCase
 
         $repository = new InMemoryMeasurementRepository();
         $repository
-            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-01", 200))
-            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-02", 404))
-            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-03", 500))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-10", 0))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-11", 100))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-12", 200))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-13", 300))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-14", 404))
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-15", 500))
 
-            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-01", 200))
-            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-02", 404))
-            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-03", 500))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-10", 0))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-11", 100))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-12", 200))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-13", 300))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-14", 404))
+            ->add($this->createMeasurement($disabledAlert->check(), "2018-01-15", 500))
 
-            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-01", 200))
-            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-02", 404))
-            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-03", 500))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-10", 0))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-11", 100))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-12", 200))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-13", 300))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-14", 404))
+            ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-15", 500))
+
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-25", 500))
         ;
 
         return $repository;
@@ -168,8 +180,69 @@ class CreateAlertNotificationsServiceTest extends TestCase
      */
     public function itShouldCreateANewNotificationForAnActiveAlert()
     {
-        $collection = $this->service->create(new \DateTimeImmutable("2018-01-01T12:00:00+0200"));
+        $collection = $this->service->create(new \DateTimeImmutable("2018-01-25T12:10:00+0200"));
 
         $this->assertEquals(1, $collection->count());
+        $this->assertEquals(
+            self::ENABLED_ALERT_ID,
+            $collection->alerts()->getIterator()->current()->id()->id(),
+            'The only notification is related to the enabled alert'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotCreateNewNotificationsForInternalErrors()
+    {
+        $collection = $this->service->create(new \DateTimeImmutable("2018-01-10T12:10:00+0200"));
+
+        $this->assertEquals(0, $collection->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCreateNewNotificationsForErrors()
+    {
+        $clientErrorNotifications = $this->service->create(new \DateTimeImmutable("2018-01-14T12:14:00+0200"));
+        $this->assertEquals(1, $clientErrorNotifications->count(), "Should create notifications for client errors");
+        $this->assertEquals(
+            self::ENABLED_ALERT_ID,
+            $clientErrorNotifications->getIterator()->current()->alert()->id()->id()
+        );
+
+        $serverErrorNotifications = $this->service->create(new \DateTimeImmutable("2018-01-15T12:14:00+0200"));
+        $this->assertEquals(
+            1,
+            $serverErrorNotifications->count(),
+            "Should create notifications for server errors"
+        );
+        $this->assertEquals(
+            self::ENABLED_ALERT_ID,
+            $serverErrorNotifications->getIterator()->current()->alert()->id()->id()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotCreateNewNotificationsForMeasurementsWithoutError()
+    {
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-11T12:14:00+0200"))->count(),
+            "No notification for informational measurements"
+        );
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-12T12:14:00+0200"))->count(),
+            "No notification successful measurements"
+        );
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-13T12:14:00+0200"))->count(),
+            "No notifications for redirects"
+        );
     }
 }

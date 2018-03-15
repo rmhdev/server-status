@@ -248,6 +248,10 @@ class InMemoryMeasurementRepository implements MeasurementRepository
 
     public function findErrors(Alert $alert, \DateTimeInterface $dateTime): MeasurementCollection
     {
+        if (!$alert->isEnabled()) {
+            return new MeasurementCollection();
+        }
+
         $dateRange = $alert->timeWindow()->dateRange($dateTime);
         $errors = array_filter($this->measurements(), function (Measurement $measurement) use ($alert, $dateRange) {
             if (!$measurement->check()->customer()->id()->equals($alert->customer()->id())) {
