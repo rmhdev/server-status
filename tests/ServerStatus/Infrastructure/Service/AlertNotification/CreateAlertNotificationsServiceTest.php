@@ -16,7 +16,9 @@ use PHPUnit\Framework\TestCase;
 use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Alert\AlertId;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotification;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus;
 use ServerStatus\Domain\Model\Check\Check;
 use ServerStatus\Domain\Model\Check\CheckStatus;
 use ServerStatus\Domain\Model\Customer\CustomerStatus;
@@ -30,6 +32,8 @@ use ServerStatus\Infrastructure\Service\AlertNotification\CreateAlertNotificatio
 use ServerStatus\Tests\Domain\Model\Alert\AlertDataBuilder;
 use ServerStatus\Tests\Domain\Model\Alert\AlertIdDataBuilder;
 use ServerStatus\Tests\Domain\Model\Alert\AlertTimeWindowDataBuilder;
+use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationDataBuilder;
+use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationStatusDataBuilder;
 use ServerStatus\Tests\Domain\Model\Check\CheckDataBuilder;
 use ServerStatus\Tests\Domain\Model\Customer\CustomerDataBuilder;
 use ServerStatus\Tests\Domain\Model\Measurement\MeasurementDataBuilder;
@@ -73,6 +77,7 @@ class CreateAlertNotificationsServiceTest extends TestCase
         $this->service = new CreateAlertNotificationsService(
             $this->alertRepository,
             $this->measurementRepository,
+            $this->alertNotificationRepository,
             new InMemoryAlertNotificationFactory()
         );
     }
@@ -126,9 +131,26 @@ class CreateAlertNotificationsServiceTest extends TestCase
 
     private function createAlertNotificationRepository(): AlertNotificationRepository
     {
+        $alert = $this->alertRepository->ofId(new AlertId(self::ENABLED_ALERT_ID));
         $repository = new InMemoryAlertNotificationRepository();
+        $repository
+            ->add($this->createAlertNotification($alert, "2018-01-24", AlertNotificationStatus::SENT));
 
         return $repository;
+    }
+
+    private function createAlertNotification(Alert $alert, $date, $code): AlertNotification
+    {
+        return AlertNotificationDataBuilder::anAlertNotification()
+            ->withAlert($alert)
+            ->withDate(new \DateTimeImmutable("{$date}T12:05:00+0200"))
+            ->withStatus(
+                AlertNotificationStatusDataBuilder::anAlertNotificationStatus()
+                    ->withCode($code)
+                    ->build()
+            )
+            ->build()
+        ;
     }
 
     private function createMeasurementRepository()
@@ -160,7 +182,12 @@ class CreateAlertNotificationsServiceTest extends TestCase
             ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-14", 404))
             ->add($this->createMeasurement($disabledCustomerAlert->check(), "2018-01-15", 500))
 
-            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-25", 500))
+            // there is already a notification for this measurement.
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-24", 404))
+
+
+            // there are no notifications for this measurement.
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-31", 500))
         ;
 
         return $repository;
@@ -180,7 +207,7 @@ class CreateAlertNotificationsServiceTest extends TestCase
      */
     public function itShouldCreateANewNotificationForAnActiveAlert()
     {
-        $collection = $this->service->create(new \DateTimeImmutable("2018-01-25T12:10:00+0200"));
+        $collection = $this->service->create(new \DateTimeImmutable("2018-01-31T12:10:00+0200"));
 
         $this->assertEquals(1, $collection->count());
         $this->assertEquals(
@@ -243,6 +270,18 @@ class CreateAlertNotificationsServiceTest extends TestCase
             0,
             $this->service->create(new \DateTimeImmutable("2018-01-13T12:14:00+0200"))->count(),
             "No notifications for redirects"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotCreateNewNotificationsIfACorrectNotificationIsAlreadyCreated()
+    {
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-24T12:14:00+0200"))->count(),
+            "No notification for erroneous measurements when there is already a notification SENT"
         );
     }
 }

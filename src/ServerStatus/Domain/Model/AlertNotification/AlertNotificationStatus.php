@@ -65,11 +65,28 @@ class AlertNotificationStatus
      */
     public static function codes()
     {
+        return array_merge(self::successCodes(), self::errorCodes());
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function successCodes()
+    {
         return [
             self::READY,
             self::SENDING,
             self::SENT,
-            self::ERROR,
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function errorCodes()
+    {
+        return [
+            self::ERROR
         ];
     }
 }

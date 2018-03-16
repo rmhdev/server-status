@@ -16,6 +16,7 @@ use ServerStatus\Domain\Model\Alert\AlertRepository;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationFactory;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationId;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus;
 use ServerStatus\Domain\Model\Measurement\MeasurementRepository;
 
@@ -32,6 +33,11 @@ final class CreateAlertNotificationsService
     private $measurementRepository;
 
     /**
+     * @var AlertNotificationRepository
+     */
+    private $alertNotificationRepository;
+
+    /**
      * @var AlertNotificationFactory
      */
     private $factory;
@@ -40,10 +46,12 @@ final class CreateAlertNotificationsService
     public function __construct(
         AlertRepository $alertRepository,
         MeasurementRepository $measurementRepository,
+        AlertNotificationRepository $alertNotificationRepository,
         AlertNotificationFactory $factory
     ) {
         $this->alertRepository = $alertRepository;
         $this->measurementRepository = $measurementRepository;
+        $this->alertNotificationRepository = $alertNotificationRepository;
         $this->factory = $factory;
     }
 
@@ -51,6 +59,9 @@ final class CreateAlertNotificationsService
     {
         $alertNotifications = [];
         foreach ($this->alertRepository->enabled() as $alert) {
+            //$notifications = $this->alertNotificationRepository
+            //    ->byAlert($alert, $alert->timeWindow()->dateRange($dateTime));
+
             $measurements = $this->measurementRepository->findErrors($alert, $dateTime);
             if ($measurements->count() > 0) {
                 $alertNotifications[] = $this->factory->build(
