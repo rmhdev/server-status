@@ -60,4 +60,20 @@ class AlertNotificationStatusTest extends TestCase
         $this->assertTrue($status->isCode($status::SENT));
         $this->assertFalse($status->isCode($status::ERROR));
     }
+
+    /**
+     * @test
+     */
+    public function itShouldBeAbleToTellIfOtherStatusIsEqual()
+    {
+        $statusA = AlertNotificationStatusDataBuilder::anAlertNotificationStatus()
+            ->withCode(AlertNotificationStatus::SENT)
+            ->build();
+        $statusB = AlertNotificationStatusDataBuilder::anAlertNotificationStatus()
+            ->withCode(AlertNotificationStatus::ERROR)
+            ->build();
+
+        $this->assertTrue($statusA->equals($statusA));
+        $this->assertFalse($statusA->equals($statusB));
+    }
 }

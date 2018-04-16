@@ -60,6 +60,11 @@ class AlertNotificationStatus
         return $this->code === $code;
     }
 
+    public function equals(AlertNotificationStatus $status): bool
+    {
+        return $this->isCode($status->code());
+    }
+
     /**
      * @return string[]
      */

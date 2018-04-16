@@ -12,11 +12,15 @@ declare(strict_types=1);
 
 namespace ServerStatus\Tests\Domain\Model\AlertNotification\Summary;
 
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus;
 use ServerStatus\Domain\Model\AlertNotification\Summary\AlertNotificationsSummaryByStatus;
 use ServerStatus\Domain\Model\AlertNotification\Summary\AlertNotificationsSummaryByStatusItem;
+use ServerStatus\Tests\Domain\Model\AlertNotification\AlertNotificationStatusDataBuilder;
 
 final class AlertNotificationSummaryByStatusDataBuilder
 {
+    private $status;
+
     /**
      * @var AlertNotificationsSummaryByStatusItem[]
      */
@@ -25,7 +29,17 @@ final class AlertNotificationSummaryByStatusDataBuilder
 
     public function __construct()
     {
+        $this->status = AlertNotificationStatusDataBuilder::anAlertNotificationStatus()
+            ->withCode(AlertNotificationStatus::SENT)
+            ->build();
         $this->items = [];
+    }
+
+    public function withStatus(AlertNotificationStatus $status): AlertNotificationSummaryByStatusDataBuilder
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function withItems($items): AlertNotificationSummaryByStatusDataBuilder
@@ -37,7 +51,7 @@ final class AlertNotificationSummaryByStatusDataBuilder
 
     public function build(): AlertNotificationsSummaryByStatus
     {
-        return new AlertNotificationsSummaryByStatus($this->items);
+        return new AlertNotificationsSummaryByStatus($this->status, $this->items);
     }
 
     public static function anAlertNotificationSummaryByStatus(): AlertNotificationSummaryByStatusDataBuilder
