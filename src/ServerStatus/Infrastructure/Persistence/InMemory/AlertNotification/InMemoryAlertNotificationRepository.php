@@ -18,6 +18,7 @@ use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationDoesNotExistException;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationId;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
 class InMemoryAlertNotificationRepository implements AlertNotificationRepository
@@ -81,12 +82,32 @@ class InMemoryAlertNotificationRepository implements AlertNotificationRepository
         return new AlertNotificationId();
     }
 
-    public function byAlert(AlertId $id, DateRange $dateRange): AlertNotificationCollection
+    public function byAlert(AlertId $id, DateRange $dateRange, $status = []): AlertNotificationCollection
     {
+        $statusCodes = [];
+        if ($status) {
+            if (!is_iterable($status)) {
+                $status = [$status];
+            }
+            foreach ($status as $value) {
+                if ($value instanceof AlertNotificationStatus) {
+                    $value = $value->code();
+                }
+                $statusCodes[] = (string) $value;
+            }
+        }
         $notifications = $this->alertNotifications;
-        $filtered = array_filter($notifications, function (AlertNotification $notification) use ($id, $dateRange) {
-            return $notification->alert()->id()->equals($id) && $dateRange->isInBounds($notification->dateTime());
-        });
+        $filtered = array_filter(
+            $notifications,
+            function (AlertNotification $notification) use ($id, $dateRange, $statusCodes) {
+                if ($statusCodes && !in_array($notification->status()->code(), $statusCodes)) {
+                    return false;
+                }
+
+                return $notification->alert()->id()->equals($id) &&
+                    $dateRange->isInBounds($notification->dateTime());
+            }
+        );
 
         return new AlertNotificationCollection($filtered);
     }

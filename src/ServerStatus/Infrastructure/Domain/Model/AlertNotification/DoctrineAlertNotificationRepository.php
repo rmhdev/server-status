@@ -18,6 +18,7 @@ use ServerStatus\Domain\Model\AlertNotification\AlertNotification;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationId;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationRepository;
+use ServerStatus\Domain\Model\AlertNotification\AlertNotificationStatus;
 use ServerStatus\Domain\Model\Common\DateRange\DateRange;
 
 /**
@@ -51,7 +52,7 @@ class DoctrineAlertNotificationRepository extends EntityRepository implements Al
         return new AlertNotificationId();
     }
 
-    public function byAlert(AlertId $id, DateRange $dateRange): AlertNotificationCollection
+    public function byAlert(AlertId $id, DateRange $dateRange, $status = []): AlertNotificationCollection
     {
         $qb = $this->createQueryBuilder("a");
         $qb
@@ -67,6 +68,20 @@ class DoctrineAlertNotificationRepository extends EntityRepository implements Al
                 "to" => $dateRange->to(),
             ])
         ;
+        $statusCodes = [];
+        if ($status) {
+            if (!is_iterable($status)) {
+                $status = [$status];
+            }
+            foreach ($status as $value) {
+                if ($value instanceof AlertNotificationStatus) {
+                    $value = $value->code();
+                }
+                $statusCodes[] = $value;
+            }
+            $qb->andWhere($qb->expr()->in("a.status.code", $statusCodes));
+        }
+
 
         return new AlertNotificationCollection($qb->getQuery()->execute());
     }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Infrastructure\Service\AlertNotification;
 
+use ServerStatus\Domain\Model\Alert\Alert;
 use ServerStatus\Domain\Model\Alert\AlertRepository;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationCollection;
 use ServerStatus\Domain\Model\AlertNotification\AlertNotificationFactory;
@@ -59,9 +60,9 @@ final class CreateAlertNotificationsService
     {
         $alertNotifications = [];
         foreach ($this->alertRepository->enabled() as $alert) {
-            //$notifications = $this->alertNotificationRepository
-            //    ->byAlert($alert, $alert->timeWindow()->dateRange($dateTime));
-
+            if ($this->hasSuccessNotifications($alert, $dateTime)) {
+                continue;
+            }
             $measurements = $this->measurementRepository->findErrors($alert, $dateTime);
             if ($measurements->count() > 0) {
                 $alertNotifications[] = $this->factory->build(
@@ -73,7 +74,18 @@ final class CreateAlertNotificationsService
             }
         }
 
-
         return new AlertNotificationCollection($alertNotifications);
+    }
+
+    private function hasSuccessNotifications(Alert $alert, \DateTimeInterface $dateTime)
+    {
+        $count = $this->alertNotificationRepository
+            ->byAlert(
+                $alert->id(),
+                $alert->timeWindow()->dateRange($dateTime),
+                AlertNotificationStatus::successCodes()
+            )->count();
+
+        return $count > 0;
     }
 }

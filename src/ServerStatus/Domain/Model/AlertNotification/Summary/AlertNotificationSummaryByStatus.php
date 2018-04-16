@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Model\AlertNotification\Summary;
 
-final class AlertNotificationsSummaryByStatus
+final class AlertNotificationsSummaryByStatus implements \Countable
 {
     /**
      * @var AlertNotificationsSummaryByStatusItem[]
@@ -23,5 +23,10 @@ final class AlertNotificationsSummaryByStatus
     public function __construct($byStatus = [])
     {
         $this->byStatus = $byStatus;
+    }
+
+    public function count()
+    {
+        return 0;
     }
 }

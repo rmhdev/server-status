@@ -134,7 +134,11 @@ class CreateAlertNotificationsServiceTest extends TestCase
         $alert = $this->alertRepository->ofId(new AlertId(self::ENABLED_ALERT_ID));
         $repository = new InMemoryAlertNotificationRepository();
         $repository
-            ->add($this->createAlertNotification($alert, "2018-01-24", AlertNotificationStatus::SENT));
+            ->add($this->createAlertNotification($alert, "2018-01-24", AlertNotificationStatus::SENT))
+            ->add($this->createAlertNotification($alert, "2018-01-25", AlertNotificationStatus::SENDING))
+            ->add($this->createAlertNotification($alert, "2018-01-26", AlertNotificationStatus::READY))
+            ->add($this->createAlertNotification($alert, "2018-01-27", AlertNotificationStatus::ERROR))
+        ;
 
         return $repository;
     }
@@ -185,6 +189,8 @@ class CreateAlertNotificationsServiceTest extends TestCase
             // there is already a notification for this measurement.
             ->add($this->createMeasurement($enabledAlert->check(), "2018-01-24", 404))
 
+            // the first notification for this measurement failed.
+            ->add($this->createMeasurement($enabledAlert->check(), "2018-01-27", 500))
 
             // there are no notifications for this measurement.
             ->add($this->createMeasurement($enabledAlert->check(), "2018-01-31", 500))
@@ -278,10 +284,34 @@ class CreateAlertNotificationsServiceTest extends TestCase
      */
     public function itShouldNotCreateNewNotificationsIfACorrectNotificationIsAlreadyCreated()
     {
+        $time = "T12:14:00+0200";
         $this->assertEquals(
             0,
-            $this->service->create(new \DateTimeImmutable("2018-01-24T12:14:00+0200"))->count(),
+            $this->service->create(new \DateTimeImmutable("2018-01-24" . $time))->count(),
             "No notification for erroneous measurements when there is already a notification SENT"
+        );
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-25" . $time))->count(),
+            "No notification for erroneous measurements when there is already a notification SENDING"
+        );
+        $this->assertEquals(
+            0,
+            $this->service->create(new \DateTimeImmutable("2018-01-26" . $time))->count(),
+            "No notification for erroneous measurements when there is already a notification READY"
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldCreateNewNotificationsIfAPreviousNotificationIsIncorrect()
+    {
+        $time = "T12:14:00+0200";
+        $this->assertEquals(
+            1,
+            $this->service->create(new \DateTimeImmutable("2018-01-27" . $time))->count(),
+            "A new notification should be created if previous one failed"
         );
     }
 }

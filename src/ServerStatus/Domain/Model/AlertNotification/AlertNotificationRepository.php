@@ -44,7 +44,8 @@ interface AlertNotificationRepository
     /**
      * @param AlertId $id
      * @param DateRange $dateRange
+     * @param string[] $status
      * @return AlertNotificationCollection
      */
-    public function byAlert(AlertId $id, DateRange $dateRange): AlertNotificationCollection;
+    public function byAlert(AlertId $id, DateRange $dateRange, $status = []): AlertNotificationCollection;
 }

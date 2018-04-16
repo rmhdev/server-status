@@ -19,7 +19,7 @@ class AlertNotificationSummaryByStatusTest extends TestCase
     /**
      * @test
      */
-    public function itShouldHaveEmptyListWhen()
+    public function itShouldHaveEmptyListWhenNoNotificationsAreDefined()
     {
         $summary = AlertNotificationSummaryByStatusDataBuilder::anAlertNotificationSummaryByStatus()
             ->build();
