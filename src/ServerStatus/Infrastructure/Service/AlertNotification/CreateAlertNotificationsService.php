@@ -79,13 +79,11 @@ final class CreateAlertNotificationsService
 
     private function hasSuccessNotifications(Alert $alert, \DateTimeInterface $dateTime)
     {
-        $count = $this->alertNotificationRepository
+        return $this->alertNotificationRepository
             ->byAlert(
                 $alert->id(),
                 $alert->timeWindow()->dateRange($dateTime),
                 AlertNotificationStatus::successCodes()
-            )->count();
-
-        return $count > 0;
+            )->count() > 0;
     }
 }
