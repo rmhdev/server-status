@@ -1,0 +1,6 @@
+login: 'Sign in'
+login.legend: 'Access form'
+login.username: 'Username'
+login.password: 'Password'
+login.submit: 'Submit'
+logout: 'Logout'
