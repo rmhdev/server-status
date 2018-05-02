@@ -125,6 +125,9 @@
             "ref": "c646e4b71af082e94b5014daca36ef6812bad076"
         }
     },
+    "symfony/css-selector": {
+        "version": "v4.0.9"
+    },
     "symfony/debug": {
         "version": "v4.0.4"
     },
