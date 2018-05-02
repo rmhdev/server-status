@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Domain\Fixtures\Customer;
 
+use ServerStatus\Domain\Model\Customer\Customer;
 use ServerStatus\Domain\Model\Customer\CustomerAlias;
 use ServerStatus\Domain\Model\Customer\CustomerEmail;
 use ServerStatus\Domain\Model\Customer\CustomerFactory;
@@ -38,11 +39,18 @@ final class FixturesCustomerData
         $this->factory = $factory;
     }
 
-    public function load()
+    /**
+     * @return Customer[]
+     */
+    public function load(): array
     {
+        $customers = [];
         foreach ($this->values() as $customer) {
             $this->repository->add($customer);
+            $customers[] = $customer;
         }
+
+        return $customers;
     }
 
     /**

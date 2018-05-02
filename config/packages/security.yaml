@@ -8,7 +8,7 @@ security:
                 class: App\Entity\UserCustomer
 
     encoders:
-        App\Entity\UserTraveler:
+        App\Entity\UserCustomer:
             algorithm: bcrypt
             cost: 12
 
@@ -19,16 +19,18 @@ security:
         main:
             anonymous: true
 
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: true
             # https://symfony.com/doc/current/security/form_login_setup.html
+            form_login:
+                login_path: login
+                check_path: login_check
+                always_use_default_target_path: true
+                default_target_path: homepage
+                # csrf_token_generator: security.csrf.token_manager
+            provider: customer_provider
+            logout: true
+            logout_on_user_change: true
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
