@@ -26,4 +26,27 @@ class DefaultControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldShowTheProjectName()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/');
+
+        $this->assertContains(
+            'server status',
+            strtolower($crawler->filter('body > nav a.navbar-brand')->text())
+        );
+        $this->assertContains(
+            '/',
+            $crawler->filter('body > nav a.navbar-brand')->attr("href")
+        );
+        $this->assertContains(
+            'server status',
+            strtolower($crawler->filter('title')->text()),
+            'Title of the page should contain the project name'
+        );
+    }
 }
