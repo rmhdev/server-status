@@ -27,7 +27,8 @@ help:
 	@echo "  phpcs          show code sniffer result"
 	@echo "  phpmd          show mess detector result"
 	@echo "  pdepend        show quality of design result"
-	@echo "  fixtures-dev   load fixtures in dev environment's db"
+	@echo "  fixtures-dev   load fixtures in dev db"
+	@echo "  fixtures-test  load fixtures in test db"
 
 .PHONY:
 test:
@@ -50,3 +51,9 @@ fixtures-dev:
 	$(PHP) bin/console doctrine:schema:drop --env=dev --force
 	$(PHP) bin/console doctrine:schema:create --env=dev
 	$(PHP) bin/console doctrine:fixtures:load --env=dev --append --no-interaction
+
+.PHONY: fixtures-test
+fixtures-test:
+	$(PHP) bin/console doctrine:schema:drop --env=test --force
+	$(PHP) bin/console doctrine:schema:create --env=test
+	$(PHP) bin/console doctrine:fixtures:load --env=test --append --no-interaction
