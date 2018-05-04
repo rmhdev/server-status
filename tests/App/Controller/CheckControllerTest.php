@@ -25,4 +25,21 @@ class CheckControllerTest extends AbstractControllerTest
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('Checks', $crawler->filter('title')->text());
     }
+
+    /**
+     * @test
+     */
+    public function isShouldListSortedChecksByCustomer()
+    {
+        $client = $this->authenticatedClient();
+        $crawler = $client->request("GET", "/check/");
+
+        $this->assertEquals(3, $crawler->filter("body > main .checks .check")->count());
+        $this->assertEquals(3, $crawler->filter("body > main .checks a.check")->count());
+        //$this->assertEquals(
+        //    'check/',
+        //    $crawler->filter("body > main .checks a.check")->first()->attr('href'),
+        //    'First link to check'
+        //);
+    }
 }

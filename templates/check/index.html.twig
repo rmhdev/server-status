@@ -1,7 +1,22 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}{{ 'section.checks'|trans }}{% endblock %}
 
+
 {% block body %}
-    Checks
+<main>
+    <header>
+        <h1>{{ 'section.checks'|trans }}</h1>
+    </header>
+
+    <section class="checks">
+{% for report in reports.performance_reports %}
+        <div class="check">
+            <h2>{{ report.check.name }}</h2>
+
+        </div>
+{% endfor %}
+    </section>
+</main>
 {% endblock %}

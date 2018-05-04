@@ -77,7 +77,7 @@ services:
     ServerStatus\Application\Service\Check\ViewCheckByCustomerService:
         public: false
     ServerStatus\Application\Service\Check\ViewPerformanceReportsService:
-        public: false
+        public: true
     ServerStatus\Application\Service\Alert\ViewAlertsByCustomerService:
         public: false
 
