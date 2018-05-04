@@ -2,7 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}{{ custom_app_name }}{% endblock %}</title>
+        <title>{% spaceless %}
+            {% set _title = block('title') is not empty ? block('title') : '' %}
+            {% block title %}{% endblock %}{% if _title is empty %}{{ custom_app_name }} - {{ 'site.motto'|trans }}{% else %} - {{ custom_app_name }}{% endif %}
+        {% endspaceless %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
@@ -14,7 +17,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto">{% spaceless %}
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li class="nav-item">
                         <a class="nav-link sign-out" href="{{ path('logout') }}">{{ 'logout'|trans }}</a>
@@ -24,7 +27,7 @@
                         <a class="nav-link sign-in" href="{{ path('login') }}">{{ 'login'|trans }}</a>
                     </li>
                 {% endif %}
-                </ul>
+                {% endspaceless %}</ul>
             </div>
         </div>
     </nav>

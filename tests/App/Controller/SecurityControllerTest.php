@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-class SecurityControllerTest extends WebTestCase
+class SecurityControllerTest extends AbstractControllerTest
 {
     /**
      * @test
@@ -25,21 +23,6 @@ class SecurityControllerTest extends WebTestCase
         $expectedUri = $client->request("GET", "/")->getUri();
 
         $this->assertEquals($expectedUri, $client->getHistory()->current()->getUri());
-    }
-
-    private function authenticatedClient()
-    {
-        $client = static::createClient();
-        $crawler = $client->request("GET", "/login");
-        $form = $crawler->selectButton("Submit")->form([
-            "_username" => "rober@example.com",
-            "_password" => "123456"
-        ], "POST");
-        $client->submit($form);
-        $client->followRedirect();
-
-
-        return $client;
     }
 
     /**
