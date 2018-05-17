@@ -34,12 +34,16 @@ class CheckControllerTest extends AbstractControllerTest
         $client = $this->authenticatedClient();
         $crawler = $client->request("GET", "/check/");
 
-        $this->assertEquals(3, $crawler->filter("body > main .checks .check")->count());
-        $this->assertEquals(3, $crawler->filter("body > main .checks a.check")->count());
-        //$this->assertEquals(
-        //    'check/',
-        //    $crawler->filter("body > main .checks a.check")->first()->attr('href'),
-        //    'First link to check'
-        //);
+        $this->assertEquals(3, $crawler->filter("body > main .checks .check header a")->count());
+        $this->assertEquals(
+            '/check/my-first-check',
+            $crawler->filter("body > main .checks .check header a")->first()->attr('href'),
+            'Link to first check'
+        );
+        $this->assertEquals(
+            '/check/my-disabled-check',
+            $crawler->filter("body > main .checks .check header a")->last()->attr('href'),
+            'Link to last check'
+        );
     }
 }

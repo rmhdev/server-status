@@ -47,4 +47,13 @@ class CheckController extends Controller
             throw $this->createNotFoundException('not found', $e);
         }
     }
+
+    /**
+     * @Route("/{slug}", name="check_show")
+     * @Security("has_role('ROLE_CUSTOMER')")
+     */
+    public function showAction(string $slug)
+    {
+        throw new \Exception("Not developed yet");
+    }
 }
