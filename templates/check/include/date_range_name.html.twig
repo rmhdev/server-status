@@ -1,0 +1,23 @@
+<span class="name">{{ 'check.date.range.description'|trans({
+    '%date.range%': ('date.range.type.' ~ date_range.name)|trans
+}) }}</span>{% spaceless %}
+{% if 'day' == date_range.name %}
+    <span>, </span><time datetime="{{ date_range.from|date('Y-m-d') }}">{{ date_range.from|localizeddate('long', 'none') }}</time>
+{% elseif 'week' == date_range.name %}
+    <span>, </span>{{ 'date.range.description.range'|trans({
+        '%date.start%': '<time datetime="' ~ (date_range.from|date('c')) ~ '">' ~ (date_range.from|localizeddate('medium', 'none')) ~ '</time>',
+        '%date.end%': '<time datetime="' ~ (date_range.to|date('c')) ~ '">' ~ (date_range.to|localizeddate('medium', 'none')) ~ '</time>'
+    })|raw }}
+{% elseif 'month' == date_range.name %}
+    <span>, </span><time datetime="{{ date_range.from|date('c') }}">{{ date_range.from|localizeddate('none', 'none', null, null ,'LLLL y') }}</time>
+{% elseif 'last_24_hours' == date_range.name %}
+    <span>, </span>{{ 'date.range.description.start'|trans({
+        '%date.start%': '<time datetime="' ~ (date_range.from|date('c')) ~ '">' ~ (date_range.from|localizeddate('long', 'short')) ~ '</time>'
+    })|raw }}
+{% else %}
+    <span>, </span>{{ 'date.range.description.range'|trans({
+        '%date.start%': '<time datetime="' ~ (date_range.from|date('c')) ~ '">' ~ (date_range.from|localizeddate('medium', 'short')) ~ '</time>',
+        '%date.end%': '<time datetime="' ~ (date_range.to|date('c')) ~ '">' ~ (date_range.to|localizeddate('medium', 'short')) ~ '</time>'
+    })|raw }}
+{% endif %}
+{% endspaceless %}

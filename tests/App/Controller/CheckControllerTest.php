@@ -46,4 +46,18 @@ class CheckControllerTest extends AbstractControllerTest
             'Link to last check'
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldListChecksUsingCustomDateAndType()
+    {
+        $client = $this->authenticatedClient();
+        $crawler = $client->request("GET", "/check/?date=2018-01-01&type=day");
+
+        $this->assertContains(
+            'January 1, 2018',
+            $crawler->filter('body > main > header .subtitle')->text()
+        );
+    }
 }

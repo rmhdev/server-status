@@ -16,8 +16,10 @@ use App\Entity\UserCustomer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use ServerStatus\Application\Service\Check\ViewChecksByCustomerRequest;
+use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/check")
@@ -29,10 +31,13 @@ class CheckController extends Controller
      * @Route("/", name="check_list")
      * @Security("has_role('ROLE_CUSTOMER')")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $date = $request->get('date', 'now');
         $req = new ViewChecksByCustomerRequest(
-            $this->getUser()->getCustomer()->id()
+            $this->getUser()->getCustomer()->id(),
+            new \DateTimeImmutable($date),
+            $request->get('type', DateRangeLast24Hours::NAME)
         );
         try {
             $reports = $this
