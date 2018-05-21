@@ -18,7 +18,11 @@ Encore
     .enableSassLoader()
 
     // uncomment for legacy applications that require $/jQuery as a global variable
-    // .autoProvidejQuery()
+    .autoProvidejQuery()
+
+    .autoProvideVariables({
+        Popper: ['popper.js', 'default']
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
