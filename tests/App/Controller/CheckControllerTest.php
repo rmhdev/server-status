@@ -59,5 +59,23 @@ class CheckControllerTest extends AbstractControllerTest
             'January 1, 2018',
             $crawler->filter('body > main > header .subtitle')->text()
         );
+        $this->assertContains(
+            'day performance',
+            $crawler->filter('body > main > header .subtitle')->text()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldShowProfileOfSingleCheck()
+    {
+        $client = $this->authenticatedClient();
+        $crawler = $client->request("GET", "/check/my-first-check");
+
+        $this->assertEquals(
+            'My first check',
+            $crawler->filter('body > main > header .header-title')->text()
+        );
     }
 }
