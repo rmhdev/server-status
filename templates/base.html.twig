@@ -6,7 +6,9 @@
             {% set _title = block('title') is not empty ? block('title') : '' %}
             {% block title %}{% endblock %}{% if _title is empty %}{{ custom_app_name }} - {{ 'site.motto'|trans }}{% else %} - {{ custom_app_name }}{% endif %}
         {% endspaceless %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}{% spaceless %}
+        <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+        {% endspaceless %}{% endblock %}
     </head>
     <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -32,6 +34,8 @@
         </div>
     </nav>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}{% spaceless %}
+        <link rel="stylesheet" href="{{ asset('build/js/app.js') }}">
+        {% endspaceless %}{% endblock %}
     </body>
 </html>
