@@ -15,7 +15,9 @@ Encore
     .addStyleEntry('css/app', './assets/css/app.scss')
 
     // uncomment if you use Sass/SCSS files
-    .enableSassLoader()
+    .enableSassLoader(function(sassOptions) {}, {
+        resolveUrlLoader: false
+    })
 
     // uncomment for legacy applications that require $/jQuery as a global variable
     .autoProvidejQuery()
