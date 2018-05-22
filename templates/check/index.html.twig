@@ -5,7 +5,7 @@
 
 
 {% block body %}
-<main>
+<main class="container">
     <header>
         <h1 class="header-title">{{ 'section.checks'|trans }}</h1>
         <p class="subtitle">{% include 'check/include/date_range_name.html.twig' with { 'date_range': reports.date_range } %}</p>
