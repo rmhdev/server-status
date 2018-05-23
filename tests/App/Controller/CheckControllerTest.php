@@ -73,9 +73,29 @@ class CheckControllerTest extends AbstractControllerTest
         $client = $this->authenticatedClient();
         $crawler = $client->request("GET", "/check/my-first-check");
 
-        $this->assertEquals(
+        $this->assertEquals(200, $client->getResponse()->getStatusCode(), 'Check page exists');
+        $this->assertContains(
             'My first check',
             $crawler->filter('body > main > header .header-title')->text()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldShowCheckValuesUsingCustomDateAndType()
+    {
+        $client = $this->authenticatedClient();
+        $crawler = $client->request("GET", "/check/my-first-check?date=2018-01-01&type=day");
+
+        $this->assertContains(
+            'January 1, 2018',
+            $crawler->filter('body > main > header .subtitle')->text(),
+            $crawler->filter('body > main > header .subtitle')->text()
+        );
+        $this->assertContains(
+            'day performance',
+            $crawler->filter('body > main > header .subtitle')->text()
         );
     }
 }

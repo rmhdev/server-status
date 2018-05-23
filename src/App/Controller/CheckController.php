@@ -59,15 +59,18 @@ class CheckController extends Controller
      * @Route("/{slug}", name="check_show")
      * @Security("has_role('ROLE_CUSTOMER')")
      */
-    public function showAction(string $slug)
+    public function showAction(string $slug, Request $request)
     {
+        $date = $request->get('date', 'now');
         $req = new ViewCheckByCustomerRequest(
             $this->getUser()->getCustomer()->id(),
-            new CheckName($slug, $slug)
+            new CheckName($slug, $slug),
+            new \DateTimeImmutable($date),
+            $request->get('type', DateRangeLast24Hours::NAME)
         );
         $summary = $this->get('ServerStatus\Application\Service\Check\ViewCheckByCustomerService')
             ->execute($req);
-        //dump($check);
+        //dump($summary);
 
         return $this->render('check/show.html.twig', [
             'summary' => $summary
