@@ -8,31 +8,12 @@
         {% endspaceless %}</title>
         {% block stylesheets %}{% spaceless %}
         <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
-        {% endspaceless %}{% endblock %}
-    </head>
-    <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ path('homepage') }}">{{ custom_app_name }}</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="{{ 'toggle.navigation'|trans }}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+{% endspaceless %}{% endblock %}
 
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav ml-auto">{% spaceless %}
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <li class="nav-item">
-                        <a class="nav-link sign-out" href="{{ path('logout') }}">{{ 'logout'|trans }}</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link sign-in" href="{{ path('login') }}">{{ 'login'|trans }}</a>
-                    </li>
-                {% endif %}
-                {% endspaceless %}</ul>
-            </div>
-        </div>
-    </nav>
+    </head>
+{% set _section = block('section') is defined ? block('section') : '' %}
+    <body>
+        {% include 'include/navbar.html.twig' with { 'section': _section } only %}
         {% block body %}{% endblock %}
         {% block javascripts %}{% spaceless %}
         <link rel="stylesheet" href="{{ asset('build/js/app.js') }}">

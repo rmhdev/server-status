@@ -1,0 +1,31 @@
+{% set _section = section is not empty ? section : 'dashboard' %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('homepage') }}">{{ custom_app_name }}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="{{ 'toggle.navigation'|trans }}">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}<ul class="navbar-nav mr-auto my-main-links">
+                <li class="nav-item my-section-dashboard {{ _section == 'dashboard' ? 'active' : '' }}">{% spaceless %}
+                    <a class="nav-link" href="{{ path('homepage') }}">{{ 'section.dashboard'|trans }}{% if _section == 'dashboard' %} <span class="sr-only">({{ 'link.current'|trans }})</span>{% endif %}</a>
+                {% endspaceless %}</li>
+                <li class="nav-item my-section-checks {{ _section == 'check' ? 'active' : '' }}">{% spaceless %}
+                    <a class="nav-link" href="{{ path('check_list') }}">{{ 'section.checks'|trans }}{% if _section == 'active' %} <span class="sr-only">({{ 'link.current'|trans }})</span>{% endif %}</a>
+                {% endspaceless %}</li>
+            </ul>
+            {% endif %}
+
+            <ul class="navbar-nav ml-auto my-login-links">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}<li class="nav-item">
+                    <a class="nav-link sign-out" href="{{ path('logout') }}">{{ 'logout'|trans }}</a>
+                </li>
+                {% else %}<li class="nav-item {{ _section == 'login' ? 'active' : '' }}">
+                    <a class="nav-link sign-in" href="{{ path('login') }}">{{ 'login'|trans }}{% if _section == 'login' %} <span class="sr-only">({{ 'link.current'|trans }})</span>{% endif %}</a>
+                </li>{% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
