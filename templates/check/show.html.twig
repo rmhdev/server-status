@@ -6,7 +6,8 @@
 
 
 {% block body %}
-<main class="container">
+<main>
+    <div class="container">
     <header>
         <h1 class="header-title">{{ summary.check.name }}</h1>
         <p class="subtitle">{% include 'check/include/date_range_name.html.twig' with {
@@ -41,5 +42,6 @@
             </table>
         </div>
     </section>
+    </div>
 </main>
 {% endblock %}

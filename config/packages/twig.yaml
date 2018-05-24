@@ -4,3 +4,6 @@ twig:
     strict_variables: '%kernel.debug%'
     globals:
         custom_app_name: "Server Status"
+        author_name: '%author_name%'
+        author_username: '%author_username%'
+        author_webpage: '%author_webpage%'

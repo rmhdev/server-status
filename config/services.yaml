@@ -2,6 +2,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    author_name: 'Rober MH'
+    author_username: 'rmhdev'
+    author_webpage: 'http://rmhdev.net'
 
 services:
     # default configuration for services in *this* file

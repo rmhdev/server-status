@@ -1,0 +1,15 @@
+body > footer {
+  background-color: $white;
+  padding-top: $spacer * 2;
+  padding-bottom: $spacer * 2;
+
+  color: $text-muted;
+  a {
+    color: $dark;
+    :hover,
+    :active,
+    :focus {
+      color: $dark;
+    }
+  }
+}

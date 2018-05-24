@@ -16,7 +16,8 @@
         {% include 'include/navbar.html.twig' with { 'section': _section } only %}
         {% block body %}{% endblock %}
         {% block javascripts %}{% spaceless %}
-        <link rel="stylesheet" href="{{ asset('build/js/app.js') }}">
+        <script src="{{ asset('build/js/app.js') }}"></script>
         {% endspaceless %}{% endblock %}
+        {% include 'include/footer.html.twig' %}
     </body>
 </html>
