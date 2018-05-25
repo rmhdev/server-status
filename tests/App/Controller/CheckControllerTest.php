@@ -15,14 +15,31 @@ namespace App\Tests\Controller;
 class CheckControllerTest extends AbstractControllerTest
 {
     /**
+     * @var \Symfony\Bundle\FrameworkBundle\Client;
+     */
+    private $authenticatedClient;
+
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->authenticatedClient = $this->authenticatedClient();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->authenticatedClient);
+        parent::tearDown();
+    }
+
+    /**
      * @test
      */
     public function itShouldShowBasicInfoByCustomer()
     {
-        $client = $this->authenticatedClient();
-        $crawler = $client->request("GET", "/check/");
+        $crawler = $this->authenticatedClient->request("GET", "/check/");
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->authenticatedClient->getResponse()->getStatusCode());
         $this->assertContains('Checks', $crawler->filter('title')->text());
     }
 
@@ -31,8 +48,7 @@ class CheckControllerTest extends AbstractControllerTest
      */
     public function isShouldListSortedChecksByCustomer()
     {
-        $client = $this->authenticatedClient();
-        $crawler = $client->request("GET", "/check/");
+        $crawler = $this->authenticatedClient->request("GET", "/check/");
 
         $this->assertEquals(3, $crawler->filter("body > main .checks .check header a")->count());
         $this->assertEquals(
@@ -52,16 +68,15 @@ class CheckControllerTest extends AbstractControllerTest
      */
     public function itShouldListChecksUsingCustomDateAndType()
     {
-        $client = $this->authenticatedClient();
-        $crawler = $client->request("GET", "/check/?date=2018-01-01&type=day");
+        $crawler = $this->authenticatedClient->request("GET", "/check/?date=2018-01-01&type=day");
 
         $this->assertContains(
             'January 1, 2018',
-            $crawler->filter('body > main > header .subtitle')->text()
+            $crawler->filter('body > main header .subtitle')->text()
         );
         $this->assertContains(
             'day performance',
-            $crawler->filter('body > main > header .subtitle')->text()
+            $crawler->filter('body > main header .subtitle')->text()
         );
     }
 
@@ -70,13 +85,12 @@ class CheckControllerTest extends AbstractControllerTest
      */
     public function itShouldShowProfileOfSingleCheck()
     {
-        $client = $this->authenticatedClient();
-        $crawler = $client->request("GET", "/check/my-first-check");
+        $crawler = $this->authenticatedClient->request("GET", "/check/my-first-check");
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), 'Check page exists');
+        $this->assertEquals(200, $this->authenticatedClient->getResponse()->getStatusCode(), 'Check page exists');
         $this->assertContains(
             'My first check',
-            $crawler->filter('body > main > header .header-title')->text()
+            $crawler->filter('body > main header .header-title')->text()
         );
     }
 
@@ -85,17 +99,16 @@ class CheckControllerTest extends AbstractControllerTest
      */
     public function itShouldShowCheckValuesUsingCustomDateAndType()
     {
-        $client = $this->authenticatedClient();
-        $crawler = $client->request("GET", "/check/my-first-check?date=2018-01-01&type=day");
+        $crawler = $this->authenticatedClient->request("GET", "/check/my-first-check?date=2018-01-01&type=day");
 
         $this->assertContains(
             'January 1, 2018',
-            $crawler->filter('body > main > header .subtitle')->text(),
-            $crawler->filter('body > main > header .subtitle')->text()
+            $crawler->filter('body > main header .subtitle')->text(),
+            $crawler->filter('body > main header .subtitle')->text()
         );
         $this->assertContains(
             'day performance',
-            $crawler->filter('body > main > header .subtitle')->text()
+            $crawler->filter('body > main header .subtitle')->text()
         );
     }
 }

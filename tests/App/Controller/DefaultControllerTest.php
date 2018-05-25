@@ -36,7 +36,7 @@ class DefaultControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertContains(
-            'server status',
+            'aktibo',
             strtolower($crawler->filter('body > nav a.navbar-brand')->text())
         );
         $this->assertContains(
@@ -44,7 +44,7 @@ class DefaultControllerTest extends WebTestCase
             $crawler->filter('body > nav a.navbar-brand')->attr("href")
         );
         $this->assertContains(
-            'server status',
+            'aktibo',
             strtolower($crawler->filter('title')->text()),
             'Title of the page should contain the project name'
         );

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="{{ _charset }}">
         <title>{% spaceless %}
             {% set _title = block('title') is not empty ? block('title') : '' %}
-            {% block title %}{% endblock %}{% if _title is empty %}{{ custom_app_name }} - {{ 'site.motto'|trans }}{% else %} - {{ custom_app_name }}{% endif %}
+            {% block title %}{% endblock %}{% if _title is empty %}{{ custom_app_name|title }} - {{ 'site.motto'|trans }}{% else %} - {{ custom_app_name|title }}{% endif %}
         {% endspaceless %}</title>
         {% block stylesheets %}{% spaceless %}
         <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
@@ -13,8 +13,17 @@
     </head>
 {% set _section = block('section') is defined ? block('section') : '' %}
     <body>
+        {% spaceless %}
+        <a id="skippy" class="sr-only sr-only-focusable" href="#content">
+            <div class="container">
+                <span class="skiplink-text">{{ 'skip.to.content'|trans }}</span>
+            </div>
+        </a>{% endspaceless %}
+
         {% include 'include/navbar.html.twig' with { 'section': _section } only %}
+        <main id="content">
         {% block body %}{% endblock %}
+        </main>
         {% block javascripts %}{% spaceless %}
         <script src="{{ asset('build/js/app.js') }}"></script>
         {% endspaceless %}{% endblock %}

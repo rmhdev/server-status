@@ -3,3 +3,15 @@
 
 @import "app_main";
 @import "app_footer";
+
+#skippy {
+  display: block;
+  padding: $spacer;
+  color: $white;
+  background-color: $dark;
+  outline: 0;
+}
+
+.my-form-actions {
+  padding-top: $spacer;
+}

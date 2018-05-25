@@ -6,8 +6,7 @@
 
 
 {% block body %}
-<main>
-    <div class="container">
+<div class="container">
     <header>
         <h1 class="header-title">{{ summary.check.name }}</h1>
         <p class="subtitle">{% include 'check/include/date_range_name.html.twig' with {
@@ -22,26 +21,25 @@
                 <caption>{{ 'check.measurements.caption'|trans }}</caption>
                 <thead class="">
                 <tr>
-                    <th>{{ 'measure.date.from'|trans }}</th>
-                    <th>{{ 'measure.date.to'|trans }}</th>
-                    <th>{{ 'measurement.result.duration'|trans }}</th>
-                    <th>{{ 'measurement.result.diff'|trans }}</th>
+                    <th class="my-tab-date">{{ 'measurement.date.from'|trans }}</th>
+                    <th class="my-tab-date">{{ 'measurement.date.to'|trans }}</th>
+                    <th class="my-tab-number">{{ 'measurement.result.average'|trans }}</th>
+                    <th class="my-tab-number">{{ 'measurement.result.diff'|trans }}</th>
                 </tr>
                 </thead>
 
                 <tbody>
                 {% for average in summary.measure_summary.averages %}
                     <tr>
-                        <td><time>{{ average.response_time.date_range.from|localizeddate('medium', 'short') }}</time></td>
-                        <td><time>{{ average.response_time.date_range.to|localizeddate('medium', 'short') }}</time></td>
-                        <td><span>{{ average.response_time.value|localizednumber }} ms</span></td>
-                        <td><span>{{ average.response_time.diff.value|localizednumber('percent', 'double') }}</span></td>
+                        <td class="my-tab-date"><time>{{ average.response_time.date_range.from|localizeddate('medium', 'short') }}</time></td>
+                        <td class="my-tab-date"><time>{{ average.response_time.date_range.to|localizeddate('medium', 'short') }}</time></td>
+                        <td class="my-tab-number"><span>{{ average.response_time.value|localizednumber }} ms</span></td>
+                        <td class="my-tab-number"><span>{{ average.response_time.diff.value|localizednumber('percent', 'double') }}</span></td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </section>
-    </div>
-</main>
+</div>
 {% endblock %}
