@@ -14,6 +14,9 @@
                 <li class="nav-item my-section-checks {{ _section == 'check' ? 'active' : '' }}">{% spaceless %}
                     <a class="nav-link" href="{{ path('check_list') }}">{{ 'section.checks'|trans }}{% if _section == 'check' %} <span class="sr-only">({{ 'link.current'|trans }})</span>{% endif %}</a>
                 {% endspaceless %}</li>
+                <li class="nav-item my-section-alerts {{ _section == 'alert' ? 'active' : '' }}">{% spaceless %}
+                    <a class="nav-link" href="{{ path('alert_list') }}">{{ 'section.alerts'|trans }}{% if _section == 'alert' %} <span class="sr-only">({{ 'link.current'|trans }})</span>{% endif %}</a>
+                {% endspaceless %}</li>
             </ul>
             {% endif %}
 

@@ -59,7 +59,7 @@ class NavigationControllerTest extends AbstractControllerTest
 
     public function sectionUris()
     {
-        return ['/', '/check/'];
+        return ['/', '/check/', '/alert/'];
     }
 
     /**
