@@ -2,6 +2,7 @@ body > footer {
   background-color: $white;
   padding-top: $spacer * 2;
   padding-bottom: $spacer * 2;
+  font-size: $font-size-sm;
 
   color: $text-muted;
   a {
@@ -11,5 +12,8 @@ body > footer {
     :focus {
       color: $dark;
     }
+  }
+  ul {
+    margin-bottom: 0;
   }
 }

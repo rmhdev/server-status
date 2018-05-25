@@ -3,7 +3,10 @@
         <div class="row">
             <div class="col-md-12">
                 <ul class="list-unstyled list-inline">
-                    <li>&copy; {{ 'now'|date('Y') }} {{ author_name }} (<a href="{{ author_webpage }}">{{ author_username }}</a>)</li>
+                    <li class="list-inline-item">Copyright &copy; {{ 'now'|date('Y') }} {{ author_name }} (<a href="{{ author_webpage }}">{{ author_username }}</a>)</li>
+                    <li class="list-inline-item">{{ 'footer.license'|trans({
+                        '%license%': '<a href="' ~ (custom_app_repository) ~'">' ~ ('footer.license.name'|trans) ~ '</a>'
+                    })|raw }}</li>
                 </ul>
             </div>
         </div>

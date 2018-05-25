@@ -3,6 +3,7 @@
 parameters:
     locale: 'en'
     app_name: 'aktibo'
+    app_repository: 'https://github.com/rmhdev/server-status'
     author_name: 'Rober MH'
     author_username: 'rmhdev'
     author_webpage: 'http://rmhdev.net'
