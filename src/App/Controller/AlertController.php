@@ -15,8 +15,8 @@ namespace App\Controller;
 use App\Entity\UserCustomer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use ServerStatus\Application\Service\Alert\ViewAlertsByCustomerRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/alert")
@@ -28,8 +28,16 @@ class AlertController extends Controller
      * @Route("/", name="alert_list")
      * @Security("has_role('ROLE_CUSTOMER')")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
-        return $this->render('alert/index.html.twig');
+        $req = new ViewAlertsByCustomerRequest(
+            $this->getUser()->getCustomer()->id()
+        );
+        $report = $this
+            ->get('ServerStatus\Application\Service\Alert\ViewAlertsByCustomerService')
+            ->execute($req);
+        //sdump($report); die();
+
+        return $this->render('alert/index.html.twig', [ 'report' => $report ]);
     }
 }

@@ -62,6 +62,7 @@ services:
         arguments:
             $entityName: 'ServerStatus\Domain\Model\AlertNotification\AlertNotification'
 
+    # http services
     Http\Client\HttpClient:
         factory: ['Http\Discovery\HttpClientDiscovery', find]
     Http\Message\MessageFactory:
@@ -87,7 +88,7 @@ services:
     ServerStatus\Application\Service\Check\ViewPerformanceReportsService:
         public: true
     ServerStatus\Application\Service\Alert\ViewAlertsByCustomerService:
-        public: false
+        public: true
 
     # console commands:
     ServerStatus\Infrastructure\Ui\Console\Command\PingCommand:

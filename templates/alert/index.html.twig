@@ -6,4 +6,13 @@
 
 
 {% block body %}
+<div class="container">
+    <div class="app-alerts">
+    {% for alert in report.alerts %}
+        <div class="app-alert">
+            <h2>{% if alert.check %}{{ alert.check.name }}{% else %}all{% endif %}</h2>
+        </div>
+    {% endfor %}
+    </div>
+</div>
 {% endblock %}

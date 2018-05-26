@@ -42,4 +42,14 @@ class AlertControllerTest extends AbstractControllerTest
         $this->assertEquals(200, $this->authenticatedClient->getResponse()->getStatusCode());
         $this->assertContains('Alerts', $crawler->filter('title')->text());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldListAlertsOrderedByName()
+    {
+        $crawler = $this->authenticatedClient->request("GET", "/alert/");
+
+        $this->assertEquals(3, $crawler->filter("body > main .app-alerts .app-alert")->count());
+    }
 }
