@@ -111,4 +111,14 @@ class CheckControllerTest extends AbstractControllerTest
             $crawler->filter('body > main header .subtitle')->text()
         );
     }
+
+    /**
+     * @test
+     */
+    public function itShouldThrowExceptionWhenAccessingNonExistingCheck()
+    {
+        $this->authenticatedClient->request("GET", "/check/this-check-does-not-exist");
+
+        $this->assertEquals(404, $this->authenticatedClient->getResponse()->getStatusCode());
+    }
 }

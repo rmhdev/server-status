@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use ServerStatus\Application\Service\Check\ViewCheckByCustomerRequest;
 use ServerStatus\Application\Service\Check\ViewChecksByCustomerRequest;
+use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckName;
 use ServerStatus\Domain\Model\Common\DateRange\DateRangeLast24Hours;
 use ServerStatus\Domain\Model\Customer\CustomerDoesNotExistException;
@@ -68,8 +69,14 @@ class CheckController extends Controller
             new \DateTimeImmutable($date),
             $request->get('type', DateRangeLast24Hours::NAME)
         );
-        $summary = $this->get('ServerStatus\Application\Service\Check\ViewCheckByCustomerService')
-            ->execute($req);
+        try {
+            $summary = $this->get('ServerStatus\Application\Service\Check\ViewCheckByCustomerService')
+                ->execute($req);
+        } catch (CheckDoesNotExistException $e) {
+            throw $this->createNotFoundException();
+        } catch (CustomerDoesNotExistException $e) {
+            throw $this->createAccessDeniedException();
+        }
         //dump($summary);
 
         return $this->render('check/show.html.twig', [
