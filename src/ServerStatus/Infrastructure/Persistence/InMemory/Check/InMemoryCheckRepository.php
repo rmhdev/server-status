@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ServerStatus\Infrastructure\Persistence\InMemory\Check;
 
 use ServerStatus\Domain\Model\Check\Check;
+use ServerStatus\Domain\Model\Check\CheckAlreadyExistException;
 use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckId;
 use ServerStatus\Domain\Model\Check\CheckName;
@@ -54,6 +55,14 @@ class InMemoryCheckRepository implements CheckRepository
      */
     public function add(Check $check): CheckRepository
     {
+        if ($this->byCustomerAndSlug($check->customer()->id(), $check->name())) {
+            throw new CheckAlreadyExistException(sprintf(
+                'Customer "%s" already has a check with same slug "%s" (id "%s")',
+                $check->customer()->id(),
+                $check->name()->slug(),
+                $check->id()
+            ));
+        }
         $this->checks[$check->id()->id()] = $check;
 
         return $this;

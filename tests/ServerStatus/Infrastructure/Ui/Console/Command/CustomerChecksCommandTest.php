@@ -100,17 +100,17 @@ class CustomerChecksCommandTest extends KernelTestCase
             ->add(
                 CheckDataBuilder::aCheck()->withCustomer($defaultCustomer)->withUrl(
                     CheckUrlDataBuilder::aCheckUrl()->withDomain("site.example.com")->build()
-                )->build()
+                )->withName("first")->build()
             )
             ->add(
                 CheckDataBuilder::aCheck()->withCustomer($defaultCustomer)->withUrl(
                     CheckUrlDataBuilder::aCheckUrl()->withDomain("example.io")->build()
-                )->build()
+                )->withName("second")->build()
             )
             ->add(
                 CheckDataBuilder::aCheck()->withUrl(
                     CheckUrlDataBuilder::aCheckUrl()->withDomain("site.example.com")->build()
-                )->build()
+                )->withName("third")->build()
             )
         ;
 

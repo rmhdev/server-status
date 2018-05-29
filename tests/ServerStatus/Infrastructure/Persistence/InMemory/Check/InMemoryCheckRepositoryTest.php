@@ -121,9 +121,9 @@ class InMemoryCheckRepositoryTest extends TestCase
         $otherCustomer = CustomerDataBuilder::aCustomer()->withId($otherCustomerId)->build();
         $repository = $this->createEmptyRepository();
         $repository
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
-            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->build())
-            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->withName("first")->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->withName("second")->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($otherCustomer)->withName("third")->build())
         ;
         $customerCollection = $repository->byCustomer($customerId);
 
@@ -154,9 +154,10 @@ class InMemoryCheckRepositoryTest extends TestCase
 
         $repository = $this->createEmptyRepository();
         $repository
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->build())
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withStatus($statusDisabled)->build())
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customerDisabled)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withName("first")->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerEnabled)->withName("second")
+                ->withStatus($statusDisabled)->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customerDisabled)->withName("third")->build())
         ;
 
         $this->assertEquals(1, $repository->enabled()->count(), 'Return only enabled checks from enabled customers');
@@ -178,5 +179,22 @@ class InMemoryCheckRepositoryTest extends TestCase
             $customer->id(),
             CheckNameDataBuilder::aCheckName()->withName("check-two")->withSlug("check-two")->build()
         ));
+    }
+
+    /**
+     * @test
+     * @expectedException  \ServerStatus\Domain\Model\Check\CheckAlreadyExistException
+     */
+    public function itShouldThrowExceptionWhenAddingWithSameSlugForSameCustomer()
+    {
+        $id = CheckIdDataBuilder::aCheckId()->withValue("qwerty")->build();
+        $checkA = CheckDataBuilder::aCheck()->withId($id)->build();
+        $repository = $this->createEmptyRepository();
+        $repository->add($checkA);
+        $checkB = CheckDataBuilder::aCheck()
+            ->withName($checkA->name())
+            ->withCustomer($checkA->customer())
+            ->build();
+        $repository->add($checkB);
     }
 }

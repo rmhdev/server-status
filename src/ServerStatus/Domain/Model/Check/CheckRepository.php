@@ -25,6 +25,7 @@ interface CheckRepository
     /**
      * @param Check $check
      * @return CheckRepository
+     * @throws CheckAlreadyExistException
      */
     public function add(Check $check): CheckRepository;
 

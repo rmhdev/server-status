@@ -41,8 +41,11 @@ class CustomerDataBuilder
         return $this;
     }
 
-    public function withEmail(CustomerEmail $email): CustomerDataBuilder
+    public function withEmail($email): CustomerDataBuilder
     {
+        if (!$email instanceof CustomerEmail) {
+            $email = CustomerEmailDataBuilder::aCustomerEmail()->withValue($email)->build();
+        }
         $this->email = $email;
 
         return $this;

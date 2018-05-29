@@ -70,9 +70,9 @@ class ViewChecksByCustomerServiceTest extends TestCase
 
         $checkRepo = new InMemoryCheckRepository();
         $checkRepo
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
-            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->build())
-            ->add(CheckDataBuilder::aCheck()->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->withName("first")->build())
+            ->add(CheckDataBuilder::aCheck()->withCustomer($customer)->withName("second")->build())
+            ->add(CheckDataBuilder::aCheck()->withName("third")->build())
         ;
 
         // fake measurements for $customerId's checks:
