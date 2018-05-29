@@ -79,7 +79,7 @@ class AddCheckServiceTest extends TestCase
      */
     public function itShouldThrowExceptionWhenAddingExistingCheckByCustomer()
     {
-        $customer = CustomerDataBuilder::aCustomer()->withEmail("add-new-check@example.com")->build();
+        $customer = CustomerDataBuilder::aCustomer()->withEmail("add-new-check-duplicate@example.com")->build();
         $request = new AddCheckRequest(
             CheckNameDataBuilder::aCheckName()->withSlug("add-new-check")->build(),
             CheckUrlDataBuilder::aCheckUrl()->build(),
