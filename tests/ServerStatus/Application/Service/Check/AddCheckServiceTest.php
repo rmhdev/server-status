@@ -73,7 +73,10 @@ class AddCheckServiceTest extends TestCase
         $this->assertNotNull($newCheck, 'The newly created check should be in repository');
     }
 
-
+    /**
+     * @test
+     * @expectedException \ServerStatus\Domain\Model\Check\CheckAlreadyExistException
+     */
     public function itShouldThrowExceptionWhenAddingExistingCheckByCustomer()
     {
         $customer = CustomerDataBuilder::aCustomer()->withEmail("add-new-check@example.com")->build();
@@ -83,6 +86,8 @@ class AddCheckServiceTest extends TestCase
             CheckStatusDataBuilder::aCheckStatus()->build(),
             $customer
         );
+        static::$service->execute($request);
+        // Adding a new check with same values as previous one should throw exception:
         static::$service->execute($request);
     }
 }
