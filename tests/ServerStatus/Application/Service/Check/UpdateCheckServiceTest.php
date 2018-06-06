@@ -50,7 +50,7 @@ class UpdateCheckServiceTest extends TestCase
     /**
      * @test
      */
-    public function itShouldUpdateValues()
+    public function itShouldSaveEditedValuesInRepositoryAfterUpdate()
     {
         $check = CheckDataBuilder::aCheck()
             ->withStatus(CheckStatus::CODE_ENABLED)
@@ -68,5 +68,22 @@ class UpdateCheckServiceTest extends TestCase
         $this->assertEquals("edited-check", $editedCheck->name()->slug());
         $this->assertEquals("edited-domain.com", $editedCheck->url()->domain());
         $this->assertEquals(CheckStatus::CODE_DISABLED, $editedCheck->status()->name());
+    }
+
+    /**
+     * @test
+     * @expectedException \ServerStatus\Domain\Model\Check\CheckDoesNotExistException
+     */
+    public function itShouldThrowExceptionIfCheckDoesNotExist()
+    {
+        $check = CheckDataBuilder::aCheck()->build();
+        $request = new UpdateCheckRequest(
+            $check->id(),
+            CheckNameDataBuilder::aCheckName()->withSlug("edited-check")->build(),
+            CheckUrlDataBuilder::aCheckUrl()->withDomain("edited-domain.com")->build(),
+            CheckStatusDataBuilder::aCheckStatus()->withCode(CheckStatus::CODE_DISABLED)->build()
+        );
+        $this->service->execute($request);
+        $this->assertEquals(1, 2);
     }
 }

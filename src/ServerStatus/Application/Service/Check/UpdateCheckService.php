@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace ServerStatus\Application\Service\Check;
 
+use ServerStatus\Domain\Model\Check\CheckDoesNotExistException;
 use ServerStatus\Domain\Model\Check\CheckRepository;
 use ServerStatus\Infrastructure\Domain\Model\Check\DoctrineCheckFactory;
 
@@ -22,9 +23,20 @@ class UpdateCheckService
         $this->checkRepository = $checkRepository;
     }
 
+    /**
+     * @param UpdateCheckRequest $request
+     * @throws \ServerStatus\Domain\Model\Check\CheckDoesNotExistException
+     * @throws \ServerStatus\Domain\Model\Check\CheckAlreadyExistException
+     */
     public function execute(UpdateCheckRequest $request)
     {
         $check = $this->checkRepository->ofId($request->id());
+        if (!$check) {
+            throw new CheckDoesNotExistException(sprintf(
+                'Update action error: Check object (id "%s") does not exist in repository',
+                $request->id()
+            ));
+        }
         $factory = new DoctrineCheckFactory();
         $edited = $factory->build(
             $request->id(),

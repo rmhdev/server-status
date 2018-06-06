@@ -28,7 +28,6 @@ security:
                 # csrf_token_generator: security.csrf.token_manager
             provider: customer_provider
             logout: true
-            logout_on_user_change: true
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
